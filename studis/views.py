@@ -13,8 +13,9 @@ def login(request):
 	
 	#check if ip is blocked 
 	print(attempts)
-	if attempts >=3:
-		is_blocked(request)
+	if is_blocked(request):
+		return HttpResponseRedirect('/user/invalid')
+
 
 	c = {}
 	c.update(csrf(request))
@@ -22,6 +23,7 @@ def login(request):
 	return render_to_response('login.html', c)
 
 #checks if usr and pwd are correct and logs in
+#else +1 to attempts
 def auth_view(request):
 	username = request.POST.get('usr', '')
 	password = request.POST.get('pwd', '')
@@ -29,7 +31,7 @@ def auth_view(request):
 	global attempts
 	attempts = attempts + 1
 
-	if user is not None:
+	if user is not None and attempts<3:
 
 		auth.login(request, user)
 		attempts=0
@@ -75,22 +77,23 @@ def get_client_ip(request):
 
 #checks if ip is being blocked
 def is_blocked(request):
-	now = datetime.datetime.now()
-	global ip
 	global attempts
+	if attempts < 3:
+		return False
+
+	now = datetime.datetime.now()
+
+	global ip
 
 	print(block_time-now)
 	#unblock
-	if now >= block_time:
+	if now > block_time:
 		attempts=0
 		ip = -1
 		print("true")
+		return False
 
-	#block
-	else:
-		print("false")
-		context = {'ip': ip}
-		return render_to_response('invalid.html', context)
+	return True
 
 
 

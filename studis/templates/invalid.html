@@ -3,5 +3,6 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<p>Zaradi prevelikega števila napačnih vnosov je vaš IP {{ ip }} začasno blokiran</p>
+<p class="text-center">Zaradi prevelikega števila napačnih vnosov je vaš IP {{ ip }} začasno blokiran</p>
+<p class="text-center"><a href="{% url 'login' %}">Osvežite</a> stran</p>
 {% endblock %}
