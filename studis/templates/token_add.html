@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Dodaj vpisni žeton{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <a href="{% url 'logout' %}">logout</a>
+
+    <h1>Prosimo, vnesite zahtevane podatke (heavy WIP):</h1>
+
+    <form action="TODO" method="POST">
+        <div class="form-group">
+            <label for="stud_prog">Študent</label>
+            <input type="text" class="form-control" value="" name="Študent" id="stud" required> <!-- SPREMENI -->
+        </div>
+        <div class="form-group">
+            <label for="stud_prog">Študijski program</label>
+            <input type="text" class="form-control" value="" name="Študijski program" id="stud_prog" required> <!-- SPREMENI V DROPDOWN -->
+        </div>
+        <div class="form-group">
+            <label for="stud_prog">Letnik</label>
+            <input type="text" class="form-control" value="" name="Letnik" id="letnik" required> <!-- SPREMENI V DROPDOWN -->
+        </div>
+        <div class="form-group">
+            <label for="stud_prog">Vrsta vpisa</label>
+            <input type="text" class="form-control" value="" name="Vrsta vpisa" id="vrsta_vpisa" required> <!-- SPREMENI V DROPDOWN -->
+        </div>
+        <div class="form-group">
+            <label for="stud_prog">Način in oblika študija</label>
+            <input type="text" class="form-control" value="" name="Način in oblika študija" id="nac_stud" required> <!-- SPREMENI V DROPDOWN -->
+        </div>
+        <div class="form-group">
+            <label for="stud_prog">Pravica do proste izbore predmetov</label>
+            <input type="text" class="form-control" value="" name="Pravica do proste izibre predmetov" id="predmet_choice" required> <!-- SPREMENI V TRUE/FALSE, prisotno le pri vpisu v 3. letnik dodip -->
+        </div>
+
+        <button type="submit" class="btn btn-default">Ustvari žeton za vpis</button>
+      
+    </form>
+
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
+{% endblock %}
