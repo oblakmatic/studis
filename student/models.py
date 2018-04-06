@@ -6,7 +6,7 @@ class Student(models.Model):
     ime = models.CharField(max_length = 30)
     vpisna_stevilka = models.IntegerField(primary_key = True)
     naslov_stalno_bivalisce = models.CharField(max_length = 260)
-    naslov_zacasno_bivalisce = models.CharField(max_length = 260)
+    naslov_zacasno_bivalisce = models.CharField(max_length = 260, null = True)
     # foreign key drzava
     kraj_rojstva = models.CharField(max_length = 260) # kako bomo preverjali konsistentnost drzave in obcine rojstva
     naslov_posta = models.CharField(max_length = 260)

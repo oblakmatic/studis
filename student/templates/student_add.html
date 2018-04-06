@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Dodaj študenta{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <a href="{% url 'logout' %}">logout</a>
+
+    <h1>Prosimo, vnesite zahtevane podatke (heavy WIP):</h1>
+
+    <form action="TODO" method="POST">
+        <div class="form-group">
+            <label for="ime">Ime</label>
+            <input type="text" class="form-control" value="" name="Ime" id="ime" maxlength="30" required>
+        </div>
+        <div class="form-group">
+            <label for="priimek">Priimek</label>
+            <input type="text" class="form-control" value="" name="Priimek" id="priimek" maxlength="30" required>
+        </div>
+        <div class="form-group">
+            <label for="emso">EMŠO</label>
+            <input type="text" class="form-control" value="" name="EMŠO" id="emso" minlength="13" maxlength="13" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="text" class="form-control" value="" name="Email" id="email" maxlength="60" required> 
+        </div>
+        <div class="form-group">
+            <label for="stalni_naslov">Stalno bivališče</label>
+            <input type="text" class="form-control" value="" name="Stalno bivališče" id="stalni_naslov" maxlength="260" required> 
+        </div>
+        <div class="form-group">
+            <label for="zacasni_naslov">Začasno bivališče</label>
+            <input type="text" class="form-control" value="" name="Začasno bivališče" id="zacasno_naslov" maxlength="260" required> 
+        </div>
+
+        <button type="submit" class="btn btn-default">Ustvari študenta</button>
+      
+    </form>
+
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
+{% endblock %}
