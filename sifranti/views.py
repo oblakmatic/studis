@@ -17,7 +17,8 @@ def index(request):
 
 def changesif(request, diff):
     if diff in diff_names:
-        elements = eval(diff).objects.all()
+        elements = eval(diff).objects.values_list()
+        
         context = {
         'elements' : elements
 
