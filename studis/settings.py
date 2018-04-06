@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'student.apps.StudentConfig'
 ]
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
