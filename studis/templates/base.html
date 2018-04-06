@@ -3,14 +3,35 @@
 <head>
   <meta charset="utf-8">
   {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/theme.bootstrap.min.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/mystyle.css' %}" />
   <title>{% block title %}Title{% endblock %}</title>
 </head>
 <body>
-  <div class="container login">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<div class=container>
+			<a class="navbar-brand" href="/">Studis</a>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav">
+				  <li class="nav-item active">
+				    <a class="nav-link" href="/">Domov<span class="sr-only">(current)</span></a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" href="#">Karkoli</a>
+				  </li>
+				  <li class="nav-item">
+				    <a class="nav-link" href="#">Ful dobr</a>
+				  </li>
+				</ul>
+				<ul class="navbar-nav ml-auto">
+				  <li class="nav-ite ">
+				    <a class="nav-link" href="{% url 'logout' %}">Odjava</a>
+				  </li>
+				</ul>
+			</div>
+		</div>
+	</nav>
     {% block content %}
     {% endblock %}
-  </div>
 </body>
 </html>

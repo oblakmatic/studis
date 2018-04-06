@@ -1,27 +1,27 @@
-{% extends 'base.html' %}
+{% extends 'base_login.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Prijava{% endblock %}
 
 {% block content %}
 
 <h2>Prijava</h2>
-	<form action="/user/auth/" method="post" > 
-		{% csrf_token %}
-		<div class="form-group">
-			<label for="usr">Uporabniško ime:</label>
-			<input type="text" class="form-control" value="" name="usr" id="usr">
-		</div>
-		<div class="form-group">
-			<label for="pwd">Geslo:</label>
-			<input type="password" class="form-control" value="" name="pwd" id="pwd">
-		</div>
+<form action="/user/auth/" method="post" > 
+	{% csrf_token %}
+	<div class="form-group">
+		<label for="usr">Uporabniško ime:</label>
+		<input type="text" class="form-control" value="" name="usr" id="usr">
+	</div>
+	<div class="form-group">
+		<label for="pwd">Geslo:</label>
+		<input type="password" class="form-control" value="" name="pwd" id="pwd">
+	</div>
 
-			<div class="alert alert-danger" {% if not error %} style="display:none" {% endif %}>
-  				Napačno ime ali geslo!
-			</div>
-		
-		<button type="submit" class="btn btn-default">Prijava</button>
-	</form>
-	<a href="{% url 'password_reset' %}">Pozabljeno geslo?</a>
+		<div class="alert alert-danger" {% if not error %} style="display:none" {% endif %}>
+				Napačno ime ali geslo!
+		</div>
+	
+	<button type="submit" class="btn btn-outline-primary" style="margin-bottom: 10px">Prijava</button>
+</form>
+<a href="{% url 'password_reset' %}" >Pozabljeno geslo?</a>
 
 {% endblock %}
