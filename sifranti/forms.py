@@ -18,3 +18,42 @@ class ObcinaForm(ModelForm):
     class Meta:
         model = Obcina
         fields = '__all__'
+
+class StudijskiProgramForm(ModelForm):
+    class Meta:
+        model = StudijskiProgram
+        fields = '__all__'
+
+class ModulForm(ModelForm):
+    class Meta:
+        model = Modul
+        fields = '__all__'
+class VrstaVpisaForm(ModelForm):
+    class Meta:
+        model = VrstaVpisa
+        fields = '__all__'
+
+class VrstaStudijaForm(ModelForm):
+    class Meta:
+        model = VrstaStudija
+        fields = '__all__'
+
+class LetnikForm(ModelForm):
+    class Meta:
+        model = Letnik
+        fields = '__all__'
+
+class StudijskoLetoForm(ModelForm):
+    class Meta:
+        model = StudijskoLeto
+        fields = '__all__'
+
+class NacinStudijaForm(ModelForm):
+    class Meta:
+        model = NacinStudija
+        fields = '__all__'
+
+class PredmetForm(ModelForm):
+    class Meta:
+        model = Predmet
+        fields = '__all__'

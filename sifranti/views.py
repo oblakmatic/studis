@@ -7,7 +7,7 @@ from .models import *
 
 # Create your views here.
 #diff_ names is array with all possible models
-diff_names = [ "Drzava" , "Posta" , "Obcina" ]
+diff_names = [ "Predmet", "NacinStudija", "Drzava" , "Posta" , "Obcina", "StudijskiProgram", "Modul","VrstaVpisa","VrstaStudija","Letnik","StudijskoLeto" ]
 
 def index(request):
     context = {
