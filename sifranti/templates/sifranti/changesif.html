@@ -1,6 +1,10 @@
+{% include "base.html" %}
+
+{% block content %}
+<div class="container sifrant">
 {% if elements %}
 
-    <table>
+    <table class="table">
         <tr>
             {% for diff in elements.1  %}
                 {% if not diff == "id" %}
@@ -19,12 +23,13 @@
             <td>
                 <form action="/sifranti/{{ object_name }}/{{ diff.id }}/delete/" method="post">
                     {% csrf_token %} 
-                    <input type="submit" value="Odstrani" />
+                    <button type="submit" class="btn btn-outline-danger">Odstrani</button>
                 </form>
             </td>
             <td>
                 <form action="/sifranti/{{ object_name }}/{{ diff.id }}/" method="get">
-                    <input type="submit" value="Posodobi" />
+                    <button type="submit" class="btn btn-outline-primary">Posodobi</button>
+                    
                 </form>
             </td>
         </tr>
@@ -32,17 +37,19 @@
 
     </table>
 
-    <p>Dodaj element:</p>
+    <p>Dodaj element: </p>
     <form action="/sifranti/{{ object_name }}/" method="post">
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="Dodaj" />
+        <button type="submit" class="btn btn-outline-primary">Dodaj</button>
     </form>
 {% else %}
-    <p>Dodaj element:</p>
+    <p>Dodaj element: </p>
     <form action="/sifranti/{{ object_name }}/" method="post">
         {% csrf_token %}
         {{ form }}
-        <input type="submit" value="Dodaj" />
+        <button type="submit" class="btn btn-outline-primary">Dodaj</button>
     </form>
 {% endif %}
+</div>
+{% endblock %}
