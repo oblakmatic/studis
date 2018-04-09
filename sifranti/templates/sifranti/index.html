@@ -1,0 +1,9 @@
+{% if diff_names %}
+    <ul>
+    {% for diff in diff_names %}
+    <li><a href="/sifranti/{{ diff }}/">{{ diff }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Ni elementov</p>
+{% endif %}

@@ -1,0 +1,48 @@
+{% if elements %}
+
+    <table>
+        <tr>
+            {% for diff in elements.1  %}
+                {% if not diff == "id" %}
+                <td>{{ diff }}</td>
+                {% endif %}
+                
+            {% endfor %}
+        </tr>
+        {% for diff in elements  %}
+        <tr>
+            {% for k, v in diff.items  %}
+                {% if not k == "id" %}
+                <td>{{ v }}</td>
+                {% endif %}
+            {% endfor %}
+            <td>
+                <form action="/sifranti/{{ object_name }}/{{ diff.id }}/delete/" method="post">
+                    {% csrf_token %} 
+                    <input type="submit" value="Odstrani" />
+                </form>
+            </td>
+            <td>
+                <form action="/sifranti/{{ object_name }}/{{ diff.id }}/" method="get">
+                    <input type="submit" value="Posodobi" />
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+    <p>Dodaj element:</p>
+    <form action="/sifranti/{{ object_name }}/" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Dodaj" />
+    </form>
+{% else %}
+    <p>Dodaj element:</p>
+    <form action="/sifranti/{{ object_name }}/" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Dodaj" />
+    </form>
+{% endif %}

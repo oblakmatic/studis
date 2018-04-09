@@ -109,3 +109,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+\.idea/
+
+\.vscode/
+
+*.pyc
+db.sqlite3
