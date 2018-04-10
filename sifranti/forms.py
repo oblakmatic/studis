@@ -2,7 +2,9 @@ from django.forms import ModelForm
 from django import forms
 from .models import *
 
-
+class SearchForm(forms.Form):
+    isci_element = forms.CharField(label='Isci element po atributu:',max_length=100)
+    element = forms.CharField(max_length=100)
 
 class PostaForm(ModelForm):
     class Meta:

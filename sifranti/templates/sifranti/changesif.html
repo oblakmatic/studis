@@ -1,5 +1,11 @@
 {% if elements %}
-
+    
+    <p>Iskanje</p>
+    <form action="/sifranti/{{ object_name }}/search/" method="post">
+        {% csrf_token %}
+        {{ form2 }}
+        <input type="submit" value="Isci element" />
+    </form>
     <table>
         <tr>
             {% for diff in elements.0  %}

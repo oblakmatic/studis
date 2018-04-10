@@ -34,12 +34,13 @@ def changesif(request, diff):
     else:
         if diff in diff_names:
             elements = eval(diff).objects.values()
-            
+            form_iskanje = SearchForm()
             form = eval(diff+'Form')()
             context = {
             'object_name' : diff,
             'elements' : elements,
             'form': form,
+            'form2' : form_iskanje
             }
             return render(request,'sifranti/changesif.html',context)
 
@@ -68,7 +69,8 @@ def update(request, diff, index):
             context = {
             'object_name' : diff,
             'form': form,
-            'element' : element
+            'element' : element,
+            
             }
             return render(request,'sifranti/update.html',context)
 
@@ -82,3 +84,20 @@ def delete(request, diff, index):
         element = eval(diff).objects.get(id=index)
         element.delete()
         return HttpResponseRedirect('/sifranti/'+ diff +'/')
+
+def search(request, diff):
+
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+
+        if form.is_valid() and diff in diff_names:
+            isci_element = form.cleaned_data['isci_element']
+            element = form.cleaned_data['element']
+            print(isci_element)
+            print(element)
+
+            rezultat = eval(diff).objects.filter(**{isci_element: element}).values()
+            return HttpResponseRedirect('/sifranti/'+ diff +'/'+str(rezultat[0]["id"])+'/')
+            
+
+
