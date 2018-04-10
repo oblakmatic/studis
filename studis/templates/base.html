@@ -29,8 +29,12 @@
 				  	{% endif %}>
 				    <a class="nav-link" href="/sifranti/">Šifranti</a>
 				  </li>
-				  <li class="nav-item">
-				    <a class="nav-link" href="/">Ful dobr</a>
+				  <li {% if request.resolver_match.url_name == 'students' or request.resolver_match.url_name == 'upload_file' %}
+				  		class="nav-item active"
+				  	{% else %}
+				  		class="nav-item"
+				  	{% endif %}>
+				    <a class="nav-link" href="/student/">Študenti</a>
 				  </li>
 				</ul>
 				<ul class="navbar-nav ml-auto">

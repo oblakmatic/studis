@@ -23,6 +23,7 @@ urlpatterns = [
 	path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('admin/', admin.site.urls),
     path('sifranti/', include('sifranti.urls')),
+    path('student/', include('student.urls')),
     path('user/login/', login, name="login"),
     path('user/logout/', logout, name="logout"),
     path('user/auth/', auth_view, name = "auth_view"),

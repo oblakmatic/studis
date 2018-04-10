@@ -4,7 +4,6 @@ class Student(models.Model):
     emso = models.CharField(max_length = 13)
     priimek = models.CharField(max_length = 30)
     ime = models.CharField(max_length = 30)
-    vpisna_stevilka = models.IntegerField(primary_key = True)
     naslov_stalno_bivalisce = models.CharField(max_length = 260)
     naslov_zacasno_bivalisce = models.CharField(max_length = 260)
     # foreign key drzava
