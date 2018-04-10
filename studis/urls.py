@@ -22,6 +22,7 @@ from studis.views import login, auth_view, logout, invalid
 urlpatterns = [
 	path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('admin/', admin.site.urls),
+    path('vpis/', include('vpis.urls')),
     path('sifranti/', include('sifranti.urls')),
     path('student/', include('student.urls')),
     path('user/login/', login, name="login"),
@@ -35,3 +36,4 @@ urlpatterns = [
     path('reset/done/', auth_views.password_reset_complete, name='password_reset_complete'),
 
 ]
+    
