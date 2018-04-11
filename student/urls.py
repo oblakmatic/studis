@@ -10,6 +10,6 @@ urlpatterns = [
     path('isci/',views.students_search,name='students_search'),
     path('ustvari-zeton/',views.token_add,name='token_add'),
     path('seznam-zetonov/',views.token_list,name="token_list"),
-    path('izbrisi-zeton/<int:del_id>', views.token_delete,name="token_delete")
+    path('izbrisi-zeton/<int:del_id>', views.token_delete,name="token_delete"),
     path('uredi-zeton/<int:edit_id>', views.token_edit,name="token_edit")
 ]

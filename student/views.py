@@ -181,13 +181,13 @@ def token_edit(request, edit_id):
 		token.vrsta_vpisa = VrstaVpisa.objects.filter(ime=request.POST.get('vrsta_vpisa'))
 		token.nacin_studija = NacinStudija.objects.filter(ime=request.POST.get('nac_stud'))
 		token.vrsta_studija = VrstaStudija.objects.filter(ime=request.POST.get('vrst_stud'))
-		token.prosta_izbira = True if request.POST.get('predmet_choice', False) == 'on'
+		token.prosta_izbira = True if request.POST.get('predmet_choice') == 'on' else False
 		token.save()
 
 	else:
 		try:
 			zeton = Zeton.objects.select_related().get(pk=edit_id)
-		except: Zeton.DoesNotExist:
+		except Zeton.DoesNotExist:
 			zeton = None
 		if(zeton == None):
 			return token_list(request, 'Ta žeton ne obstaja!')
