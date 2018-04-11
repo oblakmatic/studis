@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Pregled vpisnih žetonov{% endblock %}
+
+{% block content %}
+<div class="container sifrant">
+
+<h3>Vsi vpisni žetoni</h3>
+{% if message %}
+<h4>{{ message }}</h4>
+{% endif %}
+<table class="table">
+	<thead>
+	    <tr>
+	      <th scope="col">Vpisna številka</th>
+	      <th scope="col">Študijski program</th>
+	      <th scope="col">Letnik</th>
+          <th scope="col">Vrsta vpisa</th>
+          <th scope="col">Način študija</th>
+          <th scope="col">Vrsta študija</th>
+          <th scope="col">Pravica do izbire predmeta v tretjem letniku</th>
+	    </tr>
+  	</thead>
+{% for t in arr %}
+	<tr>
+	{% for k,v in t.items %}
+		{% if not k == 'id' %}
+		<td>{{ v }}</td>
+		{% endif %}
+	
+	{% endfor %}
+		<td><a href="/student/izbrisi-zeton/{{ t.id }}">Izbriši</a></td>
+	</tr>
+{% endfor %}
+</div>
+{% endblock %}

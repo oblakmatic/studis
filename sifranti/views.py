@@ -98,6 +98,6 @@ def search(request, diff):
 
             rezultat = eval(diff).objects.filter(**{isci_element: element}).values()
             return HttpResponseRedirect('/sifranti/'+ diff +'/'+str(rezultat[0]["id"])+'/')
-            
+
 
 

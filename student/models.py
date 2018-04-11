@@ -31,7 +31,7 @@ class Kandidat(models.Model):
     izkoriscen = models.BooleanField(default = False)
 
 class Zeton(models.Model):
-    student = models.ForeignKey(Student, primary_key = True,  on_delete= models.CASCADE)
+    student = models.ForeignKey(Student, on_delete= models.CASCADE)
     studijski_program = models.ForeignKey(StudijskiProgram, null = True, on_delete= models.SET_NULL)
     letnik = models.ForeignKey(Letnik, null=True, on_delete= models.SET_NULL)
 
