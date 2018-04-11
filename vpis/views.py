@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
+from django import forms
 
 # Create your views here.
 from .forms import *
@@ -23,23 +24,32 @@ def index_vpis(request):
         # and saves into database
         if form.is_valid():
 
-            vpis = form.save(commit=False)
-            vpis.student = possible_student[0]
-            vpis.save()
-            #student requesta stran, naredim query po njegovem emailu
-            
-            
-            return HttpResponseRedirect('/vpis/')
+            st = form.save(commit=False)
+            st.student = possible_student[0]
+            st.save()
+            context = {
+            'form': form,
+            'possible_student' : possible_student,
+            'opozorilo' : "Uspešno dodan Vpis!"
+            }
+            return render(request,'vpis/index_vpis.html',context)
         else:
-            print("NI SAFE")
+            context = {
+            'form': form,
+            'possible_student' : possible_student
+            }
+            return render(request,'vpis/index_vpis.html',context)
 
     # if a GET (or any other method) we'll create a blank form
     else:
         
         possible_student = vrniStudenta(request.user.email)
         possible_student = possible_student.values()
+       
         #print(student[0]["id"])
         form = VpisForm()
+        # to je potrebno da ni treba restartat streznika
+  
         context = {
         'form': form,
         'possible_student' : possible_student
