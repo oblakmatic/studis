@@ -43,12 +43,7 @@
     {% for t in vpisi %}
     <tr>
     {% for k, v in t.items %}
-        <td>{% if v == None or v == '' %}
-                {{v}}, v ni enak praznemu nizu
-            {% else %}
-                /
-            {% endif %}
-        </td>
+        <td>{{v}}</td>
     {% endfor %}
     </tr>
     {% endfor %}
