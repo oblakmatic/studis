@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Podatki o študentu {{ student.pk }}{% endblock %}
+
+{% block content %}
+<div class="container sifrant">
+
+<h3>Osebni podatki</h3>
+
+<table class="table">
+	<thead>
+	    <tr>
+            <th>Podatek</th>
+            <th>Vrednost</th>
+	    </tr>
+    </thead>
+    <tr><td scope="col">Emšo</td> <td>{{student.emso}}</td></tr>
+	<tr><td scope="col">Priimek</td> <td>{{student.priimek}}</td></tr>
+	<tr><td scope="col">Ime</td> <td>{{student.ime}}</td></tr>
+    <tr><td scope="col">Naslov stalnega prebivališča</td> <td>{{student.nalsov_stalno_bivalisce}}</td></tr>
+    <tr><td scope="col">Naslov začasnega prebivališča</td> <td>{{student.nalsov_zacasno_bivalisce}}</td></tr>
+    <tr><td scope="col">Država</td> <td>{{student.drzava}}</td></tr>
+    <tr><td scope="col">Kraj rojstva</td> <td>{{student.kraj_rojstva}}</td></tr>
+    <tr><td scope="col">Pošta</td> <td>{{student.posta}}</td></tr>
+    <tr><td scope="col">Občina</td> <td>{{student.obcina}}</td></tr>
+    <tr><td scope="col">Telefon</td> <td>{{student.telefon}}</td></tr>
+    <tr><td scope="col">Email</td> <td>{{student.email}}</td></tr>
+    <tr><td scope="col">Dodatno leto</td> <td>{{student.dodatno_leto}}</td></tr> 
+</table>
+
+<h3>Vpisi</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Študijsko Leto</th>
+            <th>Študijski Program</th>
+            <th>Letnik</th>
+            <th>Vrsta Vpisa</th>
+            <th>Način Študija</th>
+            <th>Vrsta Študija</th>
+        </tr>
+    </thead>
+    {% for t in vpisi %}
+    <tr>
+    {% for k, v in t.items %}
+        <td>{{v}}</td>
+    {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+</div>
+{% endblock %}
