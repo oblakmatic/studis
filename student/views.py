@@ -59,3 +59,30 @@ def import_students(request):
 	}
 
 	return render(request,'import_msg.html', context)
+
+def students_search(request): 
+	print(request.body)
+	search_query = request.POST.get('search_text', '')
+	print("Iskalni niz:" + search_query)
+	#if (search_query != ''):
+	id_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email').filter(id__startswith=search_query)
+	print(id_filtered_students)
+	name_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email').filter(ime__startswith=search_query)
+	surname_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email').filter(priimek__startswith=search_query)
+	context = {
+		'students_id': id_filtered_students,
+		'students_name': name_filtered_students,
+		'students_surname': surname_filtered_students
+	}
+	'''
+	else:
+		id_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email')
+		name_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email')
+		surname_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email')
+		context = {
+			'students_id': id_filtered_students,
+			'students_name': name_filtered_students,
+			'students_surname': surname_filtered_students
+		}
+	'''
+	return render(request,'search.html', context)

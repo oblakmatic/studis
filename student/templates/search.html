@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Iskanje študentov{% endblock %}
+
+{% block content %}
+<div class="container sifrant">
+
+<h3>Najdeni študenti</h3>
+
+{% if students_id or students_name or students_surname %}
+<h4>Po vpisni stevilki</h4>
+{% if students_id %}
+<table class="table">
+	<thead>
+	    <tr>
+            <th scope="col">Vpisna stevilka</th>
+	        <th scope="col">Ime</th>
+	        <th scope="col">Priimek</th>
+	        <th scope="col">Email</th>
+	    </tr>
+  	</thead>
+{% for temp in students_id %}
+	<tr>
+	{% for k, s in temp.items %}
+	
+		<td>{{ s }}</td>
+	
+	{% endfor %}
+	</tr>
+{% endfor %}
+</table>
+{% else %}
+<p>Ni najdenih vnosov!</p>
+{% endif %}
+
+<h4>Po po imenu</h4>
+{% if students_name %}
+<table class="table">
+	<thead>
+	    <tr>
+            <th scope="col">Vpisna stevilka</th>
+	        <th scope="col">Ime</th>
+	        <th scope="col">Priimek</th>
+	        <th scope="col">Email</th>
+	    </tr>
+  	</thead>
+{% for temp in students_name %}
+	<tr>
+	{% for k, s in temp.items %}
+	
+		<td>{{ s }}</td>
+	
+	{% endfor %}
+	</tr>
+{% endfor %}
+</table>
+{% else %}
+<p>Ni najdenih vnosov!</p>
+{% endif %}
+
+<h4>Po priimku</h4>
+{% if students_surname %}
+<table class="table">
+	<thead>
+	    <tr>
+            <th scope="col">Vpisna stevilka</th>
+	        <th scope="col">Ime</th>
+	        <th scope="col">Priimek</th>
+	        <th scope="col">Email</th>
+	    </tr>
+  	</thead>
+{% for temp in students_surname %}
+	<tr>
+	{% for k, s in temp.items %}
+	
+		<td>{{ s }}</td>
+	
+	{% endfor %}
+	</tr>
+{% endfor %}
+</table>
+{% else %}
+<p>Ni najdenih vnosov!</p>
+{% endif %}
+
+{% else %}
+    <p>Noben vnos ne ustreza iskanju. Poizkusite ponovno.</a></p>
+{% endif %}
+</div>
+{% endblock %}

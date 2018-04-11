@@ -30,5 +30,10 @@
 		{% csrf_token %}
     	<button type="submit" class="btn btn-outline-primary mb-2">Uvozi datoteko</button>
 	</form>
+	<form action="/student/isci/" method="post">
+		{% csrf_token %}
+		<input type="text" name="search_text">
+    	<button type="submit" class="btn btn-outline-primary mb-2">Išči</button>
+	</form>
 </div>
 {% endblock %}
