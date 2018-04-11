@@ -14,5 +14,6 @@ urlpatterns = [
     path('izbrisi-zeton/<int:del_id>', views.token_delete,name="token_delete"),
     path('uredi-zeton/<int:edit_id>', views.token_edit,name="token_edit"),
     path('izvoz/pdf/',views.export_pdf,name='export_pdf'),
-    path('izvoz/csv/',views.export_csv,name='export_csv')
+    path('izvoz/csv/',views.export_csv,name='export_csv'),
+    path('podatki/<int:id>', views.all_data, name="all_data")
 ]
