@@ -93,6 +93,7 @@ class StudijskoLeto(models.Model):
         return self.ime
 
 
+
 class NacinStudija(models.Model):
 #redni, izredni
     '''

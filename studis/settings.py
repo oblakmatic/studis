@@ -31,8 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'vpis.apps.VpisConfig',
     'sifranti.apps.SifrantiConfig',
+    'vpis.apps.VpisConfig',
     'student.apps.StudentConfig',
     'django.contrib.admin',
     'django.contrib.auth',
