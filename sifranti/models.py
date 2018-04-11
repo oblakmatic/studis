@@ -72,6 +72,9 @@ class VrstaStudija(models.Model):
 
     ime = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.ime 
+
 class Letnik(models.Model):
 #1., 2. ,3. letnik
     '''

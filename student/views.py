@@ -29,7 +29,7 @@ def import_students(request):
 
 		student = Student(ime=name, priimek=surname, email=email)
 		student.save()
-		password = User.objects.make_random_password()
+		password = "adminadmin"#User.objects.make_random_password()
 		username = surname+str(student.id)
 
 		user = User.objects.create_user(username=username,
