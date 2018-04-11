@@ -1,0 +1,18 @@
+{% include "base.html" %}
+
+
+{% block content %}
+
+<div class="container sifrant">
+    {% if possible_student.0.id %}
+    <p>Student z vpisno številko {{possible_student.0.id}} se lahko vpišeš :</p>
+    {% else %}
+    <p>Ne moreš se vpisati ker nisi študent</p>
+    {% endif %}
+    <form action="/vpis/" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Dodaj" />
+    </form>
+</div>
+{% endblock %}

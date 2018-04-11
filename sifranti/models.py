@@ -22,22 +22,22 @@ class Posta(models.Model):
 
 class StudijskiProgram(models.Model):
 #dodiplomski, magisterki, doktorski,
-    
+    '''
     PROGRAMS = (
         ('DIPL','Dodiplomski'),
         ('MAG','Magistrski'),
         ('DR','Doktorski')
-    )
-    ime = models.CharField(max_length=4, choices=PROGRAMS)
+    )'''
+    ime = models.CharField(max_length=4)
     def __str__(self):
-        return self.get_ime_display()
+        return self.ime
 
 class Predmet(models.Model):
 
     ime = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.get_ime_display()
+        return self.ime
 
 class Modul(models.Model):
 # sestavljen iz treh predmetov
@@ -50,39 +50,40 @@ class Modul(models.Model):
 
 class VrstaVpisa(models.Model):
 #prvi vpis, ponovni vpis, absolvent
-    VPISI = (
+    '''VPISI = (
         (('PRVI', 'Prvi vpis'),
         ('PONO', 'Ponovni'),
         ('ABSO','Absolvent'))
-    )
+    )'''
 
 
-    ime = models.CharField(max_length=100, choices = VPISI)
+    ime = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.get_ime_display()
+        return self.ime
 
 class VrstaStudija(models.Model):
 #univerzitetni, visokosolski
-    VRSTE = (
+    '''VRSTE = (
         ('VSŠ','Visokošolski'),
         ('UNI','Univerzitetni')
 
-    )
+    )'''
 
-    ime = models.CharField(max_length=100, choices=VRSTE)
+    ime = models.CharField(max_length=100)
 
 class Letnik(models.Model):
 #1., 2. ,3. letnik
+    '''
     LETNIKI = (
         ('1.','1. letnik'),
         ('2.','2. letnik'),
         ('3.','3. letnik')
-    )
+    )'''
 
-    ime = models.CharField(max_length=100,choices =LETNIKI)
+    ime = models.CharField(max_length=100)
     def __str__(self):
-        return self.get_ime_display()
+        return self.ime
 
 class StudijskoLeto(models.Model):
 # 2017/2018, 2018/2019
@@ -92,13 +93,16 @@ class StudijskoLeto(models.Model):
         return self.ime
 
 
+
 class NacinStudija(models.Model):
 #redni, izredni
+    '''
     NACINI = (
         ('RED','Redni'),
         ('IZR','Izredni')
     )
+    '''
 
-    ime = models.CharField(max_length=100,choices= NACINI)
+    ime = models.CharField(max_length=100)
     def __str__(self):
-        return self.get_ime_display()   
+        return self.ime   

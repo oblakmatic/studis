@@ -1,6 +1,8 @@
 {% include "base.html" %}
 
+
 {% block content %}
+{% if user.is_authenticated %}
 <div class="container sifrant">
 {% if diff_names %}
     <ul class="list-group">
@@ -12,4 +14,5 @@
     <p>Ni elementov</p>
 {% endif %}
 </div>
+{% endif %}
 {% endblock %}
