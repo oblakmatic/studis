@@ -5,6 +5,12 @@ from student.models import Student, Zeton
 from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+import csv
+from reportlab.pdfgen import canvas
+from reportlab.platypus import *
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import letter, A4, landscape
+from reportlab.lib import colors 
 
 # Create your views here.
 def upload_file(request):
@@ -221,3 +227,41 @@ def token_edit(request, edit_id):
 			}
 			return render(request, 'token_edit.html', context)
 	
+def export_csv(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="studenti.csv"'
+
+	writer = csv.writer(response)
+	all_students = Student.objects.values()
+	writer.writerow(all_students[0].keys())
+   
+	for student in all_students:
+		 writer.writerow(student.values())
+
+	return response
+
+def export_pdf(request):
+	# Create the HttpResponse object with the appropriate PDF headers.
+	response = HttpResponse(content_type='application/pdf')
+	response['Content-Disposition'] = 'attachment; filename="studenti.pdf"'
+
+	doc = SimpleDocTemplate(response, pagesize=landscape(A4))
+	
+	elements = []
+	all_students = Student.objects.values()
+	k = list(all_students[0].keys())
+
+	for l in range(len(k)):
+		if len(k[l]) > 10:
+			k[l] = k[l][:10] + ".."		
+
+	data = [k]
+	for student in all_students:
+		 data.append(list(student.values()))
+	LIST_STYLE = TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.2, colors.black)])
+	t=Table(data)
+	t.setStyle(LIST_STYLE)
+	elements.append(t)
+
+	doc.build(elements)
+	return response

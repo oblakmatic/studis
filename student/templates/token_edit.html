@@ -3,10 +3,9 @@
 {% block title %}Spremeni vpisni žeton{% endblock %}
 
 {% block content %}
+<div class="container sifrant">
 {% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <a href="{% url 'logout' %}">logout</a>
-    
+ 
     <h1>Prosimo, vnesite zahtevane podatke:</h1>
     {% if message %}
     <h2>{{ message }}</h2>
@@ -67,4 +66,5 @@
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a>
 {% endif %}
+</div>
 {% endblock %}

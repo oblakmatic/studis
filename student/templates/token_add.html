@@ -3,10 +3,9 @@
 {% block title %}Dodaj vpisni žeton{% endblock %}
 
 {% block content %}
+<div class="container sifrant">
 {% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <a href="{% url 'logout' %}">logout</a>
-    
+
     <h1>Prosimo, vnesite zahtevane podatke:</h1>
     {% if message %}
     <h2>{{ message }}</h2>
@@ -19,7 +18,7 @@
         </div>
         <div class="form-group">
             <label for="stud_prog">Študijski program</label>
-            <select name="stud_prog" id="stud_prog">
+            <select name="stud_prog" class="form-control" id="stud_prog">
                 <option value="DIPL" selected>DIPL</option>
                 <option value="MAG">MAG</option>
                 <option value="DR">DR</option>
@@ -27,7 +26,7 @@
         </div>
         <div class="form-group">
             <label for="letnik">Letnik</label>
-            <select name="letnik" id="letnik">
+            <select name="letnik" class="form-control" id="letnik">
                 <option value="1." selected>1. letnik</option>
                 <option value="2.">2. letnik</option>
                 <option value="3.">3. letnik</option>
@@ -35,7 +34,7 @@
         </div>
         <div class="form-group">
             <label for="vrsta_vpisa">Vrsta vpisa</label>
-            <select name="vrsta_vpisa" id="vrsta_vpisa">
+            <select name="vrsta_vpisa" class="form-control" id="vrsta_vpisa">
                 <option value="PRVI" selected>Prvi</option>
                 <option value="PONO">Ponovni</option>                
                 <option value="ABSO">Absolvent</option>
@@ -43,12 +42,14 @@
         </div>
         <div class="form-group">
             <label for="nac_stud">Način študija</label>
-            <select name="nac_stud" id="nac_stud">
+            <select name="nac_stud" class="form-control" id="nac_stud">
                 <option value="RED" selected>Redni</option>
                 <option value="IZR">Izredni</option>
             </select>
-            <label for="vrst_stud">Način študija</label>
-            <select name="vrst_stud" id="vrst_stud">
+        </div>
+        <div class="form-group">
+            <label for="vrst_stud">Vrsta študija</label>
+            <select name="vrst_stud" class="form-control" id="vrst_stud">
                 <option value="UNI" selected>Univerzitetni</option>
                 <option value="VSŠ">Visokošolski</option>
             </select>
@@ -59,7 +60,7 @@
             <input type="checkbox" class="form-control" name="predmet_choice" id="predmet_choice">
         </div>
 
-        <button type="submit" class="btn btn-default">Ustvari žeton za vpis</button>
+        <button type="submit" class="btn btn-outline-success">Ustvari žeton za vpis</button>
       
     </form>
 
@@ -67,4 +68,5 @@
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a>
 {% endif %}
+</div>
 {% endblock %}
