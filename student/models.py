@@ -11,13 +11,13 @@ class Student(models.Model):
     ime = models.CharField(max_length = 30)
     naslov_stalno_bivalisce = models.CharField(max_length = 260)
     naslov_zacasno_bivalisce = models.CharField(max_length = 260, blank=True, null=True)
-    drzava = models.ForeignKey(Drzava, null=True, on_delete= models.SET_NULL)
+    drzava = models.ForeignKey(Drzava, null=True, on_delete = models.SET_NULL)
     kraj_rojstva = models.CharField(max_length = 260) # kako bomo preverjali konsistentnost drzave in obcine rojstva
     
-    posta = models.ForeignKey(Posta, on_delete= models.SET_NULL, null=True)
-    obcina = models.ForeignKey(Obcina, on_delete= models.SET_NULL, null=True)
+    posta = models.ForeignKey(Posta, on_delete = models.SET_NULL, null=True)
+    obcina = models.ForeignKey(Obcina, on_delete = models.SET_NULL, null=True)
     telefon = models.CharField(max_length = 15) # reci je treba se mal preverit
-    email = models.CharField(max_length = 60)
+    email = models.CharField(max_length = 60, unique = True)
     # tu naj bi prisli se vsi vpisi, verjetno bodo vpisi kazali na studenta
     # one to many se izrazi z foreign keyom
     dodatno_leto = models.BooleanField(default = True)
