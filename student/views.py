@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from student.models import Student, Zeton
@@ -88,7 +88,7 @@ def students_search(request):
 	'''
 	return render(request,'search.html', context)
 
-def token_add(request):
+def token_add(request, id):
 	if request.method == 'POST':
 		student = Student.objects.filter(id=request.POST.get('stud'))
 		program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))
@@ -109,7 +109,7 @@ def token_add(request):
 			'nacin_studija': nacin_studija,
 			'prosta_izbira': prosta_izbira
 		}
-		print(data)
+		# print(data)
 		if(student.count() != 1 or program.count() != 1 or letnik.count() != 1 or vrsta_vpisa.count() != 1 or nacin_studija.count() != 1):
 			context = {
 				'message': 'Prosimo, vnesite vse zahtevane podatke!'
@@ -119,7 +119,7 @@ def token_add(request):
 
 		else:
 			
-			if Zeton.objects.filter(student=student[0]).count() > 2:
+			if Zeton.objects.filter(student=student[0]).count() >= 2:
 				context = {
 					'message': 'Student že ima 2 žetona!'
 				}
@@ -129,17 +129,20 @@ def token_add(request):
 			context = {
 				'message': 'Žeton uspešno dodan!'
 			}
-			return render(request, 'token_add.html', context)
+			return token_list(request, context)
 	else:
-		return render(request, 'token_add.html')
+		context = {
+			'id': id
+		}
+		return render(request, 'token_add.html', context )
 
 def token_list(request, msg=None):
 	all_tokens = Zeton.objects.select_related()
 	zetoni = []
 	for token in all_tokens:
-		print(token)
-		print(token.student)
-		print(dir(token))
+		# print(token)
+		# print(token.student)
+		# print(dir(token))
 		zeton = {
 			'id': token.pk,
 			'student': token.student.id,
@@ -172,17 +175,27 @@ def token_delete(request, del_id):
 		return token_list(request, 'Žeton uspešno izbrisan!')
 
 def token_edit(request, edit_id):
+	print(request.method)
 	if request.method == 'POST':
-
+		# print(request.POST)
 		token = Zeton.objects.get(pk=edit_id)
-		
-		token.program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))
-		token.letnik = Letnik.objects.filter(ime=request.POST.get('letnik'))
-		token.vrsta_vpisa = VrstaVpisa.objects.filter(ime=request.POST.get('vrsta_vpisa'))
-		token.nacin_studija = NacinStudija.objects.filter(ime=request.POST.get('nac_stud'))
-		token.vrsta_studija = VrstaStudija.objects.filter(ime=request.POST.get('vrst_stud'))
+		# print('neurejeni token')
+		# print(token.studijski_program)
+		token.studijski_program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))[0]
+		token.letnik = Letnik.objects.filter(ime=request.POST.get('letnik'))[0]
+		token.vrsta_vpisa = VrstaVpisa.objects.filter(ime=request.POST.get('vrsta_vpisa'))[0]
+		token.nacin_studija = NacinStudija.objects.filter(ime=request.POST.get('nac_stud'))[0]
+		token.vrsta_studija = VrstaStudija.objects.filter(ime=request.POST.get('vrst_stud'))[0]
 		token.prosta_izbira = True if request.POST.get('predmet_choice') == 'on' else False
 		token.save()
+		# print('urejeni token')
+		# print(token.program)
+
+		context = {
+			'message': 'Žeton uspešno urejen!'
+		}
+
+		return redirect('/student/seznam-zetonov/', context)
 
 	else:
 		try:
@@ -190,17 +203,20 @@ def token_edit(request, edit_id):
 		except Zeton.DoesNotExist:
 			zeton = None
 		if(zeton == None):
-			return token_list(request, 'Ta žeton ne obstaja!')
+			context = {
+				'message': 'Ta žeton ne obstaja!'
+			}
+			return redirect('/student/seznam-zetonov/', context)
 		else:
 			context = {
-				data: {
+				'data': {
 					'vpisna': zeton.student.pk,
 					'prog': zeton.studijski_program.ime,
 					'letnik': zeton.letnik.ime,
 					'vrsta_vp': zeton.vrsta_vpisa.ime,
 					'nac_stud': zeton.nacin_studija.ime,
 					'vrst_stud': zeton.vrsta_studija.ime,
-					'izbira': prosta_izbira
+					'izbira': zeton.pravica_do_izbire
 				}
 			}
 			return render(request, 'token_edit.html', context)
