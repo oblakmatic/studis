@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Uvoz studentov{% endblock %}
+
+{% block content %}
+<div class="container sifrant">
+<form action="/student/uvoz/seznam/" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+  <div class="form-group">
+    <label for="exampleFormControlFile1">Datoteka s študenti:</label>
+    <input type="file" class="form-control-file" accept=".txt" id="import-st" name="students" required>
+    <button type="submit" class="btn btn-outline-primary mt-2">Pošlji</button>
+  </div>
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Uvoz studentov{% endblock %}
+
+{% block content %}
+<div class="container sifrant">
+
+<h3>Uvoženi študenti</h3>
+
+{% if elements %}
+<table class="table">
+	<thead>
+	    <tr>
+	      <th scope="col">Ime</th>
+	      <th scope="col">Priimek</th>
+	      <th scope="col">Uporabniško ime</th>
+	      <th scope="col">Geslo</th>
+	    </tr>
+  	</thead>
+{% for temp in students %}
+	<tr>
+	{% for s in temp %}
+	
+		<td>{{ s }}</td>
+	
+	{% endfor %}
+	</tr>
+{% endfor %}
+
+{% else %}
+    <p>Prišlo je do napake. <a href="{% url 'upload_file' %}">Poskusite ponovno.</a></p>
+{% endif %}
+</div>
+{% endblock %}
