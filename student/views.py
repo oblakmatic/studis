@@ -138,12 +138,13 @@ def token_add(request, id):
 		if(vpisi.count() > 0):
 			data = {}
 			data['prog'] = vpisi[0].studijski_program.ime
-			data['letnik'] = vpisi[0].letnik.ime
+			data['letnik'] = '2.' if vpisi[0].letnik.ime == '1.' else '3.'  
 			data['vrsta_vp'] = vpisi[0].vrsta_vpisa.ime
 			data['nac_stud'] = vpisi[0].nacin_studija
 			data['vrst_stud'] = vpisi[0].vrsta_studija
 			data['izbira'] = vpisi[0].pravica_do_izbire
 			context['data'] = data
+		
 		return render(request, 'token_add.html', context )
 
 def token_list(request, msg=None):
