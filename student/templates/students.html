@@ -23,12 +23,22 @@
 		<td>{{ v }}</td>
 	
 	{% endfor %}
+	<td><a href="ustvari-zeton/{{ t.id }}">Ustvari vpisni žeton</a></td>
 	</tr>
 {% endfor %}
 
 	<form action="/student/uvoz/" method="post">
 		{% csrf_token %}
     	<button type="submit" class="btn btn-outline-primary mb-2">Uvozi datoteko</button>
+	</form>
+	<form action="/student/isci/" method="post">
+		{% csrf_token %}
+		<input type="text" name="search_text">
+    	<button type="submit" class="btn btn-outline-primary mb-2">Išči</button>
+	</form>
+	<form action="/student/seznam-zetonov/" method="post">
+		{% csrf_token %}
+    	<button type="submit" class="btn btn-outline-primary mb-2">Seznam vpisnih žetonov</button>
 	</form>
 </div>
 {% endblock %}

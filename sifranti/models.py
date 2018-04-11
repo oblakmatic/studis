@@ -5,16 +5,16 @@ from django.db import models
 # IF you add new sifrant here, add name into table diff_names (views.py)
 # AND you have to add Form Class in forms.py, go and see it is easy
 class Drzava(models.Model):
-    ime = models.CharField(max_length=100)
+    ime = models.CharField(max_length=100, unique = True)
 
     def __str__(self):
         return self.ime
 
 class Obcina(models.Model):
-    ime = models.CharField(max_length=100)
+    ime = models.CharField(max_length=100, unique = True)
 
 class Posta(models.Model):
-    ime = models.CharField(max_length=100)
+    ime = models.CharField(max_length=100, unique = True)
     postna_stevilka = models.IntegerField()
 
     def __str__(self):
@@ -27,8 +27,9 @@ class StudijskiProgram(models.Model):
         ('DIPL','Dodiplomski'),
         ('MAG','Magistrski'),
         ('DR','Doktorski')
-    )'''
-    ime = models.CharField(max_length=4)
+    )
+    '''
+    ime = models.CharField(max_length=4, unique = True)
     def __str__(self):
         return self.ime
 
@@ -57,7 +58,7 @@ class VrstaVpisa(models.Model):
     )'''
 
 
-    ime = models.CharField(max_length=100)
+    ime = models.CharField(max_length=100, unique = True)
 
     def __str__(self):
         return self.ime
@@ -70,7 +71,7 @@ class VrstaStudija(models.Model):
 
     )'''
 
-    ime = models.CharField(max_length=100)
+    ime = models.CharField(max_length=100, unique = True)
 
 class Letnik(models.Model):
 #1., 2. ,3. letnik
@@ -81,13 +82,13 @@ class Letnik(models.Model):
         ('3.','3. letnik')
     )'''
 
-    ime = models.CharField(max_length=100)
+    ime = models.CharField(max_length=100, unique = True)
     def __str__(self):
         return self.ime
 
 class StudijskoLeto(models.Model):
 # 2017/2018, 2018/2019
-    ime = models.CharField(max_length=100)
+    ime = models.CharField(max_length=100, unique = True)
 
     def __str__(self):
         return self.ime
@@ -103,6 +104,6 @@ class NacinStudija(models.Model):
     )
     '''
 
-    ime = models.CharField(max_length=100)
+    ime = models.CharField(max_length=100, unique = True)
     def __str__(self):
         return self.ime   
