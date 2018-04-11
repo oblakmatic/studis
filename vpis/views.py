@@ -8,7 +8,7 @@ from student.models import Vpis
 
 
 
-def index(request):
+def index_vpis(request):
 
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -36,13 +36,15 @@ def index(request):
     # if a GET (or any other method) we'll create a blank form
     else:
         
-        
+        possible_student = vrniStudenta(request.user.email)
+        possible_student = possible_student.values()
         #print(student[0]["id"])
         form = VpisForm()
         context = {
         'form': form,
+        'possible_student' : possible_student
         }
-        return render(request,'vpis/index.html',context)
+        return render(request,'vpis/index_vpis.html',context)
 
 
 

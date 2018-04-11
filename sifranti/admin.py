@@ -7,3 +7,4 @@ from .models import *
 
 admin.site.register(Drzava)
 admin.site.register(Posta)
+admin.site.register(Obcina)
