@@ -135,13 +135,6 @@ def token_add(request):
 
 def token_list(request, msg=None):
 	all_tokens = Zeton.objects.select_related()
-	# all_tokens = Zeton.objects.select_related('student', 'studijski_program', 'letnik', 'vrsta_vpisa', 'nacin_studija', 'vrsta_studija')
-	# all_tokens = Zeton.objects.values('student', 'studijski_program', 'letnik', 'vrsta_vpisa', 'nacin_studija', 'vrsta_studija')
-	print('All tokens: ')
-	print(all_tokens)
-	# print(all_tokens[0].keys())
-	# print(all_tokens[0])
-	# print(all_tokens['studijski_program'])
 	zetoni = []
 	for token in all_tokens:
 		print(token)
@@ -177,3 +170,38 @@ def token_delete(request, del_id):
 	else:
 		zeton.delete()
 		return token_list(request, 'Žeton uspešno izbrisan!')
+
+def token_edit(request, edit_id):
+	if request.method == 'POST':
+
+		token = Zeton.objects.get(pk=edit_id)
+		
+		token.program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))
+		token.letnik = Letnik.objects.filter(ime=request.POST.get('letnik'))
+		token.vrsta_vpisa = VrstaVpisa.objects.filter(ime=request.POST.get('vrsta_vpisa'))
+		token.nacin_studija = NacinStudija.objects.filter(ime=request.POST.get('nac_stud'))
+		token.vrsta_studija = VrstaStudija.objects.filter(ime=request.POST.get('vrst_stud'))
+		token.prosta_izbira = True if request.POST.get('predmet_choice', False) == 'on'
+		token.save()
+
+	else:
+		try:
+			zeton = Zeton.objects.select_related().get(pk=edit_id)
+		except: Zeton.DoesNotExist:
+			zeton = None
+		if(zeton == None):
+			return token_list(request, 'Ta žeton ne obstaja!')
+		else:
+			context = {
+				data: {
+					'vpisna': zeton.student.pk,
+					'prog': zeton.studijski_program.ime,
+					'letnik': zeton.letnik.ime,
+					'vrsta_vp': zeton.vrsta_vpisa.ime,
+					'nac_stud': zeton.nacin_studija.ime,
+					'vrst_stud': zeton.vrsta_studija.ime,
+					'izbira': prosta_izbira
+				}
+			}
+			return render(request, 'token_edit.html', context)
+	
