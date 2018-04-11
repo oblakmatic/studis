@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  {% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/theme.bootstrap.min.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/mystyle.css' %}" />
+  <title>{% block title %}Title{% endblock %}</title>
+</head>
+<body>
+  <div class="container login">
+    {% block content %}
+    {% endblock %}
+  </div>
+</body>
+</html>

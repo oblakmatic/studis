@@ -1,0 +1,15 @@
+{% include "base.html" %}
+
+{% block content %}
+<div class="container sifrant">
+{% if diff_names %}
+    <ul class="list-group">
+    {% for diff in diff_names %}
+    <li class="list-group-item"><a href="/sifranti/{{ diff }}/">{{ diff }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Ni elementov</p>
+{% endif %}
+</div>
+{% endblock %}

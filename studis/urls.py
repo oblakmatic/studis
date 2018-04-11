@@ -18,9 +18,13 @@ from django.urls import path, re_path, include
 from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
 from studis.views import login, auth_view, logout, invalid
+
 urlpatterns = [
 	path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('admin/', admin.site.urls),
+    path('vpis/', include('vpis.urls')),
+    path('sifranti/', include('sifranti.urls')),
+    path('student/', include('student.urls')),
     path('user/login/', login, name="login"),
     path('user/logout/', logout, name="logout"),
     path('user/auth/', auth_view, name = "auth_view"),
@@ -32,3 +36,4 @@ urlpatterns = [
     path('reset/done/', auth_views.password_reset_complete, name='password_reset_complete'),
 
 ]
+    

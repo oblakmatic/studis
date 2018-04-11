@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Domov{% endblock %}
 
 {% block content %}
 {% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <a href="{% url 'logout' %}">logout</a>
+
+
 {% else %}
-  <p>You are not logged in</p>
+<div class="container login text-center">
+  <p>Prijavite se</p>
   <a href="{% url 'login' %}">login</a>
+</div>
 {% endif %}
 {% endblock %}
+
+
