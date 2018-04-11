@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from student.models import Student, Zeton
+from student.models import Student, Zeton, Vpis
 from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -220,4 +220,17 @@ def token_edit(request, edit_id):
 				}
 			}
 			return render(request, 'token_edit.html', context)
+
+def all_data(request, id):
+	student = Student.objects.get(pk = id)
+	vpisi = Vpis.objects.filter(student = student)
+	# if student.naslov_zacasno_bivalisce == '':
+	# 	student.naslov_stalno_bivalisce = student.naslov_zacasno_bivalisce
+	
+	context = {
+		'student': student,
+		'vpisi': vpisi
+	}
+
+	return render(request, 'student_data.html', context)
 	
