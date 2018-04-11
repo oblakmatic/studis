@@ -126,14 +126,24 @@ def token_add(request, id):
 				return render(request, 'token_add.html', context)
 			zeton = Zeton(student=student[0], studijski_program=program[0], letnik=letnik[0], vrsta_vpisa=vrsta_vpisa[0], nacin_studija=nacin_studija[0], vrsta_studija=vrsta_studija[0], pravica_do_izbire=prosta_izbira)
 			zeton.save()
-			context = {
-				'message': 'Žeton uspešno dodan!'
-			}
-			return token_list(request, context)
+			return token_list(request, 'Žeton uspešno dodan!')
 	else:
+		vpisi = Vpis.objects.select_related().filter(student__pk = id).order_by('-pk')
+		print(vpisi)
+
 		context = {
 			'id': id
 		}
+		
+		if(vpisi.count() > 0):
+			data = {}
+			data['prog'] = vpisi[0].studijski_program.ime
+			data['letnik'] = vpisi[0].letnik.ime
+			data['vrsta_vp'] = vpisi[0].vrsta_vpisa.ime
+			data['nac_stud'] = vpisi[0].nacin_studija
+			data['vrst_stud'] = vpisi[0].vrsta_studija
+			data['izbira'] = vpisi[0].pravica_do_izbire
+			context['data'] = data
 		return render(request, 'token_add.html', context )
 
 def token_list(request, msg=None):
@@ -145,7 +155,7 @@ def token_list(request, msg=None):
 		# print(dir(token))
 		zeton = {
 			'id': token.pk,
-			'student': token.student.id,
+			'student': token.student.pk,
 			'studijski_program': token.studijski_program.ime,
 			'letnik': token.letnik.ime,
 			'vrsta_vpisa': token.vrsta_vpisa.ime,
@@ -191,11 +201,8 @@ def token_edit(request, edit_id):
 		# print('urejeni token')
 		# print(token.program)
 
-		context = {
-			'message': 'Žeton uspešno urejen!'
-		}
 
-		return redirect('/student/seznam-zetonov/', context)
+		return redirect('/student/seznam-zetonov/', 'Žeton uspešno urejen!')
 
 	else:
 		try:
@@ -203,10 +210,7 @@ def token_edit(request, edit_id):
 		except Zeton.DoesNotExist:
 			zeton = None
 		if(zeton == None):
-			context = {
-				'message': 'Ta žeton ne obstaja!'
-			}
-			return redirect('/student/seznam-zetonov/', context)
+			return redirect('/student/seznam-zetonov/', 'Ta žeton ne obstaja!')
 		else:
 			context = {
 				'data': {
