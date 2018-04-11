@@ -148,7 +148,6 @@ def token_add(request, id):
 			data['vrsta_vp'] = vpisi[0].vrsta_vpisa.ime
 			data['nac_stud'] = vpisi[0].nacin_studija
 			data['vrst_stud'] = vpisi[0].vrsta_studija
-			data['izbira'] = vpisi[0].pravica_do_izbire
 			context['data'] = data
 		
 		return render(request, 'token_add.html', context )

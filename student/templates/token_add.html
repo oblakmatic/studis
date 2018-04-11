@@ -17,52 +17,6 @@
             <input type="number" class="form-control" name="stud" id="stud" value = "{{id}}" required>
         </div>
         <div class="form-group">
-<<<<<<< HEAD
-            <label for="stud_prog">Študijski program</label>
-            <select name="stud_prog" class="form-control" id="stud_prog">
-                <option value="DIPL" selected>DIPL</option>
-                <option value="MAG">MAG</option>
-                <option value="DR">DR</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="letnik">Letnik</label>
-            <select name="letnik" class="form-control" id="letnik">
-                <option value="1." selected>1. letnik</option>
-                <option value="2.">2. letnik</option>
-                <option value="3.">3. letnik</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="vrsta_vpisa">Vrsta vpisa</label>
-            <select name="vrsta_vpisa" class="form-control" id="vrsta_vpisa">
-                <option value="PRVI" selected>Prvi</option>
-                <option value="PONO">Ponovni</option>                
-                <option value="ABSO">Absolvent</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="nac_stud">Način študija</label>
-            <select name="nac_stud" class="form-control" id="nac_stud">
-                <option value="RED" selected>Redni</option>
-                <option value="IZR">Izredni</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="vrst_stud">Vrsta študija</label>
-            <select name="vrst_stud" class="form-control" id="vrst_stud">
-                <option value="UNI" selected>Univerzitetni</option>
-                <option value="VSŠ">Visokošolski</option>
-            </select>
-
-        </div>
-        <div class="form-group">
-            <label for="predmet_choice">Pravica do proste izbore predmetov</label>
-            <input type="checkbox" class="form-control" name="predmet_choice" id="predmet_choice">
-        </div>
-
-        <button type="submit" class="btn btn-outline-success">Ustvari žeton za vpis</button>
-=======
                 <label for="stud_prog">Študijski program</label>
                 <select name="stud_prog" id="stud_prog">
                     <option value="DIPL" {% if data.prog == 'DIPL' or not data%} selected {% endif %}>DIPL</option>
@@ -104,7 +58,6 @@
                 <input type="checkbox" class="form-control" name="predmet_choice" id="predmet_choice"  {% if data.izbira %} selected {% endif %}>
             </div>
         <button type="submit" class="btn btn-default">Ustvari žeton za vpis</button>
->>>>>>> jaka
       
     </form>
 
