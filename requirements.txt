@@ -1,4 +1,13 @@
+certifi==2018.1.18
+dj-database-url==0.5.0
 Django==2.0.3
+gunicorn==19.7.1
 Pillow==5.1.0
+pipenv==11.10.0
+psycopg2==2.7.4
+python-dotenv==0.8.2
 pytz==2018.3
 reportlab==3.4.0
+virtualenv==15.2.0
+virtualenv-clone==0.3.0
+whitenoise==3.3.1
