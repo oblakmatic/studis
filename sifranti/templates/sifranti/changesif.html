@@ -16,18 +16,16 @@
     <table class="table">
         <tr>
             {% for diff in elements.0  %}
-                {% if not diff == "id" %}
+                
                 <td>{{ diff }}</td>
-                {% endif %}
+                
                 
             {% endfor %}
         </tr>
         {% for diff in elements  %}
         <tr>
             {% for k, v in diff.items  %}
-                {% if not k == "id" %}
                 <td>{{ v }}</td>
-                {% endif %}
             {% endfor %}
             <td>
                 <form action="/sifranti/{{ object_name }}/{{ diff.id }}/delete/" method="post">
@@ -49,14 +47,14 @@
     <p>Dodaj element: </p>
     <form action="/sifranti/{{ object_name }}/" method="post">
         {% csrf_token %}
-        {{ form }}
+        {{ form.as_p }}
         <button type="submit" class="btn btn-outline-primary">Dodaj</button>
     </form>
 {% else %}
     <p>Dodaj element: </p>
     <form action="/sifranti/{{ object_name }}/" method="post">
         {% csrf_token %}
-        {{ form }}
+        {{ form.as_p }}
         <button type="submit" class="btn btn-outline-primary">Dodaj</button>
     </form>
 {% endif %}

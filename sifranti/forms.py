@@ -2,6 +2,19 @@ from django.forms import ModelForm
 from django import forms
 from .models import *
 
+my_default_errors = {
+    
+}
+
+from django.forms import Field
+from django.utils.translation import ugettext_lazy
+Field.default_error_messages = {
+    'required': ugettext_lazy("To polje je obvezno"),
+    'invalid': ugettext_lazy("Vnesite pravilno vrednost"),
+    'unique': ugettext_lazy("Ta zapis že obstaja"),
+    'max_decimal_places' : ugettext_lazy("Ta zapis že obstaja"),
+    'max_digit' : ugettext_lazy("Ta zapis že obstaja"),
+}
 class SearchForm(forms.Form):
     isci_element = forms.CharField(label='Isci element po atributu:',max_length=100)
     element = forms.CharField(max_length=100)
@@ -26,10 +39,6 @@ class StudijskiProgramForm(ModelForm):
         model = StudijskiProgram
         fields = '__all__'
 
-class ModulForm(ModelForm):
-    class Meta:
-        model = Modul
-        fields = '__all__'
 class VrstaVpisaForm(ModelForm):
     class Meta:
         model = VrstaVpisa

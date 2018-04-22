@@ -5,108 +5,102 @@ from django.db import models
 # IF you add new sifrant here, add name into table diff_names (views.py)
 # AND you have to add Form Class in forms.py, go and see it is easy
 class Drzava(models.Model):
-    ime = models.CharField(max_length=100, unique = True)
+
+    # id je numerična oznaka
+    numerica_oznaka = models.DecimalField(primary_key=True, max_digits=3, decimal_places=0, verbose_name="Numerična oznaka" )
+    dvomestna_koda = models.CharField(max_length=2,unique = True, verbose_name="Dvomestna koda")
+    tromestna_oznaka = models.CharField(max_length=3, unique = True, verbose_name="Tromestna oznaka")
+    iso_naziv = models.CharField(max_length=100, verbose_name="ISO naziv")
+    slovenski_naziv = models.CharField(max_length=100, verbose_name="Slovenski naziv")
+    opomba = models.CharField(max_length=100, verbose_name="Opomba")
+    veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
     def __str__(self):
-        return self.ime
+        return self.slovenski_naziv
 
 class Obcina(models.Model):
-    ime = models.CharField(max_length=100, unique = True)
+
+    #id je sifra obcine
+    sifra = models.DecimalField(primary_key=True, max_digits=3, decimal_places=0, verbose_name="Šifra občine" )
+    ime = models.CharField(max_length=100, verbose_name="Ime")
+    veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
 class Posta(models.Model):
-    ime = models.CharField(max_length=100, unique = True)
-    postna_stevilka = models.IntegerField()
+    
+    postna_stevilka = models.IntegerField(primary_key=True, verbose_name="Poštna številka" )
+    kraj = models.CharField(max_length=100, unique = True , verbose_name="Kraj")
+    veljaven = models.BooleanField(default = True, verbose_name="Veljavnost šifranta")
+
 
     def __str__(self):
-        return self.ime
+        return self.postna_stevilka
 
 class StudijskiProgram(models.Model):
 #dodiplomski, magisterki, doktorski,
-    '''
-    PROGRAMS = (
-        ('DIPL','Dodiplomski'),
-        ('MAG','Magistrski'),
-        ('DR','Doktorski')
-    )
-    '''
-    ime = models.CharField(max_length=4, unique = True)
+    
+    sifra_evs = models.DecimalField(primary_key=True, verbose_name="Šifra EVŠ",decimal_places=0, max_digits= 7)
+    sifra = models.CharField(max_length=2, verbose_name="Šifra",unique=True)
+    stopnja = models.BooleanField(default=True, verbose_name="Stopnja")
+    semestri = models.IntegerField(verbose_name="Število semestrov")
+    naziv = models.CharField(max_length=4,verbose_name="Naziv")
+    veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     def __str__(self):
-        return self.ime
+        return self.naziv
+class VrstaStudija(models.Model):
+#univerzitetni, visokosolski
+    sifra = models.IntegerField(primary_key=True,verbose_name="Šifra")
+    opis = models.CharField(max_length=100, verbose_name="Opis")
+    nacin_zakljucka = models.CharField(max_length=100, verbose_name="Način zaključka šolanja")
+    raven_klasius = models.IntegerField(verbose_name="Raven izobrazbe po KLASIUS-SRV")
+    veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+
+    def __str__(self):
+        return self.opis 
+
+class VrstaVpisa(models.Model):
+
+    sifra = models.IntegerField(primary_key=True,verbose_name="Šifra")
+    opis = models.CharField(max_length=100, verbose_name="Opis vrste vpisa")
+    mozni_letniki = models.CharField(max_length=200, verbose_name="Možni letniki študija")
+    veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+
+    def __str__(self):
+        return self.opis
+
+class NacinStudija(models.Model):
+#redni, izredni
+
+    sifra = models.IntegerField(primary_key=True,verbose_name="Šifra")
+    opis = models.CharField(max_length=100, verbose_name="Opis")
+    veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+    def __str__(self):
+        return self.opis   
+
+
+class OblikaStudija(models.Model):
+
+    sifra = models.IntegerField(primary_key=True,verbose_name="Šifra")
+    opis = models.CharField(max_length=100, verbose_name="Opis")
+    veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+    def __str__(self):
+        return self.opis
 
 class Predmet(models.Model):
 
-    ime = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.ime
-
-class Modul(models.Model):
-# sestavljen iz treh predmetov
-# OK modul ni sifrant sam naj mu bo
-    ime= models.CharField(max_length=100)
-
-    predmet_ena = models.ForeignKey(Predmet, on_delete= models.SET_NULL, null=True, related_name = 'predmet_ena')
-    predmet_dva = models.ForeignKey(Predmet, on_delete= models.SET_NULL, null=True, related_name = 'predmet_dva')
-    predmet_tri = models.ForeignKey(Predmet, on_delete= models.SET_NULL, null=True, related_name = 'predmet_tri')
-
-class VrstaVpisa(models.Model):
-#prvi vpis, ponovni vpis, absolvent
-    '''VPISI = (
-        (('PRVI', 'Prvi vpis'),
-        ('PONO', 'Ponovni'),
-        ('ABSO','Absolvent'))
-    )'''
-
-
-    ime = models.CharField(max_length=100, unique = True)
-
-    def __str__(self):
-        return self.ime
-
-class VrstaStudija(models.Model):
-#univerzitetni, visokosolski
-    '''VRSTE = (
-        ('VSŠ','Visokošolski'),
-        ('UNI','Univerzitetni')
-
-    )'''
-
-    ime = models.CharField(max_length=100, unique = True)
-
-    def __str__(self):
-        return self.ime 
-
-class Letnik(models.Model):
-#1., 2. ,3. letnik
-    '''
-    LETNIKI = (
-        ('1.','1. letnik'),
-        ('2.','2. letnik'),
-        ('3.','3. letnik')
-    )'''
-
-    ime = models.CharField(max_length=100, unique = True)
+    ime = models.CharField(max_length=100,primary_key=True)
+    veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     def __str__(self):
         return self.ime
 
 class StudijskoLeto(models.Model):
 # 2017/2018, 2018/2019
-    ime = models.CharField(max_length=100, unique = True)
+    ime = models.CharField(max_length=100, primary_key=True,verbose_name="Ime")
+    veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
     def __str__(self):
         return self.ime
 
-
-
-class NacinStudija(models.Model):
-#redni, izredni
-    '''
-    NACINI = (
-        ('RED','Redni'),
-        ('IZR','Izredni')
-    )
-    '''
-
-    ime = models.CharField(max_length=100, unique = True)
+class Letnik(models.Model):
+    ime = models.CharField(max_length=100, primary_key=True,verbose_name="Ime")
     def __str__(self):
-        return self.ime   
+        return self.ime

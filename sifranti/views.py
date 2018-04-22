@@ -7,7 +7,7 @@ from .models import *
 
 # Create your views here.
 #diff_ names is array with all possible models
-diff_names = [ "Predmet", "NacinStudija", "Drzava" , "Posta" , "Obcina", "StudijskiProgram", "Modul","VrstaVpisa","VrstaStudija","Letnik","StudijskoLeto" ]
+diff_names = [ "Predmet", "Letnik", "NacinStudija", "Drzava" , "Posta" , "Obcina", "StudijskiProgram", "Modul","VrstaVpisa","VrstaStudija","StudijskoLeto" ]
 
 def index(request):
     context = {
@@ -29,6 +29,16 @@ def changesif(request, diff):
             
             new_object = form.save()
             return HttpResponseRedirect('/sifranti/'+ diff +'/')
+        else:
+            elements = eval(diff).objects.values()
+            form_iskanje = SearchForm()
+            context = {
+            'object_name' : diff,
+            'elements' : elements,
+            'form': form,
+            'form2' : form_iskanje
+            }
+            return render(request,'sifranti/changesif.html',context)
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -103,75 +113,5 @@ def search(request, diff):
 
 def naredi_bazo(request):
 
-    a = Drzava(ime="Slovenija")
-    a.save()
-    a = Drzava(ime="Slovaška")
-    a.save()
-    a = Drzava(ime="Hrvaška")
-    a.save()
-    a = Drzava(ime="Aljažira")
-    a.save()
-    a = Drzava(ime="Kanada")
-    a.save()
-    a = Drzava(ime="Avstralija")
-    a.save()
-    a = Drzava(ime="Makedonija")
-    a.save()
-    a = Obcina(ime="Ljubljana")
-    a.save()
-    a = Obcina(ime="Maribor")
-    a.save()
-    a = Obcina(ime="Grosuplje")
-    a.save()
-    a = Posta(ime = "Ljubljana", postna_stevilka=1000)
-    a.save()
-    a = Posta(ime = "Grosuplje", postna_stevilka=1290)
-    a.save()
-    a = Posta(ime = "Šmarje-Sap", postna_stevilka=1293)
-    a.save()
-    a = Posta(ime = "Škofljica", postna_stevilka=1291)
-    a.save()
-    a = StudijskiProgram(ime = "DIPL")
-    a.save()
-    a = StudijskiProgram(ime = "MAG")
-    a.save()
-    a = StudijskiProgram(ime = "DR")
-    a.save()
-    a = Predmet(ime = "TPO")
-    a.save()
-    a = Predmet(ime = "OIS")
-    a.save()
-    a = Predmet(ime = "PRPO")
-    a.save()
-    a = Predmet(ime = "DS")
-    a.save()
-    a = Predmet(ime = "MM")
-    a.save()
-    a = VrstaVpisa(ime = "PRVI")
-    a.save()
-    a = VrstaVpisa(ime = "PONO")
-    a.save()
-    a = VrstaVpisa(ime = "ABSO")
-    a.save()
-    a = VrstaStudija(ime = "VSŠ")
-    a.save()
-    a = VrstaStudija(ime = "UNI")
-    a.save()
-    a = Letnik(ime = "1.")
-    a.save()
-    a = Letnik(ime = "2.")
-    a.save()
-    a = Letnik(ime = "3.")
-    a.save()
-    a = StudijskoLeto(ime = "2017/2018")
-    a.save()
-    a = StudijskoLeto(ime = "2018/2019")
-    a.save()
-    a = StudijskoLeto(ime = "2019/2020")
-    a.save()
-    a = NacinStudija(ime = "RED")
-    a.save()
-    a = NacinStudija(ime = "VSŠ")
-    a.save()
     return HttpResponse("Nafilana baza!")
 
