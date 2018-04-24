@@ -2,10 +2,16 @@
 
 {% block content %}
 <div class="container sifrant">
-<p>Posodobi element {{ element.0.id}}:</p>
+
+<p>Posodobi element z vrednostmi:</p>
+
+{% for k, v in element.0.items  %}
+<p>{{ k }}:{{ v }}</p>
+{% endfor %}
+
 <form action="/sifranti/{{ object_name }}/{{ element.0.id }}/" method="post">
     {% csrf_token %}
-     {{ form }}
+     {{ form.as_p }}
      <button type="submit" class="btn btn-outline-primary">Posodobi</button>
 </form>
 </div>
