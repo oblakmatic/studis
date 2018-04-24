@@ -26,11 +26,13 @@ def students(request):
 	return render(request,'students.html', context)
 
 def import_students(request):
-	content = request.FILES['students'].read().splitlines()
+	content = request.FILES['students'].read().decode('utf-8')
 
+	str_size = 127
 	arr = []
-	for i in range(0, len(content)):
-		data = content[i].decode('utf-8');
+	for i in range(0, len(content), 127):
+		data = content[i:i+127];
+	
 		
 		name = data[0:30].rstrip()
 		surname = data[30:60].rstrip()
@@ -56,21 +58,25 @@ def import_students(request):
 
 
 
-		password = "adminadmin"#User.objects.make_random_password()
+		password = "adminadmin" #User.objects.make_random_password()
 		username = email[:6]
 
 
-		user, created2 = User.objects.get_or_create(username=username, password=password, email=email)
+		user, created2 = User.objects.get_or_create(username=username, email=email)
+		user.first_name = name
+		user.last_name = surname
 		
 		if created2:
+			user.set_password(password)
 			user.is_staff=False
 			user.is_superuser=False
-			user.save()
 			students_group, status = Group.objects.get_or_create(name='students') 
 			students_group.user_set.add(user)
 
+		user.save()
+
 		temp=[]
-		temp.append(str(i+1))
+		temp.append(str(i//127 +1))
 		temp.append(surname)
 		temp.append(name)
 		temp.append(student.vpisna_stevilka)
@@ -79,7 +85,7 @@ def import_students(request):
 		
 
 		arr.append(temp)
-		
+	
 
 
 	context = {
