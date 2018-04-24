@@ -68,3 +68,8 @@ class PredmetForm(ModelForm):
     class Meta:
         model = Predmet
         fields = '__all__'
+
+class OblikaStudijaForm(ModelForm):
+    class Meta:
+        model = OblikaStudija
+        fields = '__all__'
