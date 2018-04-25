@@ -46,7 +46,6 @@ def import_students(request):
 			student.priimek = surname
 			student.save()
 		except Student.DoesNotExist:
-
 			serial = Student.objects.count()+1
 			year = datetime.datetime.today().year % 2000
 			vpisna = "63"+ str(year) + format(serial, '04d')

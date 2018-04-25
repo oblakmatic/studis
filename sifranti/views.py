@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
+from django.contrib.auth.models import User, Group
 
 from .forms import *
 from .models import *
@@ -186,6 +187,36 @@ def naredi_bazo(request):
     a.save()
     a = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )
     a.save()
+
+
+    #naredi referenta
+    user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")
+    user.first_name = "Tatjana"
+    user.last_name = "Novak"
+        
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        ref_group, status = Group.objects.get_or_create(name='referent') 
+        ref_group.user_set.add(user)
+
+    user.save()
+
+    #naredi profesorja
+    user, created = User.objects.get_or_create(username="profesor", email="profesor@fri.uni-lj.si")
+    user.first_name = "Lado"
+    user.last_name = "Gubara"
+        
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        prof_group, status = Group.objects.get_or_create(name='professors') 
+        prof_group.user_set.add(user)
+
+    user.save()
+
 
     return HttpResponse("Narejena baza!")
 
