@@ -13,35 +13,35 @@
             <a class="navbar-brand" href="/">Studis</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li {% if request.resolver_match.url_name= ='home' %}
+                    <li {% if request.resolver_match.url_name == 'home' %}
                         class="nav-item active"
                         {% else %}
                         class="nav-item"
                         {% endif %}>
                         <a class="nav-link" href="/">Domov</a>
                     </li>
-                    <li {% if request.resolver_match.url_name= ='index' or request.resolver_match.url_name= ='changesif' %}
+                    <li {% if request.resolver_match.url_name == 'index' or request.resolver_match.url_name == 'changesif' %}
                         class="nav-item active"
                         {% else %}
                         class="nav-item"
                         {% endif %}>
                         <a class="nav-link" href="/sifranti/">Šifranti</a>
                     </li>
-                    <li {% if request.resolver_match.url_name= ='students' or request.resolver_match.url_name= ='upload_file' %}
+                    <li {% if request.resolver_match.url_name == 'students' or request.resolver_match.url_name == 'upload_file' %}
                         class="nav-item active"
                         {% else %}
                         class="nav-item"
                         {% endif %}>
                         <a class="nav-link" href="/student/">Študenti</a>
                     </li>
-                    <li {% if request.resolver_match.url_name= ='vpis' or request.resolver_match.url_name= ='index_vpis' %}
+                    <li {% if request.resolver_match.url_name == 'vpis' or request.resolver_match.url_name == 'index_vpis' %}
                         class="nav-item active"
                         {% else %}
                         class="nav-item"
                         {% endif %}>
                         <a class="nav-link" href="/vpis/">Vpis</a>
                     </li>
-                    <li {% if request.resolver_match.url_name= ='izpiti' or request.resolver_match.url_name= ='index_izpiti' %}
+                    <li {% if request.resolver_match.url_name == 'izpiti' or request.resolver_match.url_name == 'index_izpiti' %}
                         class="nav-item active"
                         {% else %}
                         class="nav-item"
