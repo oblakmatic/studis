@@ -22,6 +22,7 @@ class PredmetiStudenta(models.Model):
     vpis = models.ForeignKey(Vpis, on_delete = models.SET_NULL, null = True)
     predmet = models.ForeignKey(Predmet, on_delete = models.SET_NULL, null = True)
     
+	
 
 class Prijava(models.Model):
     predmeti_studenta = models.ForeignKey(PredmetiStudenta, on_delete = models.SET_NULL, null = True)
