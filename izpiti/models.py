@@ -16,7 +16,14 @@ class IzvedbaPredmeta(models.Model):
 
 class Rok(models.Model):
     izvedba_predmeta = models.ForeignKey(IzvedbaPredmeta, on_delete = models.SET_NULL, null = True)
-    datum = models.DateField()
+    
+
+    def validate_current_a(value):
+        print(value + " Devaaaa")
+        if value >= 2019:
+            raise ValidationError("neaaa deva")
+        
+    datum = models.DateTimeField(validators = [validate_current_a])
 
 class PredmetiStudenta(models.Model):
     vpis = models.ForeignKey(Vpis, on_delete = models.SET_NULL, null = True)

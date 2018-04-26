@@ -5,64 +5,40 @@ from izpiti.models import *
 from sifranti.models import *
 from sifranti.models import *
 from .models import *
+from time import gmtime, strftime
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 def index_izpiti(request):
-    # pr profesorju se pojavjo sam te k jih ma on nacez. 
-    # izpis kera vloga je
-
-    all_subjects_id = IzvedbaPredmeta.objects.select_related().values('predmet'); #tle cudn pokaze tale predmet
-    predmet_objekti = Predmet.objects.select_related().values();
-    print(predmet_objekti)
-
-    for ObjektIzvedba in all_subjects_id:
-        trenutni_id = ObjektIzvedba['predmet']
-        print(trenutni_id)
-        for predmet in predmet_objekti:
-           if trenutni_id == predmet['id']:
-                print(str(predmet['id']) + " " + predmet['ime'])
-           
-
-
-    
-    #print(all_subjects)
-
-    #print(all_subjects)
-    all_subjects = Predmet.objects.select_related().values();
+    all_izvedbaPredmeta = IzvedbaPredmeta.objects.select_related()
     context = {
-        'arr': all_subjects
+        'arr': all_izvedbaPredmeta,
+        'curr_date': strftime("%Y-%m-%dT%H:%M", gmtime())
 
         }
 
     return render(request,'index_izpiti.html',context)
 
 def dodaj_izpit(request):
-    predmet_ = request.POST.get('ime_predmeta')
-    datum_ = request.POST.get('datum')
 
-    izvedbaPredmeta_izBaze = IzvedbaPredmeta.objects.get(predmet=predmet_) #mogoce se more nanasat tut na studijsko leto? 
-   
-    dodaj_rok = Rok.objects.create(izvedba_predmeta=izvedbaPredmeta_izBaze, datum=datum_)
+    if request.method == 'POST':
 
+        datum_ = request.POST['datum']
+        #print(datum_)
+
+        id_IzvedbaPredmeta = request.POST['id_IzvedbaPredmeta']
+        vnos_izvedbaPredmeta = IzvedbaPredmeta.objects.all()
+        for curr_izvedbaPredmeta in vnos_izvedbaPredmeta:
+            if str(curr_izvedbaPredmeta.id) == id_IzvedbaPredmeta:
+                vnesi = curr_izvedbaPredmeta
+
+        
+        a = Rok(izvedba_predmeta = vnesi, datum = datum_)
+        print(a.datum + " " + "hehe")
+        a.save()
+    
     return render(request,'izpiti-message.html')
 
-def fill_database(request):
-
-    #add_predmet=Predmet.objects.get(ime="TPO")
-    add_predmet=Predmet(ime="TPO1")
-    add_predmet.save()
-    #add_studijskoLeto=StudijskoLeto.objects.get(ime="2017/2018")
-    add_studijskoLeto=StudijskoLeto(ime="2017/2018")
-    add_studijskoLeto.save()
-
-    add_ucitelj=Ucitelj(ime="Vilijan",priimek="Mahnič",email="vilijan.mahnic@gmail.com")
-    add_ucitelj.save()
-
-    add_IzvedbaPredmeta=IzvedbaPredmeta(predmet=add_predmet,studijsko_leto=add_studijskoLeto,ucitelj_1=add_ucitelj)
-    add_IzvedbaPredmeta.save()
-
-    return render(request,'napolni-bazo.html')
-    
 
     #add_predmet=Predmet(ime="Organizacija in management")
     #add_predmet.save()
