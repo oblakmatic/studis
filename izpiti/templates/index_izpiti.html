@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Izpiti{% endblock %}
+
+{% block content %}
+
+<h3>Izpiti</h3>
+<form action="/izpiti/napolni-bazo/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <button type="submit" name="fill_database" class="btn btn-outline-primary mt-2">Napolni bazo</button>
+</form>
+
+    <form action="/izpiti/izpiti-message/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        <select class="predmet" name="ime_predmeta">
+                            {% for t in arr %}
+                            <option>{{ t.ime }}</option>
+                            {% endfor %}
+                        </select>
+                    </th>
+                    <th scope="col">
+                        <input id="choose_date" name="datum" type="datetime-local" value="2018-01-13" />
+                    </th>
+                    <th scope="col">
+                        <button type="submit" name="dodaj_izpit" class="btn btn-outline-primary mt-2">Dodaj izpitni rok</button>
+
+                    </th>
+
+                </tr>
+            </thead>
+    </form>
+
+
+
+
+
+    {% endblock %}
