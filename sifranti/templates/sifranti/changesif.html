@@ -6,7 +6,7 @@
 <div class="container sifrant">
 {% if elements %}
     
-    <p>Iskanje</p>
+    <p>Iskanje: </p>
     <form action="/sifranti/{{ object_name }}/search/" method="post">
         {% csrf_token %}
         {{ form2 }}
@@ -15,26 +15,40 @@
 
     <table class="table">
         <tr>
-            {% for diff in elements.0  %}
-                {% if not diff == "id" %}
+            {% for diff in verbose_names  %}
+                {% if not diff == "Veljavnost šifranta" %}
                 <td>{{ diff }}</td>
                 {% endif %}
+                
                 
             {% endfor %}
         </tr>
         {% for diff in elements  %}
         <tr>
             {% for k, v in diff.items  %}
-                {% if not k == "id" %}
+                {% if not k == "veljaven" %}
                 <td>{{ v }}</td>
                 {% endif %}
             {% endfor %}
+
+            {% if diff.veljaven %}
             <td>
                 <form action="/sifranti/{{ object_name }}/{{ diff.id }}/delete/" method="post">
                     {% csrf_token %} 
-                    <button type="submit" class="btn btn-outline-danger">Odstrani</button>
+                    <button type="submit" class="btn btn-outline-danger">Deaktiviraj</button>
                 </form>
             </td>
+
+            {% else %}
+            <td>
+                <form action="/sifranti/{{ object_name }}/{{ diff.id }}/delete/" method="post">
+                    {% csrf_token %} 
+                    <button type="submit" class="btn btn-outline-success">Aktiviraj</button>
+                </form>
+            </td>
+
+            {% endif %}
+            
             <td>
                 <form action="/sifranti/{{ object_name }}/{{ diff.id }}/" method="get">
                     <button type="submit" class="btn btn-outline-primary">Posodobi</button>
@@ -49,14 +63,14 @@
     <p>Dodaj element: </p>
     <form action="/sifranti/{{ object_name }}/" method="post">
         {% csrf_token %}
-        {{ form }}
+        {{ form.as_p }}
         <button type="submit" class="btn btn-outline-primary">Dodaj</button>
     </form>
 {% else %}
     <p>Dodaj element: </p>
     <form action="/sifranti/{{ object_name }}/" method="post">
         {% csrf_token %}
-        {{ form }}
+        {{ form.as_p }}
         <button type="submit" class="btn btn-outline-primary">Dodaj</button>
     </form>
 {% endif %}
