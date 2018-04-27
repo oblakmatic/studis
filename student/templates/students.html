@@ -10,14 +10,19 @@
 <table class="table">
 	<thead>
 	    <tr>
-	      <th scope="col">Vpisna številka</th>
-	      <th scope="col">Ime</th>
+	      <th scope="col">#</th>
 	      <th scope="col">Priimek</th>
-	      <th scope="col">Uporabniško ime</th>
+	      <th scope="col">Ime</th>
+	      <th scope="col">Vpisna številka</th>
+	      <th scope="col">Email</th>
+	      <th scope="col"></th>
+	      <th scope="col"></th>
 	    </tr>
   	</thead>
 {% for t in arr %}
-	<tr>
+	
+	<td>{{ forloop.counter }}</td>
+	
 	{% for k,v in t.items %}
 	
 		<td>{{ v }}</td>

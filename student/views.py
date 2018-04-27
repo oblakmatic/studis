@@ -6,6 +6,7 @@ from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 import csv
+import datetime
 from reportlab.pdfgen import canvas
 from reportlab.platypus import *
 from reportlab.lib.styles import getSampleStyleSheet
@@ -15,10 +16,10 @@ from reportlab.lib import colors
 # Create your views here.
 def upload_file(request):
 
-    return render(request,'import_students.html')
+	return render(request,'import_students.html')
 
 def students(request):
-	all_students = Student.objects.values('id', 'ime', 'priimek', 'email')
+	all_students = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email').order_by('priimek')
 	context = {
 		'arr': all_students
 	}
@@ -28,41 +29,72 @@ def import_students(request):
 	content = request.FILES['students'].read().splitlines()
 
 	arr = []
-	for i in range(0, len(content), 4):
-		name = content[i].decode('utf-8')
-		surname = content[i+1].decode('utf-8')
-		program = content[i+2].decode('utf-8')
-		email = content[i+3].decode('utf-8')
+	updated = 0
+	new = 0
+	for i in range(0, len(content)):
+		data = content[i].decode('utf-8');
+		
+		name = data[0:30].rstrip()
+		surname = data[30:60].rstrip()
+		program = data[60:67]
+		email = data[67:].rstrip()
 
-		student = Student(ime=name, priimek=surname, email=email)
-		student.save()
-		password = "adminadmin"#User.objects.make_random_password()
-		username = surname+str(student.id)
+		student = None
+		try:
+			student = Student.objects.get(email=email)
+			student.ime = name
+			student.priimek = surname
+			student.save()
+			updated = updated + 1
+		except Student.DoesNotExist:
 
-		user = User.objects.create_user(username=username,
-                                 email=email,
-                                 password=password,
-                                 is_staff=False,
-                                 is_superuser=False)
+			serial = Student.objects.count()+1
+			year = datetime.datetime.today().year % 2000
+			vpisna = "63"+ str(year) + format(serial, '04d')
+			student = Student.objects.create(vpisna_stevilka=int(vpisna))
+			student.email = email
+			student.ime = name
+			student.priimek = surname
+			student.save()
+			
+			new = new + 1
 
 
-		students_group, status = Group.objects.get_or_create(name='students') 
-		students_group.user_set.add(user)
+		password = "adminadmin" #User.objects.make_random_password()
+		username = email[:6]
+
+
+		user, created2 = User.objects.get_or_create(username=username, email=email)
+		user.first_name = name
+		user.last_name = surname
+		
+		if created2:
+			user.set_password(password)
+			user.is_staff=False
+			user.is_superuser=False
+			students_group, status = Group.objects.get_or_create(name='students') 
+			students_group.user_set.add(user)
+
+		user.save()
 
 		temp=[]
-		temp.append(name)
+		temp.append(str(i + 1))
+		temp.append(student.vpisna_stevilka)
 		temp.append(surname)
+		temp.append(name)
 		temp.append(username)
 		temp.append(password)
 		
 
 		arr.append(temp)
-		
+	
 
 
 	context = {
 		'length': len(arr),
-		'students':arr
+		'students':arr,
+		'new': new,
+		'updated': updated
 	}
 
 	return render(request,'import_msg.html', context)
@@ -261,11 +293,11 @@ def export_pdf(request):
 	# Create the HttpResponse object with the appropriate PDF headers.
 	response = HttpResponse(content_type='application/pdf')
 	response['Content-Disposition'] = 'attachment; filename="studenti.pdf"'
-
+	styles = getSampleStyleSheet()
 	doc = SimpleDocTemplate(response, pagesize=landscape(A4))
-	
+	header = Paragraph('Tabela študentov na dan: ' + str(datetime.date.today()), styles['title'])
 	elements = []
-	all_students = Student.objects.values()
+	all_students = Student.objects.values().order_by('priimek')
 	k = list(all_students[0].keys())
 
 	for l in range(len(k)):
@@ -278,6 +310,7 @@ def export_pdf(request):
 	LIST_STYLE = TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.2, colors.black)])
 	t=Table(data)
 	t.setStyle(LIST_STYLE)
+	elements.append(header)
 	elements.append(t)
 
 	doc.build(elements)

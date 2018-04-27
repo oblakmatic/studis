@@ -7,12 +7,16 @@
 
 <h3>Uvoženi študenti</h3>
 
+<h5>{{ new }} novih in {{ updated }} posodobljenih</h3>
+
 {% if students %}
 <table class="table">
 	<thead>
 	    <tr>
-	      <th scope="col">Ime</th>
+	      <th scope="col">#</th>
 	      <th scope="col">Priimek</th>
+	      <th scope="col">Ime</th>
+	      <th scope="col">Vpisna številka</th>
 	      <th scope="col">Uporabniško ime</th>
 	      <th scope="col">Geslo</th>
 	    </tr>

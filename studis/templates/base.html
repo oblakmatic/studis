@@ -5,6 +5,8 @@
   {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/theme.bootstrap.min.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'css/mystyle.css' %}" />
+<script src="{% static 'js/jquery-1.9.1.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
  <title>{% block title %}Title{% endblock %}</title>
 </head>
 <body>
@@ -45,9 +47,14 @@
 				  </li>
 				</ul>
 				<ul class="navbar-nav ml-auto">
-				  <li class="nav-ite ">
-				    <a class="nav-link" href="{% url 'logout' %}">Odjava</a>
-				  </li>
+
+
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{user.first_name }} {{user.last_name }}</a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'logout' %}">Odjava</a>
+                  </div>
+                </li>
 				</ul>
 			</div>
 		</div>

@@ -4,8 +4,8 @@ from sifranti.models import *
 #ONLY one key is allowed
 
 class Student(models.Model):
-    #njegov id je njegova vpisa stevilka
-
+    #vpisna stevilka je primarni kljuc
+    vpisna_stevilka = models.IntegerField(primary_key = True)
     emso = models.CharField(max_length = 13)
     priimek = models.CharField(max_length = 30)
     ime = models.CharField(max_length = 30)
