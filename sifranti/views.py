@@ -193,6 +193,79 @@ def naredi_bazo(request):
     user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")
     user.first_name = "Tatjana"
     user.last_name = "Novak"
+
+    #Aljaz dodal->
+    a_teh = Predmet(ime = "Tehnologija programske opreme")
+    a_teh.save()
+    a_obl = Predmet(ime = "Osnove oblikovanja")
+    a_obl.save()
+    a_ep = Predmet(ime = "Ekonomika in podjetništvo")
+    a_ep.save()
+    a_oim = Predmet(ime = "Organizacija in management")
+    a_oim.save()
+    a = Predmet(ime = "Programiranje 1")
+    a.save()
+    a = Predmet(ime = "Programiranje 2")
+    a.save()
+    a_aps1 = Predmet(ime = "Algoritmi in podatkovne strukture 1")
+    a_aps1.save()
+
+    a = StudijskoLeto(ime = "2016/2017")
+    a.save()
+    a_17_18 = StudijskoLeto(ime = "2017/2018")
+    a_17_18.save()
+    a = StudijskoLeto(ime = "2018/2019")
+    a.save()
+
+    a_vilijan = Ucitelj(ime = "Viljan", priimek = "Mahnič", email = "vilijan.mahnic@gmail.com")
+    a_vilijan.save()
+    a_narvika = Ucitelj(ime = "Narvika", priimek = "Bovcon", email = "narvika.bavcon@gmail.com")
+    a_narvika.save()
+    a_darja = Ucitelj(ime = "Darja", priimek = "Peljhan", email = "darja.peljhan@gmail.com")#ep
+    a_darja.save()
+    a_jaka = Ucitelj(ime = "Jaka", priimek = "Lindič", email = "jaka.lindic@gmail.com")#ep
+    a_jaka.save()
+    a_mateja = Ucitelj(ime = "Mateja", priimek = "Drnovšek", email = "mateja.drnovsek@gmail.com") #ep
+    a_mateja.save()
+    a = Ucitelj(ime = "Tomaž", priimek = "Hovelja", email = "tomaz.hovelja@gmail.com")
+    a.save()
+    a = Ucitelj(ime = "Boštjan", priimek = "Slivnik", email = "bostjan.slivnik@gmail.com")
+    a.save()
+    a = Ucitelj(ime = "Igor", priimek = "Kononenko", email = "igor.kononenko@gmail.com")
+    a.save()
+
+    a = IzvedbaPredmeta(predmet = a_teh, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
+    a.save()
+    a = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
+    a.save()
+    a = IzvedbaPredmeta(predmet = a_ep, studijsko_leto = a_17_18, ucitelj_1 = a_darja, ucitelj_2 = a_jaka, ucitelj_3 = a_mateja)
+    a.save()
+
+    a_aljaz = Student(vpisna_stevilka = "63150255", emso = "5869362456789", priimek="Rupar", ime="Aljaž", naslov_stalno_bivalisce="Škofja Loka", drzava=a_slo,kraj_rojstva="Kranj", posta= a_sklPosta, obcina=a_sklObcina, telefon="031866686", email="ar1961@student.uni-lj.si")
+    a_aljaz.save()
+
+    a_verlic = Student(vpisna_stevilka = "63150256", emso = "5869362456755", priimek="Verlič", ime="Aljaž", naslov_stalno_bivalisce="Ljubljana Trnovo", drzava=a_slo,kraj_rojstva="Ljubljana", posta= a_ljPosta, obcina=a_ljObcina, telefon="041786345", email="av1974@student.uni-lj.si")
+    a_verlic.save()
+
+    a_vpisAljaz = Vpis(student=a_aljaz, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vrstaVpisa,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
+    a_vpisAljaz.save()
+
+    a_vpisVerlic = Vpis(student=a_verlic, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vrstaVpisa,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
+    a_vpisVerlic.save()
+    
+  
+    a_predmetiStudentaAljaz = PredmetiStudenta()
+    a_predmetiStudentaAljaz.save()
+    a_predmetiStudentaAljaz.vpis = a_vpisAljaz
+    a_predmetiStudentaAljaz.predmeti.add(a_teh,a_oim,a_ep,a_obl)
+
+    a_predmetiStudentaVerlic = PredmetiStudenta()
+    a_predmetiStudentaVerlic.save()
+    a_predmetiStudentaVerlic.vpis = a_vpisVerlic
+    a_predmetiStudentaVerlic.predmeti.add(a_teh,a_oim,a_ep,a_obl,a_aps1)
+
+
+    
         
     if created:
         user.set_password("adminadmin")
