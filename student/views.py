@@ -26,13 +26,13 @@ def students(request):
 	return render(request,'students.html', context)
 
 def import_students(request):
-	content = request.FILES['students'].read().decode('utf-8')
+	content = request.FILES['students'].read().splitlines()
 
-	str_size = 127
 	arr = []
-	for i in range(0, len(content), 127):
-		data = content[i:i+127];
-	
+	updated = 0
+	new = 0
+	for i in range(0, len(content)):
+		data = content[i].decode('utf-8');
 		
 		name = data[0:30].rstrip()
 		surname = data[30:60].rstrip()
@@ -45,7 +45,9 @@ def import_students(request):
 			student.ime = name
 			student.priimek = surname
 			student.save()
+			updated = updated + 1
 		except Student.DoesNotExist:
+
 			serial = Student.objects.count()+1
 			year = datetime.datetime.today().year % 2000
 			vpisna = "63"+ str(year) + format(serial, '04d')
@@ -54,7 +56,8 @@ def import_students(request):
 			student.ime = name
 			student.priimek = surname
 			student.save()
-
+			
+			new = new + 1
 
 
 		password = "adminadmin" #User.objects.make_random_password()
@@ -75,10 +78,10 @@ def import_students(request):
 		user.save()
 
 		temp=[]
-		temp.append(str(i//127 +1))
+		temp.append(str(i + 1))
+		temp.append(student.vpisna_stevilka)
 		temp.append(surname)
 		temp.append(name)
-		temp.append(student.vpisna_stevilka)
 		temp.append(username)
 		temp.append(password)
 		
@@ -89,7 +92,9 @@ def import_students(request):
 
 	context = {
 		'length': len(arr),
-		'students':arr
+		'students':arr,
+		'new': new,
+		'updated': updated
 	}
 
 	return render(request,'import_msg.html', context)
