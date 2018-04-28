@@ -267,10 +267,7 @@ def naredi_bazo(request):
     a_vpisVerlic = Vpis(student=a_verlic, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vrstaVpisa,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
     a_vpisVerlic.save()
     
-    list_subjects_aljaz = [a_teh,a_oim,a_ep,a_obl]
-    list_subjects_verlic = [a_teh,a_oim,a_ep,a_obl,a_aps1]
-
-
+  
     a_predmetiStudentaAljaz = PredmetiStudenta()
     a_predmetiStudentaAljaz.save()
     a_predmetiStudentaAljaz.vpis = a_vpisAljaz

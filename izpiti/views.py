@@ -38,4 +38,15 @@ def dodaj_izpit(request):
     
     return render(request,'izpiti-message.html')
 
+def prijava(request):
+    all_roki = Rok.objects.select_related()
+    print(all_roki)
+
+    context={
+        'arr': all_roki
+        }
+
+    return render(request,'prijava.html',context)
+
+
    
