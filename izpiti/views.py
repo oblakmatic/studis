@@ -10,6 +10,10 @@ from django.core.exceptions import ValidationError
 
 # Create your views here.
 def index_izpiti(request):
+    #Prevert se treba kdo je user. Za referentko ni panike.
+    #nedela migrations
+
+
     all_izvedbaPredmeta = IzvedbaPredmeta.objects.select_related()
     
     context = {
@@ -20,10 +24,9 @@ def index_izpiti(request):
 
     return render(request,'index_izpiti.html',context)
 	
-	
 def dodaj_izpit(request):
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'dodaj_izpit' in request.POST:
 
         datum_ = request.POST['datum']
 
@@ -37,9 +40,15 @@ def dodaj_izpit(request):
         a = Rok(izvedba_predmeta = vnesi, datum = datum_)
         a.save()
     
-    return render(request,'izpiti-message.html')
+        return render(request,'izpiti-message.html')
+
+    elif request.method == 'POST' and 'prijava_izpit' in request.POST:
+
+        return render(request,'izpiti-message.html')
+
 
 def prijava(request):
+
     all_roki = Rok.objects.select_related()
     print(all_roki)
 

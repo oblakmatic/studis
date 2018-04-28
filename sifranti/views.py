@@ -5,6 +5,7 @@ from django.contrib.auth.models import User, Group
 
 from .forms import *
 from .models import *
+from izpiti.models import *
 
 # Create your views here.
 #diff_ names is array with all possible models
@@ -217,16 +218,20 @@ def naredi_bazo(request):
     a = StudijskoLeto(ime = "2018/2019")
     a.save()
 
-    a_vilijan = Ucitelj(ime = "Viljan", priimek = "Mahnič", email = "vilijan.mahnic@gmail.com")
-    a_vilijan.save()
+    
     a_narvika = Ucitelj(ime = "Narvika", priimek = "Bovcon", email = "narvika.bavcon@gmail.com")
     a_narvika.save()
+    a_narvika.predmeti.add(a_obl);
+
     a_darja = Ucitelj(ime = "Darja", priimek = "Peljhan", email = "darja.peljhan@gmail.com")#ep
     a_darja.save()
+    a_darja.predmeti.add(a_ep);
     a_jaka = Ucitelj(ime = "Jaka", priimek = "Lindič", email = "jaka.lindic@gmail.com")#ep
     a_jaka.save()
+    a_jaka.predmeti.add(a_ep);
     a_mateja = Ucitelj(ime = "Mateja", priimek = "Drnovšek", email = "mateja.drnovsek@gmail.com") #ep
     a_mateja.save()
+    a_mateja.predmeti.add(a_ep);
     a = Ucitelj(ime = "Tomaž", priimek = "Hovelja", email = "tomaz.hovelja@gmail.com")
     a.save()
     a = Ucitelj(ime = "Boštjan", priimek = "Slivnik", email = "bostjan.slivnik@gmail.com")
@@ -280,6 +285,8 @@ def naredi_bazo(request):
     user, created = User.objects.get_or_create(username="profesor", email="profesor@fri.uni-lj.si")
     user.first_name = "Lado"
     user.last_name = "Gubara"
+
+
         
     if created:
         user.set_password("adminadmin")
@@ -290,6 +297,18 @@ def naredi_bazo(request):
 
     user.save()
 
+    user, created = User.objects.get_or_create(username="vilijanmahnic", email="vilijan.mahnic@gmail.com")
+    user.first_name = "Vilijan"
+    user.last_name = "Mahnic"
+
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        prof_group, status = Group.objects.get_or_create(name='professors') 
+        prof_group.user_set.add(user)
+
+    user.save()
 
     return HttpResponse("Narejena baza!")
 
