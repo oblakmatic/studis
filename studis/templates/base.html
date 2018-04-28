@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/theme.bootstrap.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/mystyle.css' %}" />
+    <title>{% block title %}Title{% endblock %}</title>
+	
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class=container>
+            <a class="navbar-brand" href="/">Studis</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li {% if request.resolver_match.url_name == 'home' %}
+                        class="nav-item active"
+                        {% else %}
+                        class="nav-item"
+                        {% endif %}>
+                        <a class="nav-link" href="/">Domov</a>
+                    </li>
+                    <li {% if request.resolver_match.url_name == 'index' or request.resolver_match.url_name == 'changesif' %}
+                        class="nav-item active"
+                        {% else %}
+                        class="nav-item"
+                        {% endif %}>
+                        <a class="nav-link" href="/sifranti/">Šifranti</a>
+                    </li>
+                    <li {% if request.resolver_match.url_name == 'students' or request.resolver_match.url_name == 'upload_file' %}
+                        class="nav-item active"
+                        {% else %}
+                        class="nav-item"
+                        {% endif %}>
+                        <a class="nav-link" href="/student/">Študenti</a>
+                    </li>
+                    <li {% if request.resolver_match.url_name == 'vpis' or request.resolver_match.url_name == 'index_vpis' %}
+                        class="nav-item active"
+                        {% else %}
+                        class="nav-item"
+                        {% endif %}>
+                        <a class="nav-link" href="/vpis/">Vpis</a>
+                    </li>
+                    <li {% if request.resolver_match.url_name == 'izpiti' or request.resolver_match.url_name == 'index_izpiti' %}
+                        class="nav-item active"
+                        {% else %}
+                        class="nav-item"
+                        {% endif %}>
+                        <a class="nav-link" href="/izpiti/">Izpiti</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto">
+                    <span class="navbar-text mr-4">
+                        {{ user.first_name }} {{ user.last_name }}
+                        <img src="{% static 'images/profile.png' %}" width="20" height="20" alt="">
+                    </span>
+
+                    <li class="nav-item">
+                        <a class="nav-link hover-img" href="{% url 'logout' %}">Odjava <img src="{% static 'images/logout.png' %}" width="20" height="20" alt=""></a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>
