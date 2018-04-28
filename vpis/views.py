@@ -44,8 +44,11 @@ def index_vpis(request):
     else:
         opozorilo = None
         form = None
+        #preveri kdo je 
+
         possible_student = vrniStudenta(request.user.email)
 
+        #ce je student 
         if possible_student:
             zeton = Zeton.objects.filter(student=possible_student[0])
 
@@ -54,7 +57,11 @@ def index_vpis(request):
                 opozorilo = ""
             else:
                 opozorilo="Nimaš žetona"
-            
+        
+        else:
+            opozorilo = "Samo študenti se lahko vpišejo"
+        
+
 
         context = {
                 'form': form,
@@ -63,12 +70,6 @@ def index_vpis(request):
                 }
         
         return render(request,'vpis/index_vpis.html',context)
-
-            
-
-        
-
-
 
 # naredi query po studentu z emailom
 def vrniStudenta(njegovEmail):

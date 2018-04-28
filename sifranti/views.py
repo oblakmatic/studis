@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.models import User, Group
 
+from student.models import *
 from .forms import *
 from .models import *
 
@@ -238,6 +239,20 @@ def naredi_bazo(request):
     a.save()
     a = OblikaStudija(id=3, opis="e-studij", ang_opis="e-learning" )
     a.save()
+
+    #naredi studenta
+    a = Student(vpisna_stevilka = 63150000, emso=1511996500207, ime="Primož", priimek="Trubar",naslov_stalno_bivalisce="Kranjska ulica 12", drzava=Drzava.objects.filter(pk=4)[0],kraj_rojstva="Ljubljana", posta=Posta.objects.filter(pk=1293)[0],obcina=Obcina.objects.filter(pk=1)[0],telefon="040123456",email="pt0000@fri.uni-lj.si")
+    a.save()
+    user, created = User.objects.get_or_create(username="student", email="pt0000@fri.uni-lj.si")
+    user.first_name = "Primož"
+    user.last_name = "Trubar"
+
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        ref_group, status = Group.objects.get_or_create(name='student') 
+        ref_group.user_set.add(user)
 
     #naredi referenta
     user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")
