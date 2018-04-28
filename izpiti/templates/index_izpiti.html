@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Izpiti{% endblock %}
+
+
+{% block content %}
+<div class="container sifrant">
+    <h3>Izpiti</h3>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Predmet</th>
+                <th scope="col">Studijsko leto</th>
+                <th scope="col">Ucitelj</th>
+                <th scope="col">Datum</th>
+                <th scope="col">Dodaj rok izpita</th>
+            </tr>
+        </thead>
+        {% for IzvedbaPredmeta in arr %}
+        <tr>
+            <td>{{ IzvedbaPredmeta.predmet }}</td>
+            <td>{{ IzvedbaPredmeta.studijsko_leto }}</td>
+
+            {% if IzvedbaPredmeta.ucitelj_3 != null %}
+            <td>
+                {{ IzvedbaPredmeta.ucitelj_1.ime }}
+                {{ IzvedbaPredmeta.ucitelj_1.priimek }},
+                {{ IzvedbaPredmeta.ucitelj_2.ime }}
+                {{ IzvedbaPredmeta.ucitelj_2.priimek }},
+                {{ IzvedbaPredmeta.ucitelj_3.ime }}
+                {{ IzvedbaPredmeta.ucitelj_3.priimek }}
+            </td>
+            {% elif IzvedbaPredmeta.ucitelj_2 != null %}
+            <td>
+                {{ IzvedbaPredmeta.ucitelj_1.ime }}
+                {{ IzvedbaPredmeta.ucitelj_1.priimek }},
+                {{ IzvedbaPredmeta.ucitelj_2.ime }}
+                {{ IzvedbaPredmeta.ucitelj_2.priimek }}
+            </td>
+            {% elif IzvedbaPredmeta.ucitelj_1 != null %}
+            <td>
+                {{ IzvedbaPredmeta.ucitelj_1.ime }}
+                {{ IzvedbaPredmeta.ucitelj_1.priimek }}
+            </td>
+            {% endif %}
+            <form action="/izpiti/izpiti-message/" method="post">
+                {% csrf_token %}
+
+                <td>
+                    <input id="choose_date{{ forloop.counter0 }}" name="datum" oninput="myFunction(this)" type="datetime-local" min={{ curr_date }} value="" required />
+                </td>
+
+                <td>
+                    <input type="hidden" name="id_IzvedbaPredmeta" value={{ IzvedbaPredmeta.id }}>
+                    <button type="submit" name="dodaj_izpit" class="btn btn-outline-primary mt-2">Dodaj izpitni rok</button>
+                </td>
+            </form>
+
+        </tr>
+        {% endfor %}
+
+</div>
+
+
+<script type="text/javascript">
+
+    function myFunction(element) {
+
+
+        var holidays = [
+            new Date(2019, 0, 1), new Date(2019, 0, 2), new Date(2019, 1, 8), new Date(2019, 3, 27),
+            new Date(2019, 4, 1), new Date(2019, 4, 2), new Date(2019, 5, 25), new Date(2019, 7, 15),
+            new Date(2019, 9, 31), new Date(2019, 10, 1), new Date(2019, 11, 25), new Date(2019, 11, 26)
+        ];
+        
+        getEl = document.getElementById(element.id);
+        datum = element.value;
+        
+        var datum_ = new Date(datum);
+        var flag = false;
+
+        for (var i = 0; i < holidays.length; i++) {
+            console.log(holidays[i].getMonth() + " " + holidays[i].getDate());
+            if (holidays[i].getMonth() == datum_.getMonth() && holidays[i].getDate() == datum_.getDate()) {
+                
+                flag = true;
+            }
+            
+        }
+
+        var easterDate = Easter(datum_.getFullYear());
+        var table = easterDate.split(".");
+        for (var i = 0; i < table.length; i++) {
+            table[i] = table[i].replace(/^0+/, '');
+        }
+        if (datum_.getMonth() == table[0] && datum_.getDate() == table[1]) {
+            flag = true;
+        }
+       
+
+        var day = new Date(datum).getUTCDay();
+        
+        if (flag == true) {
+            getEl.setCustomValidity("Na praznik ni mogoce razpisati roka za vpis.");
+        }
+        else if (day == 5) {
+            getEl.setCustomValidity("V soboto ni mogoce razpisati roka za izpit.");
+        }
+        else if (day == 6) {
+            getEl.setCustomValidity("V nedeljo ni mogoce razpisati roka za izpit.");
+        }
+        else {
+            element.setCustomValidity('');
+        }
+
+        
+    }
+
+    function Easter(Y) {
+        var C = Math.floor(Y / 100);
+        var N = Y - 19 * Math.floor(Y / 19);
+        var K = Math.floor((C - 17) / 25);
+        var I = C - Math.floor(C / 4) - Math.floor((C - K) / 3) + 19 * N + 15;
+        I = I - 30 * Math.floor((I / 30));
+        I = I - Math.floor(I / 28) * (1 - Math.floor(I / 28) * Math.floor(29 / (I + 1)) * Math.floor((21 - N) / 11));
+        var J = Y + Math.floor(Y / 4) + I + 2 - C + Math.floor(C / 4);
+        J = J - 7 * Math.floor(J / 7);
+        var L = I - J;
+        var M = 3 + Math.floor((L + 40) / 44);
+        var D = L + 28 - 31 * Math.floor(M / 4);
+
+        return padout(M) + "." + padout(D);
+    }
+
+    function padout(number) { return (number < 10) ? '0' + number : number; }
+
+    
+</script>
+  
+
+
+
+        {% endblock %}
