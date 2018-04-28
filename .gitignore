@@ -112,7 +112,6 @@ ENV/
 \.idea/
 
 \.vscode/
-\.vs/
 
 *.pyc
 db.sqlite3

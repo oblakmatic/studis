@@ -3,9 +3,11 @@
 
 
 {% block content %}
-<h3>Prijava na izpite</h3>
-<table class="table">
-    <div class="container sifrant">
+<div class="container sifrant">
+    <h3>Prijava na izpite</h3>
+
+    <table class="table">
+
         <thead>
             <tr>
                 <th scope="col">Letnik</th>
@@ -19,13 +21,46 @@
         {% for rok in arr %}
 
         <tr>
-            <td>{{ rok.izvedba_predmeta.studijsko_leto }}<td>
-            <td>{{ rok.izvedba_predmeta.predmet }}<td>
-            <td>{{ rok.izvedba_predmeta.ucitelj_1 }}<td>
+            <td>
+                {{ rok.izvedba_predmeta.studijsko_leto }}
+            </td>
+            <td>{{ rok.izvedba_predmeta.predmet }}
+            </td>
+
+                {% if rok.izvedba_predmeta.ucitelj_3 != null %}
+            <td>
+                {{ rok.izvedba_predmeta.ucitelj_1.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+                {{ rok.izvedba_predmeta.ucitelj_2.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_2.priimek }},
+                {{ rok.izvedba_predmeta.ucitelj_3.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_3.priimek }}
+            </td>
+            {% elif rok.izvedba_predmeta.ucitelj_2 != null %}
+            <td>
+                {{ rok.izvedba_predmeta.ucitelj_1.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+                {{ rok.izvedba_predmeta.ucitelj_2.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_2.priimek }}
+            </td>
+            {% elif rok.izvedba_predmeta.ucitelj_1 != null %}
+            <td>
+                {{ rok.izvedba_predmeta.ucitelj_1.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_1.priimek }}
+            </td>
+            {% endif %}
+
+            <td>{{ rok.datum }}</td>
+
+            <form action="/izpiti/izpiti-message/" method="post">
+                {% csrf_token %}
+                <td>
+                    <button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2">Prijavi se</button>
+                </td>
+            </form>
         </tr>
+        {% endfor %}
 
-            {% endfor %}
-
-    </div>
+</div>
 
     {% endblock %}

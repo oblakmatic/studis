@@ -101,7 +101,7 @@ class Predmet(models.Model):
         return self.ime
 
 class StudijskoLeto(models.Model):
-    # 2017/2018, 2018/2019
+# 2017/2018, 2018/2019
     ime = models.CharField(max_length=100, unique=True,verbose_name="Ime")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
