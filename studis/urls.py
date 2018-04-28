@@ -26,7 +26,6 @@ urlpatterns = [
     path('sifranti/', include('sifranti.urls')),
     path('vpis/', include('vpis.urls')),
     path('student/', include('student.urls')),
-    path('izpiti/', include('izpiti.urls')),
     path('user/login/', login, name="login"),
     path('user/logout/', logout, name="logout"),
     path('user/auth/', auth_view, name = "auth_view"),
