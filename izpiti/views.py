@@ -19,7 +19,8 @@ def index_izpiti(request):
         }
 
     return render(request,'index_izpiti.html',context)
-
+	
+	
 def dodaj_izpit(request):
 
     if request.method == 'POST':

@@ -2,6 +2,7 @@ from django.db import models
 from sifranti.models import *
 from student.models import *
 
+
 class Ucitelj(models.Model):
     ime = models.CharField(max_length = 30)
     priimek = models.CharField(max_length = 30)
