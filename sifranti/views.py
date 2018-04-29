@@ -272,7 +272,7 @@ def naredi_bazo(request):
     a_predmetiStudentaAljaz = PredmetiStudenta()
     a_predmetiStudentaAljaz.save()
     a_predmetiStudentaAljaz.vpis = a_vpisAljaz
-    a_predmetiStudentaAljaz.predmeti.add(a_teh,a_oim,a_ep,a_obl)
+    a_predmetiStudentaAljaz.predmeti.add(a_teh,a_oim,a_ep,a_obl,a_P1)
     a_predmetiStudentaAljaz.save()
 
     a_predmetiStudentaVerlic = PredmetiStudenta()
