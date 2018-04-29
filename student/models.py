@@ -60,3 +60,10 @@ class Vpis(models.Model):
     # ?? potrjen = models.BooleanField(default = False)
     # ?? prosta_izbira = models.BooleanField(default = False)
 
+class Predmetnik(models.Model):
+    studijski_program = models.ForeignKey(StudijskiProgram, null=True, primary_key = True, on_delete= models.SET_NULL)
+    studijsko_leto = models.ForeignKey(StudijskoLeto, null=True, on_delete= models.SET_NULL)
+    letnik = models.ForeignKey(Letnik, null=True, on_delete= models.SET_NULL)
+    predmet = models.ForeignKey(Predmet, null=True, on_delete= models.SET_NULL)
+    obvezen = models.BooleanField(default = True)
+
