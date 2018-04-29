@@ -28,6 +28,7 @@ class Kandidat(models.Model):
     priimek = models.CharField(max_length = 30)
     email = models.CharField(max_length = 60)
     # studijski_program FK
+    studijski_program = models.ForeignKey(StudijskiProgram, null = True, on_delete= models.SET_NULL)
     izkoriscen = models.BooleanField(default = False)
 
 class Zeton(models.Model):

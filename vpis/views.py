@@ -45,7 +45,7 @@ def index_vpis(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        opozorilo = None
+        opozorilo = ""
         form = None
         context = None
         #preveri kdo je 
@@ -53,7 +53,24 @@ def index_vpis(request):
         #print(p)
         
         # preveri ce je student 
-        if is_student(request.user):
+        if is_kandidat(request.user):
+            kandidat = vrniKandidata(request.user.email)
+            studentform = None
+
+            form = VpisForm()
+            id_kandidata = kandidat[0].vpisna_stevilka
+            data = Kandidat.objects.filter(pk= id_kandidata).values()[0]
+            studentform = NameStudentForm(initial= data)
+            #kandidat 
+            context = {
+                'form': form,
+                'student' : kandidat[0],
+                'opozorilo' : opozorilo,
+                'studentform' : studentform
+                }
+
+
+        elif is_student(request.user):
             najden_student = vrniStudenta(request.user.email)
 
             # Preveri, da se lahko vpiše samo študent, ki ima žeton ali je novinec. 
@@ -70,10 +87,10 @@ def index_vpis(request):
                     'posta' : najden_student[0].posta,
                     'obcina' : najden_student[0].obcina,
                  } 
-                
-                print({**data , **data_2})
+                data = {**data , **data_2}
+                #print({**data , **data_2})
 
-                studentform = NameStudentForm(initial= {**data , **data_2})
+                studentform = NameStudentForm(initial= data)
             else:
                 opozorilo= "Nimaš žetona"
             
@@ -83,7 +100,6 @@ def index_vpis(request):
                 'opozorilo' : opozorilo,
                 'studentform' : studentform
                 }
-
         else:
             opozorilo="Samo študenti se lahko vpišejo"
             context = {
@@ -102,9 +118,20 @@ def vrniStudenta(njegovEmail):
     else:
         raise Exception('Ni bilo studenta v tabeli')
 
-def is_student(user):
-    return user.groups.filter(name='student').exists()
+def vrniKandidata(njegovEmail):
+    kandidat = Kandidat.objects.filter(email=njegovEmail)
+    
+    if student:
+        return kandidat
+    else:
+        raise Exception('Ni bilo studenta v tabeli')
 
+def is_student(user):
+    return user.groups.filter(name='students').exists()
+
+def is_kandidat(user):
+    #return Kandidat.objects.filter(email=user.email).exists()
+    return user.groups.filter(name='candidates').exists()
 def emso_verify(emso):
         """
         vnesi emso v stringu in ce dobis rez. isti kot emso je emso kul
