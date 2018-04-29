@@ -7,6 +7,7 @@ from sifranti.models import *
 from .models import *
 from time import gmtime, strftime
 from django.core.exceptions import ValidationError
+from datetime import datetime
 
 # Create your views here.
 def index_izpiti(request):
@@ -78,6 +79,7 @@ def dodaj_izpit(request):
 
 def prijava(request):
 #VNOS PRIJAVE
+
     if(request.user.groups.all()[0].name == "students"):
         if request.method == 'POST' and 'prijava_izpit' in request.POST:
             predmeti_studenta_id = request.POST['predmeti_studenta']
@@ -91,10 +93,25 @@ def prijava(request):
                 if str(rok.id) == rok_id:
                     vnesi_rok = rok
 
-            #print(str(vnesi_predmeti_studenta.id) + " ---" + str(vnesi_rok.id))
+            #prvo dobit vse prijave tega studenta, prevert je ze obstajala prijava za ta predmet
+            #ni se preverjeno ce dela!
+            flag = False
+            all_prijave = Prijava.objects.all()
+            curr_prijave = []
+            for prijava in all_prijave:
+                if prijava.predmeti_studenta.vpis.student.email == request.user.email:
+                    curr_prijave.append(prijava)
+            
+            for prijava in curr_prijave:
+                if prijava.rok.izvedba_predmeta == vnesi_rok.izvedba_predmeta:
+                    prijava.zaporedna_stevilka_polaganja += 1
+                    flag = True
 
-            a = Prijava(predmeti_studenta = vnesi_predmeti_studenta, rok = vnesi_rok, zaporedna_stevilka_polaganja = 1)
-            a.save()
+            if flag == False:
+                a = Prijava(predmeti_studenta = vnesi_predmeti_studenta, rok = vnesi_rok, zaporedna_stevilka_polaganja = 1)
+                a.save()
+
+
 #IZBRIS PRIJAVE
 
         elif request.method == 'POST' and 'odjava_izpit' in request.POST:
@@ -128,6 +145,7 @@ def prijava(request):
         if curr_student is None:
             return HttpResponse("Student ne obstaja!")
         else:
+            
             all_predmetiStudenta = PredmetiStudenta.objects.all()
             for predmetiStudenta in all_predmetiStudenta:
                 if predmetiStudenta.vpis.student.email == curr_student.email:
@@ -145,12 +163,14 @@ def prijava(request):
             all_rok = Rok.objects.all()
             roki = []
             for rok in all_rok:
+                print(rok.datum)
+                #if rok.datum > datetime.now(): #preverjanje datuma
                 for izvedba in all_izvedba_studenta:
                     if rok.izvedba_predmeta == izvedba:
                         roki.append(rok)
+            
 
             #gres se cez vse prijave da ves na kerga si se ze prjavu-->
-
             all_prijava = Prijava.objects.all()
             prijavljeni_roki = []
             neprijavljeni_roki = []
@@ -162,9 +182,6 @@ def prijava(request):
                         else:
                             neprijavljeni_roki.append(rok)
 
-            print(prijavljeni_roki)
-            
-            
     else:
         return HttpResponse("Nimaš dovoljenja.")
 
