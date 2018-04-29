@@ -234,7 +234,7 @@ def naredi_bazo(request):
         user.set_password("adminadmin")
         user.is_staff=False
         user.is_superuser=False
-        ref_group, status = Group.objects.get_or_create(name='student') 
+        ref_group, status = Group.objects.get_or_create(name='students') 
         ref_group.user_set.add(user)
     
     user.save()
