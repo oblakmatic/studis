@@ -223,33 +223,33 @@ def naredi_bazo(request):
 	a_nacinStudija.save()
 	a = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )
 	a.save()
-    #naredi studenta
-    a = Student(vpisna_stevilka = 63150000, emso=1511996500207, ime="Primož", priimek="Trubar",naslov_stalno_bivalisce="Kranjska ulica 12", drzava= Drzava.objects.filter(pk=4)[0],kraj_rojstva="Ljubljana", posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="pt0000@fri.uni-lj.si")
-    a.save()
-    user, created = User.objects.get_or_create(username="student", email="pt0000@fri.uni-lj.si")
-    user.first_name = "Primož"
-    user.last_name = "Trubar"
+	#naredi studenta
+	a = Student(vpisna_stevilka = 63150000, emso=1511996500207, ime="Primož", priimek="Trubar",naslov_stalno_bivalisce="Kranjska ulica 12", drzava= Drzava.objects.filter(pk=4)[0],kraj_rojstva="Ljubljana", posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="pt0000@fri.uni-lj.si")
+	a.save()
+	user, created = User.objects.get_or_create(username="student", email="pt0000@fri.uni-lj.si")
+	user.first_name = "Primož"
+	user.last_name = "Trubar"
 
-    if created:
-        user.set_password("adminadmin")
-        user.is_staff=False
-        user.is_superuser=False
-        ref_group, status = Group.objects.get_or_create(name='students') 
-        ref_group.user_set.add(user)
-    
-    user.save()
+	if created:
+		user.set_password("adminadmin")
+		user.is_staff=False
+		user.is_superuser=False
+		ref_group, status = Group.objects.get_or_create(name='students') 
+		ref_group.user_set.add(user)
+	
+	user.save()
 
-    #naredi referenta
-    user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")
-    user.first_name = "Tatjana"
-    user.last_name = "Novak"
-        
-    if created:
-        user.set_password("adminadmin")
-        user.is_staff=False
-        user.is_superuser=False
-        ref_group, status = Group.objects.get_or_create(name='referent') 
-        ref_group.user_set.add(user)
+	#naredi referenta
+	user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")
+	user.first_name = "Tatjana"
+	user.last_name = "Novak"
+		
+	if created:
+		user.set_password("adminadmin")
+		user.is_staff=False
+		user.is_superuser=False
+		ref_group, status = Group.objects.get_or_create(name='referent') 
+		ref_group.user_set.add(user)
 
 	a_1Letnik = Letnik(ime="1.")
 	a_1Letnik.save()
