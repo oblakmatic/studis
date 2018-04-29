@@ -37,7 +37,7 @@ class Posta(models.Model):
 
 
     def __str__(self):
-        return self.id
+        return str(self.id) +" " + self.kraj
 
 class StudijskiProgram(models.Model):
 #dodiplomski, magisterki, doktorski,
