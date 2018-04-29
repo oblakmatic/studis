@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'sifranti.apps.SifrantiConfig',
     'vpis.apps.VpisConfig',
     'student.apps.StudentConfig',
+	'izpiti.apps.IzpitiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
