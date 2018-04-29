@@ -42,7 +42,7 @@ class Posta(models.Model):
 class StudijskiProgram(models.Model):
 #dodiplomski, magisterki, doktorski,
     
-    #id je sifra obcine
+    #id je sŠifra EVŠ
     id = models.DecimalField(primary_key=True, verbose_name="Šifra EVŠ",decimal_places=0, max_digits= 7)
     sifra = models.CharField(max_length=2, verbose_name="Šifra",unique=True)
     stopnja = models.CharField(max_length=100, verbose_name="Stopnja")

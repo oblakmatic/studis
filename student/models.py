@@ -57,6 +57,7 @@ class Vpis(models.Model):
     # vrsta studija je kao oblika studija
     vrsta_studija  = models.ForeignKey(VrstaStudija, null=True, on_delete= models.SET_NULL)
     # predmeti_studenta s foreign keyom
-    # ?? potrjen = models.BooleanField(default = False)
+    # ali je bil vpis ze potrjen 
+    potrjen = models.BooleanField(default = False)
     # ?? prosta_izbira = models.BooleanField(default = False)
 

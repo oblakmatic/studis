@@ -13,14 +13,15 @@ def index_vpis(request):
 
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
-        
-        # example Posta --> PostaForm
 
-        possible_student = vrniStudenta(request.user.email)
-        print(request.POST)
 
-        form = VpisForm(request.POST)
+
         
+        if is_kandidat(request.user.email):
+            form = VpisForm(request.POST)
+        else:
+
+
 
 
         # check whether it's valid:
@@ -121,7 +122,7 @@ def vrniStudenta(njegovEmail):
 def vrniKandidata(njegovEmail):
     kandidat = Kandidat.objects.filter(email=njegovEmail)
     
-    if student:
+    if kandidat:
         return kandidat
     else:
         raise Exception('Ni bilo studenta v tabeli')
