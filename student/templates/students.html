@@ -43,10 +43,6 @@
 		{% csrf_token %}
     	<button type="submit" class="btn btn-outline-primary mb-2 mr-2">Seznam vpisnih žetonov</button>
 	</form>
-	<form action="/student/uvoz/" method="post">
-		{% csrf_token %}
-    	<button type="submit" class="btn btn-outline-primary mb-2 mr-2">Uvozi datoteko</button>
-	</form>
 	<form action="/student/izvoz/pdf/" method="post">
 		{% csrf_token %}
     	<button type="submit" class="btn btn-outline-secondary mb-2 mr-2">Izvozi PDF</button>

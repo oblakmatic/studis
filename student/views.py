@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from student.models import Student, Zeton, Vpis
+from student.models import Student, Zeton, Vpis, Kandidat
 from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -39,23 +39,24 @@ def import_students(request):
 		program = data[60:67]
 		email = data[67:].rstrip()
 
-		student = None
+		kandidat = None
 		try:
-			student = Student.objects.get(email=email)
-			student.ime = name
-			student.priimek = surname
-			student.save()
+			kandidat = Kandidat.objects.get(email=email)
+			kandidat.ime = name
+			kandidat.priimek = surname
+			kandidat.studijski_program=StudijskiProgram.objects.filter(pk=int(program))[0]
+			kandidat.save()
 			updated = updated + 1
-		except Student.DoesNotExist:
+		except Kandidat.DoesNotExist:
 
-			serial = Student.objects.count()+1
+			serial = Kandidat.objects.count()+1
 			year = datetime.datetime.today().year % 2000
 			vpisna = "63"+ str(year) + format(serial, '04d')
-			student = Student.objects.create(vpisna_stevilka=int(vpisna))
-			student.email = email
-			student.ime = name
-			student.priimek = surname
-			student.save()
+			kandidat = Kandidat.objects.create(vpisna_stevilka=int(vpisna))
+			kandidat.email = email
+			kandidat.ime = name
+			kandidat.priimek = surname
+			kandidat.save()
 			
 			new = new + 1
 
@@ -72,14 +73,14 @@ def import_students(request):
 			user.set_password(password)
 			user.is_staff=False
 			user.is_superuser=False
-			students_group, status = Group.objects.get_or_create(name='students') 
+			students_group, status = Group.objects.get_or_create(name='candidates') 
 			students_group.user_set.add(user)
 
 		user.save()
 
 		temp=[]
 		temp.append(str(i + 1))
-		temp.append(student.vpisna_stevilka)
+		temp.append(kandidat.vpisna_stevilka)
 		temp.append(surname)
 		temp.append(name)
 		temp.append(username)
