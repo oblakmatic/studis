@@ -436,4 +436,3 @@ def naredi_bazo(request):
 	user.save()
 
 	return HttpResponse("Narejena baza!")
-
