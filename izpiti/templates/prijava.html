@@ -24,10 +24,11 @@
             <td>
                 {{ rok.izvedba_predmeta.studijsko_leto }}
             </td>
-            <td>{{ rok.izvedba_predmeta.predmet }}
+            <td>
+                {{ rok.izvedba_predmeta.predmet }}
             </td>
 
-                {% if rok.izvedba_predmeta.ucitelj_3 != null %}
+            {% if rok.izvedba_predmeta.ucitelj_3 != null %}
             <td>
                 {{ rok.izvedba_predmeta.ucitelj_1.ime }}
                 {{ rok.izvedba_predmeta.ucitelj_1.priimek }},
@@ -52,10 +53,17 @@
 
             <td>{{ rok.datum }}</td>
 
-            <form action="/izpiti/izpiti-message/" method="post">
+            <form action="/izpiti/prijava/" method="post">
                 {% csrf_token %}
                 <td>
+                    <input type="hidden" name="predmeti_studenta" value={{ predmetiStudenta.id }}>
+                    <input type="hidden" name="rok_" value={{ rok.id }}>
+
+                    {% if rok in arr1 %}
+                    <button type="submit" name="odjava_izpit" class="btn btn-outline-primary mt-2">Odjavi se</button>
+                    {% else %}
                     <button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2">Prijavi se</button>
+                    {% endif %}
                 </td>
             </form>
         </tr>

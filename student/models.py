@@ -18,7 +18,7 @@ class Student(models.Model):
     obcina = models.ForeignKey(Obcina, on_delete = models.SET_NULL, null=True)
     telefon = models.CharField(max_length = 15) # reci je treba se mal preverit
     email = models.CharField(max_length = 60, unique = True)
-    # tu naj bi prisli se vsi vpisi, verjetno bodo vpisi kazali na studenta
+    # tu naj bi prisli se vsi vpisi, verjetno bodo vpisi kazali na studentas
     # one to many se izrazi z foreign keyom
     dodatno_leto = models.BooleanField(default = True)
 
