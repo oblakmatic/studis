@@ -86,7 +86,7 @@ def update(request, diff, index):
 			# and update into database
 			
 			form.save()
-			return HttpResponse("Uspesno dodan element") 
+			return HttpResponse("Uspesno posodobljen element") 
 		else:
 			context = {
 				'object_name' : diff,
@@ -103,7 +103,7 @@ def update(request, diff, index):
 		if diff in diff_names:
 			element = eval(diff).objects.filter(pk=index).values()
 
-			form = eval(diff+'Form')()
+			form = eval(diff+'Form')(initial = element[0])
 			context = {
 			'object_name' : diff,
 			'form': form,
@@ -224,7 +224,7 @@ def naredi_bazo(request):
 	a = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )
 	a.save()
 	#naredi studenta
-	a = Student(vpisna_stevilka = 63150000, emso=1511996500207, ime="Primož", priimek="Trubar",naslov_stalno_bivalisce="Kranjska ulica 12", drzava= Drzava.objects.filter(pk=4)[0],kraj_rojstva="Ljubljana", posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="pt0000@fri.uni-lj.si")
+	a = Student(vpisna_stevilka = 63150000, emso=1511996500207, ime="Primož", drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina,  priimek="Trubar",naslov_stalno_bivalisce="Kranjska ulica 12", drzava= Drzava.objects.filter(pk=4)[0], posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="pt0000@fri.uni-lj.si")
 	a.save()
 	user, created = User.objects.get_or_create(username="student", email="pt0000@fri.uni-lj.si")
 	user.first_name = "Primož"
@@ -346,11 +346,11 @@ def naredi_bazo(request):
 	a = IzvedbaPredmeta(predmet = a_P1, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
 	a.save()
 
-	a_aljaz = Student(vpisna_stevilka = "63150255", emso = "5869362456789", priimek="Rupar", ime="Aljaž", naslov_stalno_bivalisce="Škofja Loka", drzava=a_slo,kraj_rojstva="Kranj", posta= a_sklPosta, obcina=a_sklObcina, telefon="031866686", email="ar1961@student.uni-lj.si")
+	a_aljaz = Student(vpisna_stevilka = "63150255", emso = "5869362456789", priimek="Rupar", ime="Aljaž", naslov_stalno_bivalisce="Škofja Loka", drzava=a_slo, drzava_rojstva = a_slo, posta= a_sklPosta, obcina=a_sklObcina,obcina_rojstva= a_ljObcina, telefon="031866686", email="ar1961@student.uni-lj.si")
 	a_aljaz.save()
 
 
-	a_verlic = Student(vpisna_stevilka = "63150256", emso = "5869362456755", priimek="Verlič", ime="Aljaž", naslov_stalno_bivalisce="Ljubljana Trnovo", drzava=a_slo,kraj_rojstva="Ljubljana", posta= a_ljPosta, obcina=a_ljObcina, telefon="041786345", email="av1974@student.uni-lj.si")
+	a_verlic = Student(vpisna_stevilka = "63150256", emso = "5869362456755", priimek="Verlič", ime="Aljaž", naslov_stalno_bivalisce="Ljubljana Trnovo", drzava=a_slo,drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina, posta= a_ljPosta, obcina=a_ljObcina, telefon="041786345", email="av1974@student.uni-lj.si")
 	a_verlic.save()
 
 	a = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )
@@ -365,9 +365,9 @@ def naredi_bazo(request):
 
 	a_vpisVerlic = Vpis(student=a_verlic, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vrstaVpisa,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
 	a_vpisVerlic.save()
-	
-    
 
+	#a_aljaz.vpisi.add(a_vpisAljaz)
+  
 	a_predmetiStudentaAljaz = PredmetiStudenta()
 	a_predmetiStudentaAljaz.save()
 	a_predmetiStudentaAljaz.vpis = a_vpisAljaz
@@ -380,12 +380,7 @@ def naredi_bazo(request):
 	a_predmetiStudentaVerlic.predmeti.add(a_teh,a_oim,a_ep,a_obl,a_aps1)
 	a_predmetiStudentaVerlic.save()
 
-	a_prijave_aljaz = PrijaveStudenta(student = a_aljaz)
-	a_prijave_aljaz.save()
-
-	a_prijave_verlic = PrijaveStudenta(student = a_verlic)
-	a_prijave_verlic.save()
-
+	
 	#naredi referenta
 	user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")
 	user.first_name = "Tatjana"
