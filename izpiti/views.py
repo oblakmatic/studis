@@ -85,6 +85,8 @@ def prijava(request):
             predmeti_studenta_id = request.POST['predmeti_studenta']
             rok_id = request.POST['rok_']
 
+
+
             for curr_predmetiStudenta in PredmetiStudenta.objects.all():
                 if str(curr_predmetiStudenta.id) == predmeti_studenta_id:
                     vnesi_predmeti_studenta = curr_predmetiStudenta
@@ -95,22 +97,29 @@ def prijava(request):
 
             #prvo dobit vse prijave tega studenta, prevert je ze obstajala prijava za ta predmet
             #ni se preverjeno ce dela!
-            flag = False
+            
             all_prijave = Prijava.objects.all()
             curr_prijave = []
             for prijava in all_prijave:
                 if prijava.predmeti_studenta.vpis.student.email == request.user.email:
                     curr_prijave.append(prijava)
             
-            for prijava in curr_prijave:
-                if prijava.rok.izvedba_predmeta == vnesi_rok.izvedba_predmeta:
-                    prijava.zaporedna_stevilka_polaganja += 1
-                    flag = True
 
-            if flag == False:
-                a = Prijava(predmeti_studenta = vnesi_predmeti_studenta, rok = vnesi_rok, zaporedna_stevilka_polaganja = 1)
-                a.save()
+            
 
+            a = Prijava(predmeti_studenta = vnesi_predmeti_studenta, rok = vnesi_rok, zaporedna_stevilka_polaganja = 1)
+            a.save()
+
+            curr_student = vnesi_predmeti_studenta.vpis.student
+            all_prijaveStudenta = PrijaveStudenta.objects.all()
+            for prijaveStudenta in all_prijaveStudenta:
+                if prijaveStudenta.student == curr_student:
+                    prijaveStudenta.prijave.add(a)
+                    print(prijaveStudenta.prijave.all())
+            
+            
+            
+            
 
 #IZBRIS PRIJAVE
 
@@ -127,10 +136,21 @@ def prijava(request):
                     vnesi_rok = rok
         
             all_prijava = Prijava.objects.all()
+            prijava_ = None
             for prijava in all_prijava:
                 if prijava.predmeti_studenta == vnesi_predmeti_studenta and prijava.rok == vnesi_rok:
                     print("prijava odstranjena!")
-                    prijava.delete()
+                    prijava_ = prijava
+            
+            #ODSTRANJEVANJE PRIJAVE V PRIJAVESTUDENTA IN POL SE PRIJAVA!
+            curr_student = vnesi_predmeti_studenta.vpis.student
+            all_prijaveStudenta = PrijaveStudenta.objects.all()
+            for prijaveStudenta in all_prijaveStudenta:
+                if prijaveStudenta.student == curr_student:
+                    prijaveStudenta.prijave.remove(prijava_)
+                    prijava_.delete()
+                    print(prijaveStudenta.prijave.all())
+
 
 #PRIJAVA NA IZPIT
         
