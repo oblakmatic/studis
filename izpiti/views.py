@@ -7,6 +7,8 @@ from sifranti.models import *
 from .models import *
 from time import gmtime, strftime
 from django.core.exceptions import ValidationError
+from datetime import datetime
+import pytz
 
 
 # Create your views here.
@@ -104,9 +106,23 @@ def prijava(request):
             rok_id = request.POST['rok_']
             
             predmet = IzvedbaPredmeta.objects.filter(rok__id = rok_id)[0]
-            print(predmet)
-            stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet).count()
-            print(stevilo_dosedanjih_polaganj)
+            stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
+            print("polaganja skupaj", stevilo_dosedanjih_polaganj)
+
+            utc = pytz.UTC
+            trenutni_datum = utc.localize(datetime.now()).date()
+            
+            # print(trenutni_datum.year-1, trenutni_datum.year, trenutni_datum.year+1)
+            if (trenutni_datum.month >= 10 and trenutni_datum.day >= 1):
+                trenutno_leto = str(trenutni_datum.year) + "/" + str(trenutni_datum.year+1)
+            else:
+                trenutno_leto = str(trenutni_datum.year-1) + "/" + str(trenutni_datum.year)
+            
+            polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_leto, aktivna_prijava = True).count()
+            print("polaganja letos", polaganja_trenutno_leto)
+            # print(trenutno_leto)
+            trenutno_studijsko_leto = StudijskoLeto.objects.filter(ime = trenutno_leto)
+
             for curr_predmetiStudenta in PredmetiStudenta.objects.all():
                 if str(curr_predmetiStudenta.id) == predmeti_studenta_id:
                     vnesi_predmeti_studenta = curr_predmetiStudenta
