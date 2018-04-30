@@ -26,6 +26,7 @@ class PredmetiStudenta(models.Model):
     
 
 class Prijava(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
     predmeti_studenta = models.ForeignKey(PredmetiStudenta, on_delete = models.SET_NULL, null = True)
     rok = models.ForeignKey(Rok, on_delete = models.SET_NULL, null = True)
 

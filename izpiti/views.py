@@ -106,7 +106,8 @@ def prijava(request):
             rok_id = request.POST['rok_']
             
             predmet = IzvedbaPredmeta.objects.filter(rok__id = rok_id)[0]
-            stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
+            # stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
+            stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet).count()
             print("polaganja skupaj", stevilo_dosedanjih_polaganj)
             if(stevilo_dosedanjih_polaganj >= 4):
                 print('WARNING! Placljivo polaganje!')
@@ -123,21 +124,31 @@ def prijava(request):
             else:
                 trenutno_leto = str(trenutni_datum.year-1) + "/" + str(trenutni_datum.year)
             
-            polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_leto, aktivna_prijava = True).count()
+            # polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
+            trenutno_studijsko_leto = StudijskoLeto.objects.filter(ime = trenutno_leto)[0]
+            polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
             if(polaganja_trenutno_leto >= 3):
                 print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!')
             print("polaganja letos", polaganja_trenutno_leto)
             # print(trenutno_leto)
-            trenutno_studijsko_leto = StudijskoLeto.objects.filter(ime = trenutno_leto)
+            
+
+            # zadnje_prijave = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).order_by("-id")[0].created_at
+            
 
             for curr_predmetiStudenta in PredmetiStudenta.objects.all():
                 if str(curr_predmetiStudenta.id) == predmeti_studenta_id:
                     vnesi_predmeti_studenta = curr_predmetiStudenta
-        
-            for rok in Rok.objects.all():
-                if str(rok.id) == rok_id:
-                    vnesi_rok = rok
 
+            vnesi_rok = Rok.objects.filter(id = rok_id)[0]
+
+            zadnje_prijave = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).order_by("-id")
+            if(zadnje_prijave.count() != 0):
+                print(vars(zadnje_prijave[0]))
+                datum_zadnje_prijave = zadnje_prijave[0].created_at
+                print(datum_zadnje_prijave)
+                if((datum_zadnje_prijave - vnesi_rok.datum).days <= 10): # TODO: Omejitev po dnevih naj bi bila nastavljiva
+                    print("WARNING! Med prejsnjim polaganjem in tem rokom je preteklo manj kot 10 dni!")
             
             a = Prijava(predmeti_studenta = vnesi_predmeti_studenta, rok = vnesi_rok, zaporedna_stevilka_polaganja = stevilo_dosedanjih_polaganj)
             a.save()
