@@ -99,11 +99,14 @@ def prijava(request):
 
     if(request.user.groups.all()[0].name == "students"):
         if request.method == 'POST' and 'prijava_izpit' in request.POST:
+
             predmeti_studenta_id = request.POST['predmeti_studenta']
             rok_id = request.POST['rok_']
-
-
-
+            
+            predmet = IzvedbaPredmeta.objects.filter(rok__id = rok_id)[0]
+            print(predmet)
+            stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet).count()
+            print(stevilo_dosedanjih_polaganj)
             for curr_predmetiStudenta in PredmetiStudenta.objects.all():
                 if str(curr_predmetiStudenta.id) == predmeti_studenta_id:
                     vnesi_predmeti_studenta = curr_predmetiStudenta
@@ -139,13 +142,9 @@ def prijava(request):
 #PRIJAVA NA IZPIT
         
         all_roki = Rok.objects.select_related()
-        email_stud = request.user.email
 
-       
-        for student in Student.objects.all():
-            if student.email == email_stud:
-                curr_student = student
-
+        curr_student = Student.objects.filter(email = request.user.email)[0]
+        
         if curr_student is None:
             return HttpResponse("Student ne obstaja!")
         else:
