@@ -150,19 +150,22 @@ def prijava(request):
             return HttpResponse("Student ne obstaja!")
         else:
             
-            all_predmetiStudenta = PredmetiStudenta.objects.all()
-            for predmetiStudenta in all_predmetiStudenta:
-                if predmetiStudenta.vpis.student.email == curr_student.email:
-                    curr_predmetiStudenta = predmetiStudenta
-        
+            # all_predmetiStudenta = PredmetiStudenta.objects.all()
+            # for predmetiStudenta in all_predmetiStudenta:
+            #     if predmetiStudenta.vpis.student.email == curr_student.email:
+            #         curr_predmetiStudenta = predmetiStudenta
+            curr_predmetiStudenta = PredmetiStudenta.objects.filter(vpis__student__email = curr_student.email)[0]
         #pazi ker ce gres gledat tko kt js pol je lahko izvedbaPredmeta za en predmet z istmu imeno za 2 leti!
-            all_izvedba = IzvedbaPredmeta.objects.all()
+            # all_izvedba = IzvedbaPredmeta.objects.all()
             all_izvedba_studenta = []
             for predmet in curr_predmetiStudenta.predmeti.all():
-                for curr_izvedba in all_izvedba:
-                    #print(predmet.ime + "----" + curr_izvedba.predmet.ime)
-                    if predmet == curr_izvedba.predmet:
-                        all_izvedba_studenta.append(curr_izvedba)
+                izvedbe = IzvedbaPredmeta.objects.filter(predmet = predmet)
+                for izvedba in izvedbe:
+                    all_izvedba_studenta.append(izvedba)
+                # for curr_izvedba in all_izvedba:
+                #     #print(predmet.ime + "----" + curr_izvedba.predmet.ime)
+                #     if predmet == curr_izvedba.predmet:
+                #         all_izvedba_studenta.append(curr_izvedba)
 
             all_rok = Rok.objects.all()
             roki = []
