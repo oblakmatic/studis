@@ -98,7 +98,7 @@ def dodaj_izpit(request):
 
 def prijava(request):
 #VNOS PRIJAVE
-
+    # TODO: Implementacija omejitev, frontend indikatorji neustreznosti
     if(request.user.groups.all()[0].name == "students"):
         if request.method == 'POST' and 'prijava_izpit' in request.POST:
 
