@@ -6,19 +6,19 @@ from sifranti.models import *
 class Student(models.Model):
     #vpisna stevilka je primarni kljuc
     vpisna_stevilka = models.IntegerField(primary_key = True)
-    emso = models.CharField(max_length = 13)
-    priimek = models.CharField(max_length = 30)
-    ime = models.CharField(max_length = 30)
-    naslov_stalno_bivalisce = models.CharField(max_length = 260)
-    naslov_zacasno_bivalisce = models.CharField(max_length = 260, blank=True, null=True)
-    drzava = models.ForeignKey(Drzava, null=True, on_delete = models.SET_NULL)
+    emso = models.CharField(max_length = 13, verbose_name= "EMŠO")
+    priimek = models.CharField(max_length = 30, verbose_name= "Priimek")
+    ime = models.CharField(max_length = 30, verbose_name= "Ime")
+    naslov_stalno_bivalisce = models.CharField(max_length = 260, verbose_name= "Stalno prebivališče")
+    naslov_zacasno_bivalisce = models.CharField(max_length = 260, blank=True, null=True, verbose_name= "Začasno prebivališče")
+    drzava = models.ForeignKey(Drzava, null=True, on_delete = models.SET_NULL, verbose_name= "Država")
     kraj_rojstva = models.CharField(max_length = 260) # kako bomo preverjali konsistentnost drzave in obcine rojstva
     
-    posta = models.ForeignKey(Posta, on_delete = models.SET_NULL, null=True)
-    obcina = models.ForeignKey(Obcina, on_delete = models.SET_NULL, null=True)
-    telefon = models.CharField(max_length = 15) # reci je treba se mal preverit
-    email = models.CharField(max_length = 60, unique = True)
-    # tu naj bi prisli se vsi vpisi, verjetno bodo vpisi kazali na studentas
+    posta = models.ForeignKey(Posta, on_delete = models.SET_NULL, null=True, verbose_name= "Pošta")
+    obcina = models.ForeignKey(Obcina, on_delete = models.SET_NULL, null=True, verbose_name= "Občina")
+    telefon = models.CharField(max_length = 15, verbose_name= "Telefon") # reci je treba se mal preverit
+    email = models.CharField(max_length = 60, unique = True, verbose_name= "e-pošta")
+    # tu naj bi prisli se vsi vpisi, verjetno bodo vpisi kazali na studenta
     # one to many se izrazi z foreign keyom
     dodatno_leto = models.BooleanField(default = True)
 
@@ -45,6 +45,7 @@ class Zeton(models.Model):
 
 class Vpis(models.Model):
     student = models.ForeignKey(Student, primary_key = True,  on_delete= models.CASCADE)
+    
     studijsko_leto = models.ForeignKey(StudijskoLeto, null= True, on_delete=models.SET_NULL)
 
     studijski_program = models.ForeignKey(StudijskiProgram, null=True, on_delete= models.SET_NULL)
