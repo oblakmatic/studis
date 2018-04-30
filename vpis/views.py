@@ -21,7 +21,7 @@ def index_vpis(request):
             form = VpisForm(request.POST)
         else:
 
-
+            pass
 
 
         # check whether it's valid:

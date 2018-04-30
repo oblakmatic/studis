@@ -19,7 +19,7 @@ class VpisForm(ModelForm):
 
 	class Meta:
 		model = Vpis
-		exclude = ['student']
+		exclude = ['student','potrjen','prosta_izbira','izkoriscen']
 
 	def __init__(self, *args, **kwargs):
 		super(VpisForm, self).__init__(*args, **kwargs)
