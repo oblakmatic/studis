@@ -108,6 +108,11 @@ def prijava(request):
             predmet = IzvedbaPredmeta.objects.filter(rok__id = rok_id)[0]
             stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
             print("polaganja skupaj", stevilo_dosedanjih_polaganj)
+            if(stevilo_dosedanjih_polaganj >= 4):
+                print('WARNING! Placljivo polaganje!')
+
+            if(stevilo_dosedanjih_polaganj >= 6):
+                print('WARNING! Stevilo najvec moznih polaganj predmeta prekoraceno!')
 
             utc = pytz.UTC
             trenutni_datum = utc.localize(datetime.now()).date()
@@ -119,6 +124,8 @@ def prijava(request):
                 trenutno_leto = str(trenutni_datum.year-1) + "/" + str(trenutni_datum.year)
             
             polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_leto, aktivna_prijava = True).count()
+            if(polaganja_trenutno_leto >= 3):
+                print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!')
             print("polaganja letos", polaganja_trenutno_leto)
             # print(trenutno_leto)
             trenutno_studijsko_leto = StudijskoLeto.objects.filter(ime = trenutno_leto)
@@ -132,7 +139,7 @@ def prijava(request):
                     vnesi_rok = rok
 
             
-            a = Prijava(predmeti_studenta = vnesi_predmeti_studenta, rok = vnesi_rok, zaporedna_stevilka_polaganja = 1)
+            a = Prijava(predmeti_studenta = vnesi_predmeti_studenta, rok = vnesi_rok, zaporedna_stevilka_polaganja = stevilo_dosedanjih_polaganj)
             a.save()
 
 #IZBRIS PRIJAVE
