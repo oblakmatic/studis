@@ -1,4 +1,59 @@
 {% extends 'base.html' %}
 {% block content %}
-<h3>Uspesen vnos izpitnega roka</h3>
+
+<div class="container sifrant">
+    <h3>Vasi razpisani roki izpitov</h3>
+
+
+    <table class="table">
+
+        <thead>
+            <tr>
+                <th scope="col">Studijsko leto</th>
+                <th scope="col">Predmet</th>
+                <th scope="col">Izvajalec</th>
+                <th scope="col">Datum</th>
+                <th scope="col">Prijava</th>
+            </tr>
+        </thead>
+
+        {% for rok in arr %}
+
+        <tr>
+            <td>
+                {{ rok.izvedba_predmeta.studijsko_leto }}
+            </td>
+            <td>
+                {{ rok.izvedba_predmeta.predmet }}
+            </td>
+
+            {% if rok.izvedba_predmeta.ucitelj_3 != null %}
+            <td>
+                {{ rok.izvedba_predmeta.ucitelj_1.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+                {{ rok.izvedba_predmeta.ucitelj_2.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_2.priimek }},
+                {{ rok.izvedba_predmeta.ucitelj_3.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_3.priimek }}
+            </td>
+            {% elif rok.izvedba_predmeta.ucitelj_2 != null %}
+            <td>
+                {{ rok.izvedba_predmeta.ucitelj_1.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+                {{ rok.izvedba_predmeta.ucitelj_2.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_2.priimek }}
+            </td>
+            {% elif rok.izvedba_predmeta.ucitelj_1 != null %}
+            <td>
+                {{ rok.izvedba_predmeta.ucitelj_1.ime }}
+                {{ rok.izvedba_predmeta.ucitelj_1.priimek }}
+            </td>
+            {% endif %}
+
+            <td>{{ rok.datum }}</td>
+            <td>Prijava je mozna</td>
+        </tr>
+        {% endfor %}
+
+</div>
 {% endblock %}
