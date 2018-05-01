@@ -121,7 +121,7 @@ def emso_verify(emso):
 def predmetnik(request):
     program = StudijskiProgram.objects.get(id=1000468)
     leto = StudijskoLeto.objects.get(ime="2018/2019")
-    letnik = Letnik.objects.get(ime="2.")
+    letnik = Letnik.objects.get(ime="3.")
 
     predmeti_obvezni = []
     predmeti_izbirni = []

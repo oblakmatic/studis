@@ -9,52 +9,53 @@
 
     <div class="row mt-4" id="predmeti" data-base = {{ KT }} >
 
-        <div class="card mycard">
-            <div class="card-header">
-             Obvezni predmeti
-            </div>
-            <ul class="list-group list-group-flush ">
+
+        <ul class="list-group mycard">
+            <li class="list-group-item list-group-item-dark">Obvezni predmeti</li>
         {% for t in predmeti_o %}
             <li class="list-group-item">{{ t }}</li>
           
 
         {% endfor %}
-            </ul>
-        </div>
-      
-        <div class="card mycard">
-            <div class="card-header">
-            Izbirni predmeti
-            </div>
-            <ul class="list-group list-group-flush" id="izbirni-predmeti">
+        </ul>
+    
+     
+        <ul class="list-group mycard" id="izbirni-predmeti">
+            <li class="list-group-item list-group-item-primary">Izbirni predmeti</li>
             {% for t in predmeti_i %}
             <li class="list-group-item">{{ t }} <span style="float: right"><input type="checkbox" class="form-check-input"></span></li>
-            
+        
 
         {% endfor %}
-            </ul>
-        </div>
+        </ul>
+       
 
         {% if so_moduli  %}
-        <div class="card mycard">
-            <div class="card-header">
-            Moduli
-            </div>
-            <ul class="list-group list-group-flush" id="modul-predmeti">
-            {% for t in predmeti_m %}
-            <li class="list-group-item pb-4">
-                {% for p in t %}
-                    <p>{{ p }}</p>
-                {% endfor %}
-            <span style="float: right"><input type="checkbox" class="form-check-input"></span></li>
+        
+        <ul class="list-group mycard" id="modul-predmeti">
+            <li class="list-group-item list-group-item-success">Moduli</li>
+        {% for t in predmeti_m %}
+            <li class="list-group-item">
+               
+                <input type="checkbox" class="form-check-input col-sm-3">
+                <ul class="list-group list-group-flush">
 
-            {% endfor %}
-            </ul>
-        </div>
+                {% for p in t %}
+                    
+                    <li class="list-group-item">{{ p }}<span style="float: right; margin-right: -15%"><input type="checkbox" class="form-check-input"></span></li>
+                   
+                {% endfor %}
+                 </ul>
+                
+            </li>
+
+        {% endfor %}
+        </ul>
+       
         {% endif %}
 
     <div>
-        <h5>Skupaj kreditnih točk: <span id="skupaj-kt-tock">{{ KT }}</span></h5>
+        <h4>Skupaj kreditnih točk: <span id="skupaj-kt-tock">{{ KT }}</span></h4>
         <div class="alert alert-success d-none" id="ok">
             Izpolnjeni pogoji.
             <button class="btn btn-outline-success">Končaj vpis</button>

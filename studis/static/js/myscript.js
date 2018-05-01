@@ -1,19 +1,31 @@
 
 $(function(){
 	preveriPredmete();
+
 	$("#izbirni-predmeti").click(preveriPredmete);
 	$("#modul-predmeti").click(preveriPredmete);
+
+
+	$("input[type='checkbox']").on('change', function () {
+     $(this).siblings('ul')
+           .find("input[type='checkbox']")
+           .prop('checked', this.checked);
+     console.log($(this).siblings('ul')
+           .find("input[type='checkbox']")
+           .prop('checked', this.checked).length)
+  });
 });
 
 function preveriPredmete(){
 
 		base_value = $("#predmeti").data("base");
 
-		izbranih = $('#izbirni-predmeti :input[type="checkbox"]:checked').length;
+		izbranih = $('#izbirni-predmeti :input[type="checkbox"]:checked');
 	    
-	    izbranih2 = $('#modul-predmeti :input[type="checkbox"]:checked').length;
+	    izbranih2 = $('#modul-predmeti :input[type="checkbox"]:checked');
+
 	
-	    skupaj = base_value + izbranih *6 + izbranih2 * 18;
+	    skupaj = base_value + izbranih.length *6 + izbranih2.length * 18;
 
 	    if (skupaj== 60){
 
