@@ -1,0 +1,69 @@
+{% include "base.html" %}
+
+
+{% block content %}
+
+<div class="container sifrant">
+    
+    <h2>Predmeti za {{letnik}} letnik</h2>
+
+    <div class="row mt-4" id="predmeti" data-base = {{ KT }} >
+
+        <div class="card mycard">
+            <div class="card-header">
+             Obvezni predmeti
+            </div>
+            <ul class="list-group list-group-flush ">
+        {% for t in predmeti_o %}
+            <li class="list-group-item">{{ t }}</li>
+          
+
+        {% endfor %}
+            </ul>
+        </div>
+      
+        <div class="card mycard">
+            <div class="card-header">
+            Izbirni predmeti
+            </div>
+            <ul class="list-group list-group-flush" id="izbirni-predmeti">
+            {% for t in predmeti_i %}
+            <li class="list-group-item">{{ t }} <span style="float: right"><input type="checkbox" class="form-check-input"></span></li>
+            
+
+        {% endfor %}
+            </ul>
+        </div>
+
+        {% if so_moduli  %}
+        <div class="card mycard">
+            <div class="card-header">
+            Moduli
+            </div>
+            <ul class="list-group list-group-flush" id="modul-predmeti">
+            {% for t in predmeti_m %}
+            <li class="list-group-item pb-4">
+                {% for p in t %}
+                    <p>{{ p }}</p>
+                {% endfor %}
+            <span style="float: right"><input type="checkbox" class="form-check-input"></span></li>
+
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+    <div>
+        <h5>Skupaj kreditnih točk: <span id="skupaj-kt-tock">{{ KT }}</span></h5>
+        <div class="alert alert-success d-none" id="ok">
+            Izpolnjeni pogoji.
+            <button class="btn btn-outline-success">Končaj vpis</button>
+        </div>
+        <div class="alert alert-warning d-none" id="notok">
+            Potrebnih je 60 kreditnih točk.
+        </div>
+    </div>
+    </div>
+
+</div>
+{% endblock %}

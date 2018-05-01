@@ -5,9 +5,8 @@ from django import forms
 
 # Create your views here.
 from .forms import *
-from student.models import Vpis
-
-
+from student.models import Vpis, Predmetnik, Modul
+from sifranti.models import StudijskiProgram, StudijskoLeto, Letnik, Predmet
 
 def index_vpis(request):
 
@@ -118,3 +117,64 @@ def emso_verify(emso):
         emso_sum = sum([emso_digit_list[i] * emso_factor_map[i] for i in range(12)])
         control_digit = 0 if emso_sum % 11 == 0 else 11 - (emso_sum % 11)
         return str(emso)[:12] + str(control_digit)
+
+def predmetnik(request):
+    program = StudijskiProgram.objects.get(id=1000468)
+    leto = StudijskoLeto.objects.get(ime="2018/2019")
+    letnik = Letnik.objects.get(ime="2.")
+
+    predmeti_obvezni = []
+    predmeti_izbirni = []
+    predmeti_modul = []
+    KT = 0
+    so_moduli = False
+
+    #1 in 2 letnik
+    if letnik != Letnik.objects.get(ime="3."):
+       
+        predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik).values('predmet', 'obvezen')
+        
+ 
+        for i in predmeti_id:
+
+            predmet = Predmet.objects.get(id=i['predmet'])
+            if i['obvezen']:
+                predmeti_obvezni.append(predmet)
+                KT=KT+6
+            else:
+                predmeti_izbirni.append(predmet)
+    #3 letnik
+    else:
+        so_moduli = True
+        predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, ima_modul=False).values('predmet', 'obvezen')
+        for i in predmeti_id:
+
+            predmet = Predmet.objects.get(id=i['predmet'])
+            if i['obvezen']:
+                predmeti_obvezni.append(predmet)
+                KT=KT+6
+            else:
+                predmeti_izbirni.append(predmet)
+
+        num = Modul.objects.count()
+    
+        for m in range(1, num+1):
+            modul = Modul.objects.get(id=m)
+
+            temp=[]
+            for p in modul.predmetniki.all().values():
+    
+                temp.append(Predmet.objects.get(id=p["predmet_id"]))
+
+            predmeti_modul.append(temp)
+
+
+    context = {
+        'predmeti_o': predmeti_obvezni,
+        'predmeti_i': predmeti_izbirni,
+        'predmeti_m': predmeti_modul,
+        'letnik': letnik,
+        'so_moduli': so_moduli,
+        'KT': KT
+    }
+    return render(request,'vpis/predmetnik.html', context)
