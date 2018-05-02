@@ -1,3 +1,5 @@
+
+
 {% extends 'base.html' %}
 {% block title %}Prijava na izpite{% endblock %}
 
@@ -60,9 +62,9 @@
                     <input type="hidden" name="rok_" value={{ rok.id }}>
 
                     {% if rok in arr1 %}
-                    <button type="submit" name="odjava_izpit" class="btn btn-outline-primary mt-2">Odjavi se</button>
+                    <button type="submit" onclick ="myFunction(&quot;{{ rok.datum }}&quot;)" name="odjava_izpit" class="btn btn-outline-primary mt-2">Odjavi se</button>
                     {% else %}
-                    <button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2">Prijavi se</button>
+                    <button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2" >Prijavi se</button>
                     {% endif %}
                 </td>
             </form>
@@ -71,4 +73,10 @@
 
 </div>
 
-    {% endblock %}
+<script type="text/javascript">
+    function myFunction(datum) {
+        console.log(datum);
+    }
+</script>
+
+{% endblock %}

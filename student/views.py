@@ -13,6 +13,13 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter, A4, landscape
 from reportlab.lib import colors 
 
+import time
+from reportlab.lib.enums import TA_JUSTIFY
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+
 # Create your views here.
 def upload_file(request):
 
@@ -316,3 +323,111 @@ def export_pdf(request):
 
 	doc.build(elements)
 	return response
+
+def potrdi_studente(request):
+	if(request.user.groups.all()[0].name == "referent"):
+		if request.method == 'POST' and 'potrdi_studenta' in request.POST:
+
+			vpis_student_email = request.POST.get('vpis_email')
+			
+			for vpis in Vpis.objects.all():
+				if str(vpis.student.email) == vpis_student_email:
+					if vpis.potrjen == False:
+						vpis.potrjen = True
+						vpis.save()
+
+
+	else:
+		return HttpResponse("Nimaš dovoljenja.")
+
+	all_vpis = Vpis.objects.all()
+	potrjeni = []
+	for vpis in all_vpis:
+		if vpis.potrjen == False:
+			potrjeni.append(vpis)
+	
+	context = {
+		'arr': potrjeni
+		}
+
+	return render(request, 'potrdi_studente.html',context)
+
+def preveri_seznam(request):
+
+	if(request.user.groups.all()[0].name == "referent"):
+
+		if request.method == 'POST' and 'natisni' in request.POST:
+
+			vpis_student_email = request.POST.get('vpis_email')
+			vpis_ = None
+			for vpis in Vpis.objects.all():
+				if str(vpis.student.email) == vpis_student_email:
+					vpis_ = vpis
+
+
+			response = HttpResponse(content_type='application/pdf')
+			response['Content-Disposition'] = 'inline; filename="studenti.pdf"'
+			
+			doc = SimpleDocTemplate(response,pagesize=letter,
+						rightMargin=72,leftMargin=72,
+						topMargin=72,bottomMargin=18)
+			Story=[]
+			logo = "student/Logo_UL_FRI.png"
+			magName = "Pythonista"
+			issueNum = 12
+			subPrice = "99.00"
+ 
+			formatted_time = datetime.date.today()
+			full_name = vpis_.student.ime + " " +  vpis_.student.priimek 
+			address_parts = vpis_.student.naslov_stalno_bivalisce.split(",")
+ 
+			im = Image(logo, 2*inch, 2*inch)
+			Story.append(im)
+ 
+			styles=getSampleStyleSheet()
+			styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
+			ptext = '<font size=12>%s</font>' % formatted_time
+ 
+			Story.append(Paragraph(ptext, styles["Normal"]))
+			Story.append(Spacer(1, 12))
+ 
+			# Create return address
+			ptext = '<font size=12>%s</font>' % full_name
+			Story.append(Paragraph(ptext, styles["Normal"]))       
+			for part in address_parts:
+				ptext = '<font size=12>%s</font>' % part.strip()
+				Story.append(Paragraph(ptext, styles["Normal"]))   
+			
+			Story.append(Spacer(1, 12))
+			ptext = '<font size=12>POTRDILO O VPISU</font>'
+			Story.append(Paragraph(ptext, styles["Normal"]))
+			Story.append(Spacer(1, 12))
+ 
+			ptext = '<font size=12>Vpisna številka : %d <br/>Priimek, ime: %s, %s<br/>Država rojstva: %s<br/>Študijsko leto: %s<br/>Vrsta vpisa: %s<br/>Način in oblika študija: %s<br/>Letnik,dodatno leto: %s<br/>Študijski program: %s<br/>Vrsta in stopnja študija: %d %s</font>' % (vpis_.student.vpisna_stevilka,vpis_.student.priimek,vpis_.student.ime,vpis_.student.drzava_rojstva.slovenski_naziv,vpis_.studijsko_leto.ime,vpis_.vrsta_vpisa.opis,vpis_.nacin_studija.opis,vpis_.letnik.ime,vpis_.studijski_program.naziv,vpis_.studijski_program.id,vpis_.studijski_program.stopnja)
+			Story.append(Paragraph(ptext, styles["Normal"]))
+			Story.append(Spacer(1, 48))
+ 
+ 
+			ptext = '<font size=12>prof. dr. Bojan Orel<br/>dekan</font>'
+			Story.append(Paragraph(ptext, styles["Justify"]))
+			Story.append(Spacer(1, 12))
+
+			
+			
+			doc.build(Story)
+			return response
+
+		if request.method == 'POST' and 'prikaz_seznama' in request.POST:
+
+			seznam = []
+			for vpis in Vpis.objects.all():
+				if vpis.potrjen == True:
+					seznam.append(vpis)
+
+			context = {
+				'arr': seznam
+				}
+
+			return render(request, 'preveri_seznam.html',context)
+	else:
+		return HttpResponse("Nimaš dovoljenja.")

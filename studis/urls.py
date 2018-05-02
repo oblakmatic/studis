@@ -27,6 +27,7 @@ urlpatterns = [
     path('vpis/', include('vpis.urls')),
 	path('izpiti/', include('izpiti.urls')),
     path('student/', include('student.urls')),
+    path('student/potrdi_studente/', include('student.urls')),
     path('user/login/', login, name="login"),
     path('user/logout/', logout, name="logout"),
     path('user/auth/', auth_view, name = "auth_view"),
