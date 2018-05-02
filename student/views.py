@@ -150,44 +150,49 @@ def students_search(request):
 
 def token_add(request, id):
 	if request.method == 'POST':
-		# print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pridemo do posta ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-		student = Student.objects.filter(id=request.POST.get('stud'))
-		program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))
-		letnik = Letnik.objects.filter(ime=request.POST.get('letnik'))
-		vrsta_vpisa = VrstaVpisa.objects.filter(ime=request.POST.get('vrsta_vpisa'))
-		nacin_studija = NacinStudija.objects.filter(ime=request.POST.get('nac_stud'))
-		vrsta_studija = VrstaStudija.objects.filter(ime=request.POST.get('vrst_stud'))
-		prosta_izbira = request.POST.get('predmet_choice', False)
+		form = TokenForm(request.POST)
+		if (form.is_valid()):
+			# print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pridemo do posta ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+			student = form.cleaned_data['student']
+			program = form.cleaned_data['studijski_program']
+			letnik = form.cleaned_data['letnik']
+			vrsta_vpisa = form.cleaned_data['vrsta_vpisa']
+			nacin_studija = form.cleaned_data['nacin_studija']
+			vrsta_studija = form.cleaned_data['vrsta_studija']
+			prosta_izbira = form.cleaned_data['pravica_do_izbire']
 
-		if prosta_izbira == 'on':
-			prosta_izbira = True
-
-		data = {
-			'student': student,
-			'program': program,
-			'letnik': letnik,
-			'vrsta_vpisa': vrsta_vpisa,
-			'nacin_studija': nacin_studija,
-			'prosta_izbira': prosta_izbira
-		}
-		# print(data)
-		if(student.count() != 1 or program.count() != 1 or letnik.count() != 1 or vrsta_vpisa.count() != 1 or nacin_studija.count() != 1):
-			context = {
-				'message': 'Prosimo, vnesite vse zahtevane podatke!'
+			data = {
+				'student': student,
+				'program': program,
+				'letnik': letnik,
+				'vrsta_vpisa': vrsta_vpisa,
+				'nacin_studija': nacin_studija,
+				'prosta_izbira': prosta_izbira
 			}
-			return render(request, 'token_add.html', context)
-		
-
-		else:
+			# print(data)
+			'''if(student.count() != 1 or program.count() != 1 or letnik.count() != 1 or vrsta_vpisa.count() != 1 or nacin_studija.count() != 1):
+				context = {
+					'message': 'Prosimo, vnesite vse zahtevane podatke!'
+				}
+				return render(request, 'token_add.html', context)'''
 			
-			if Zeton.objects.filter(student=student[0]).count() >= 2:
+
+			#else:
+				
+			'''if Zeton.objects.filter(student=student[0]).count() >= 2:
 				context = {
 					'message': 'Student že ima 2 žetona!'
 				}
 				return render(request, 'token_add.html', context)
 			zeton = Zeton(student=student[0], studijski_program=program[0], letnik=letnik[0], vrsta_vpisa=vrsta_vpisa[0], nacin_studija=nacin_studija[0], vrsta_studija=vrsta_studija[0], pravica_do_izbire=prosta_izbira)
-			zeton.save()
+			zeton.save()'''
 			return token_list(request, 'Žeton uspešno dodan!')
+		else:
+			context = {
+				'message': 'Prosimo, vnesite vse zahtevane podatke!'
+			}
+			return render(request, 'token_add.html', context)
+		
 	else:
 		# vpisi = Vpis.objects.select_related().filter(student__pk = id).order_by('-pk')
 		# print(vpisi)
@@ -221,12 +226,12 @@ def token_list(request, msg=None):
 		# print(dir(token))
 		zeton = {
 			'id': token.pk,
-			'student': token.student.pk,
-			'studijski_program': token.studijski_program.ime,
+			'student': token.student.vpisna_stevilka,
+			'studijski_program': token.studijski_program.naziv,
 			'letnik': token.letnik.ime,
-			'vrsta_vpisa': token.vrsta_vpisa.ime,
-			'nacin_studija': token.nacin_studija.ime,
-			'vrsta_studija': token.vrsta_studija.ime,
+			'vrsta_vpisa': token.vrsta_vpisa.opis,
+			'nacin_studija': token.nacin_studija.opis,
+			'vrsta_studija': token.vrsta_studija.opis,
 			'pravica_do_izbire': 'DA' if token.pravica_do_izbire else 'NE' if token.letnik.ime == '3.' else '/'
 		}
 		zetoni.append(zeton)
@@ -293,9 +298,14 @@ def token_edit(request, edit_id):
 
 def all_data(request, id):
 	student = Student.objects.get(pk = id)
-	vpisi = Vpis.objects.filter(student = student)
-	# if student.naslov_zacasno_bivalisce == '':
-	# 	student.naslov_stalno_bivalisce = student.naslov_zacasno_bivalisce
+	if(student.naslov_zacasno_bivalisce is None):
+		student.naslov_zacasno_bivalisce = '/'
+	print(student)
+	vpisi = Vpis.objects.filter(student = student).order_by('-studijsko_leto').select_related()
+	'''.values('studijsko_leto',\
+								 'studijski_program', 'letnik', 'vrsta_vpisa', \
+								 'nacin_studija', 'vrsta_studija')'''
+	print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",vpisi)
 	
 	context = {
 		'student': student,
@@ -307,10 +317,10 @@ def all_data(request, id):
 def student_data(request):
 	if(request.user.groups.all()[0].name == "students"):
 		student = Student.objects.get(email = request.user.email)
-		vpisi = Vpis.objects.filter(student = student)
-		# if student.naslov_zacasno_bivalisce == '':
-		# 	student.naslov_stalno_bivalisce = student.naslov_zacasno_bivalisce
-		
+		vpisi = Vpis.objects.filter(student = student.vpisna_stevilka)
+		if(student.naslov_zacasno_bivalisce is None):
+			student.naslov_zacasno_bivalisce = '/'
+		print(student)
 		context = {
 			'student': student,
 			'vpisi': vpisi

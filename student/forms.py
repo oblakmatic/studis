@@ -7,4 +7,4 @@ from student.models import *
 class TokenForm(ModelForm):
     class Meta:
         model = Zeton
-        fields = '__all__'
+        exclude = ['izkoriscen']

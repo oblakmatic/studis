@@ -71,7 +71,7 @@ class VrstaVpisa(models.Model):
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
     def __str__(self):
-        return str(self.id) + " " + self.opis
+        return self.opis
 
 class NacinStudija(models.Model):
 #redni, izredni
