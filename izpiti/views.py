@@ -6,7 +6,10 @@ from sifranti.models import *
 from sifranti.models import *
 from .models import *
 from time import gmtime, strftime
+from datetime import datetime
 from django.core.exceptions import ValidationError
+import pytz
+from datetime import timedelta
 
 
 # Create your views here.
@@ -59,11 +62,27 @@ def index_izpiti(request):
 
 #DODAJANJE IZPITA PROFESOR/REFERENTKA
 def dodaj_izpit(request):
+    if request.method == 'POST' and 'prikaz_rokov' in request.POST:
 
-    if request.method == 'POST' and 'dodaj_izpit' in request.POST:
+        email_ = request.user.email
+        showRoki = []
+        for rok in Rok.objects.all():
+            if rok.izvedba_predmeta.ucitelj_1.email == email_:
+                showRoki.append(rok)
+            elif rok.izvedba_predmeta.ucitelj_2.email == email_:
+                showRoki.append(rok)
+            elif rok.izvedba_predmeta.ucitelj_3.email == email_:
+                showRoki.append(rok)
+    
+        context = {
+            'arr': showRoki
+            }
+
+        return render(request,'izpiti-message.html',context)
+
+    elif request.method == 'POST' and 'dodaj_izpit' in request.POST:
 
         datum_ = request.POST['datum']
-        print("datum v dodaj izpit --> " + datum_)
 
         id_IzvedbaPredmeta = request.POST['id_IzvedbaPredmeta']
         vnos_izvedbaPredmeta = IzvedbaPredmeta.objects.all()
@@ -71,6 +90,7 @@ def dodaj_izpit(request):
             if str(curr_izvedbaPredmeta.id) == id_IzvedbaPredmeta:
                 vnesi = curr_izvedbaPredmeta
 
+        
 
         a = Rok(izvedba_predmeta = vnesi, datum = datum_)
         a.save()
@@ -112,7 +132,7 @@ def prijava(request):
                 if str(rok.id) == rok_id:
                     vnesi_rok = rok
 
-            
+            print(vnesi_rok.datum)
             a = Prijava(predmeti_studenta = vnesi_predmeti_studenta, rok = vnesi_rok, zaporedna_stevilka_polaganja = 1)
             a.save()
 
@@ -133,8 +153,10 @@ def prijava(request):
             all_prijava = Prijava.objects.all()
             for prijava in all_prijava:
                 if prijava.predmeti_studenta == vnesi_predmeti_studenta and prijava.rok == vnesi_rok:
-                    print("prijava odstranjena!")
-                    prijava.delete()
+
+                    print("prijava oznacena kot neaktivna!")
+                    prijava.aktivna_prijava = False
+                    prijava.save()
 
 #PRIJAVA NA IZPIT
         
@@ -166,26 +188,37 @@ def prijava(request):
 
             all_rok = Rok.objects.all()
             roki = []
-
+            utc=pytz.UTC
+            time_now = datetime.now()
+            
             for rok in all_rok:
-                print(rok.datum)
-                #if rok.datum > datetime.now(): #preverjanje datuma
-                for izvedba in all_izvedba_studenta:
-                    if rok.izvedba_predmeta == izvedba:
-                        roki.append(rok)
+                #time_now = strftime("%Y-%m-%d %H:%M:00+00:00", gmtime())
+                if rok.datum > utc.localize(time_now):
+                    for izvedba in all_izvedba_studenta:
+                        if rok.izvedba_predmeta == izvedba:
+                            roki.append(rok)
             
 
             #gres se cez vse prijave da ves na kerga si se ze prjavu-->
             all_prijava = Prijava.objects.all()
             prijavljeni_roki = []
             neprijavljeni_roki = []
+            time_tomorrow = time_now + timedelta(days=1)
+            #print(time_now.time() < datetime.time(12, 00))
+            
+            
             if all_prijava:
                 for rok in roki:
-                    for prijava in all_prijava:
-                        if rok == prijava.rok:
-                            prijavljeni_roki.append(rok)
-                        else:
-                            neprijavljeni_roki.append(rok)
+                    #print(rok.datum)
+                    #print(time_now)
+                    #print(datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 12))
+                    if time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 12):
+                        #rok['enabled'] = True
+                        for prijava in all_prijava:
+                            if rok == prijava.rok and prijava.aktivna_prijava == True:
+                                prijavljeni_roki.append(rok)
+                            else:
+                                neprijavljeni_roki.append(rok)
 
     else:
         return HttpResponse("Nimaš dovoljenja.")

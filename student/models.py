@@ -9,7 +9,7 @@ class Student(models.Model):
     emso = models.CharField(max_length = 13, verbose_name= "EMŠO")
     priimek = models.CharField(max_length = 30, verbose_name= "Priimek")
     ime = models.CharField(max_length = 30, verbose_name= "Ime")
-    naslov_stalno_bivalisce = models.CharField(max_length = 260, verbose_name= "Stalno prebivališče")
+    naslov_stalno_bivalisce = models.CharField(max_length = 260, verbose_name= "Stalno prebivališče") #Formata: Godešič 163, 4220 Škofja Loka --> Za izpis potrdila o vpisu
     naslov_zacasno_bivalisce = models.CharField(max_length = 260, blank=True, null=True, verbose_name= "Začasno prebivališče")
     
     drzava_rojstva = models.ForeignKey(Drzava, null=True, on_delete = models.SET_NULL, verbose_name= "Država rojstva",related_name="drzava_rojstva")

@@ -335,9 +335,26 @@ def potrdi_studente(request):
 					if vpis.potrjen == False:
 						vpis.potrjen = True
 						vpis.save()
-					else:
-						vpis.potrjen = False
-						vpis.save()
+
+
+	else:
+		return HttpResponse("Nimaš dovoljenja.")
+
+	all_vpis = Vpis.objects.all()
+	potrjeni = []
+	for vpis in all_vpis:
+		if vpis.potrjen == False:
+			potrjeni.append(vpis)
+	
+	context = {
+		'arr': potrjeni
+		}
+
+	return render(request, 'potrdi_studente.html',context)
+
+def preveri_seznam(request):
+
+	if(request.user.groups.all()[0].name == "referent"):
 
 		if request.method == 'POST' and 'natisni' in request.POST:
 
@@ -349,7 +366,7 @@ def potrdi_studente(request):
 
 
 			response = HttpResponse(content_type='application/pdf')
-			response['Content-Disposition'] = 'attachment; filename="studenti.pdf"'
+			response['Content-Disposition'] = 'inline; filename="studenti.pdf"'
 			
 			doc = SimpleDocTemplate(response,pagesize=letter,
 						rightMargin=72,leftMargin=72,
@@ -359,12 +376,10 @@ def potrdi_studente(request):
 			magName = "Pythonista"
 			issueNum = 12
 			subPrice = "99.00"
-			limitedDate = "03/05/2010"
-			freeGift = "tin foil hat"
  
-			formatted_time = time.ctime()
+			formatted_time = datetime.date.today()
 			full_name = vpis_.student.ime + " " +  vpis_.student.priimek 
-			address_parts = ["411 State St.", "Marshalltown, IA 50158"]
+			address_parts = vpis_.student.naslov_stalno_bivalisce.split(",")
  
 			im = Image(logo, 2*inch, 2*inch)
 			Story.append(im)
@@ -382,41 +397,37 @@ def potrdi_studente(request):
 			for part in address_parts:
 				ptext = '<font size=12>%s</font>' % part.strip()
 				Story.append(Paragraph(ptext, styles["Normal"]))   
- 
+			
 			Story.append(Spacer(1, 12))
-			ptext = '<font size=12>Dear %s:</font>' % full_name.split()[0].strip()
+			ptext = '<font size=12>POTRDILO O VPISU</font>'
 			Story.append(Paragraph(ptext, styles["Normal"]))
 			Story.append(Spacer(1, 12))
  
-			ptext = '<font size=12>We would like to welcome you to our subscriber base for %s Magazine! \
-					You will receive %s issues at the excellent introductory price of $%s. Please respond by\
-					%s to start receiving your subscription and get the following free gift: %s.</font>' % (magName, 
-																											issueNum,
-																											subPrice,
-																											limitedDate,
-																											freeGift)
-			Story.append(Paragraph(ptext, styles["Justify"]))
-			Story.append(Spacer(1, 12))
- 
- 
-			ptext = '<font size=12>Thank you very much and we look forward to serving you.</font>'
-			Story.append(Paragraph(ptext, styles["Justify"]))
-			Story.append(Spacer(1, 12))
-			ptext = '<font size=12>Sincerely,</font>'
+			ptext = '<font size=12>Vpisna številka : %d <br/>Priimek, ime: %s, %s<br/>Država rojstva: %s<br/>Študijsko leto: %s<br/>Vrsta vpisa: %s<br/>Način in oblika študija: %s<br/>Letnik,dodatno leto: %s<br/>Študijski program: %s<br/>Vrsta in stopnja študija: %d %s</font>' % (vpis_.student.vpisna_stevilka,vpis_.student.priimek,vpis_.student.ime,vpis_.student.drzava_rojstva.slovenski_naziv,vpis_.studijsko_leto.ime,vpis_.vrsta_vpisa.opis,vpis_.nacin_studija.opis,vpis_.letnik.ime,vpis_.studijski_program.naziv,vpis_.studijski_program.id,vpis_.studijski_program.stopnja)
 			Story.append(Paragraph(ptext, styles["Normal"]))
 			Story.append(Spacer(1, 48))
-			ptext = '<font size=12>Ima Sucker</font>'
-			Story.append(Paragraph(ptext, styles["Normal"]))
+ 
+ 
+			ptext = '<font size=12>prof. dr. Bojan Orel<br/>dekan</font>'
+			Story.append(Paragraph(ptext, styles["Justify"]))
 			Story.append(Spacer(1, 12))
+
+			
+			
 			doc.build(Story)
 			return response
 
+		if request.method == 'POST' and 'prikaz_seznama' in request.POST:
+
+			seznam = []
+			for vpis in Vpis.objects.all():
+				if vpis.potrjen == True:
+					seznam.append(vpis)
+
+			context = {
+				'arr': seznam
+				}
+
+			return render(request, 'preveri_seznam.html',context)
 	else:
 		return HttpResponse("Nimaš dovoljenja.")
-
-	all_vpis = Vpis.objects.all()
-	context ={
-		'arr': all_vpis
-		}
-
-	return render(request, 'potrdi_studente.html',context)
