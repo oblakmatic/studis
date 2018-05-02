@@ -357,7 +357,7 @@ def naredi_bazo(request):
 	a_ns2.save()
 	#naredi 2 zetona za studenta
 
-	zeton = Zeton(student=primozt,studijski_program=a_stud,letnik=a_2Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs1)
+	zeton = Zeton(student=primozt,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_2Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs1)
 	zeton.save()
 	zeton2 = Zeton(student=primozt,studijski_program=a_stud2,letnik=a_1Letnik,vrsta_vpisa=a_vv2,nacin_studija=a_ns2,vrsta_studija=a_vs2)
 	zeton2.save()

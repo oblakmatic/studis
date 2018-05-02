@@ -23,13 +23,12 @@ def index2_vpis_post(request,index):
             student = vrniStudenta(request.user.email)
             zeton = Zeton.objects.filter(student= student[0])
             
-
-
+            # ce vpis za to studijsko leto ze obstaja, ga skensli
             if Vpis.objects.filter(studijsko_leto=nas_leto_ob[0]).filter(student=student[0]).exists():
                 return HttpResponseRedirect('/vpis/')
             else:
                 nov_vpis = Vpis(student=student[0], 
-                    studijsko_leto=StudijskoLeto.objects.filter(ime="2018/2019")[0],
+                    studijsko_leto=StudijskoLeto.objects.filter(ime=nas_leto)[0],
                     studijski_program=zeton[index].studijski_program,
                     letnik=zeton[index].letnik,
                     vrsta_vpisa=zeton[index].vrsta_vpisa,
@@ -39,7 +38,7 @@ def index2_vpis_post(request,index):
                 nov_vpis.save()
                 zeton[index].izkoriscen = True
                 zeton[index].save()
-                return HttpResponseRedirect('/')
+                return HttpResponseRedirect('/vpis/predmetnik/')
 
 def index2_vpis(request):
 
@@ -281,66 +280,73 @@ def predmetnik(request):
 
     #A preko request.POST dobis spodnje vrednosti in jih das v get
     #p_id = request.POST.get('program-id', '') namesto 1000468 npr
-    program = StudijskiProgram.objects.get(id=1000468)
-    leto = StudijskoLeto.objects.get(ime="2018/2019")
-    letnik = Letnik.objects.get(ime="2.")
+    if is_student(request.user):
+
+        student = vrniStudenta(request.user.email)
+        vpis = Vpis.objects.filter(potrjen=False).filter(student=student[0])[0]
+        '''program = StudijskiProgram.objects.get(id=1000468)
+        leto = StudijskoLeto.objects.get(ime="2018/2019")
+        letnik = Letnik.objects.get(ime="2.")'''
+        program = vpis.studijski_program
+        leto = vpis.studijsko_leto
+        letnik = vpis.letnik
 
 
 
-    predmeti_obvezni = []
-    predmeti_izbirni = []
-    predmeti_modul = []
-  
-    so_moduli = False
+        predmeti_obvezni = []
+        predmeti_izbirni = []
+        predmeti_modul = []
+    
+        so_moduli = False
 
-    #1 in 2 letnik
-    if letnik != Letnik.objects.get(ime="3."):
-       
-        predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik).values('predmet', 'obvezen')
+        #1 in 2 letnik
+        if letnik != Letnik.objects.get(ime="3."):
         
- 
-        for i in predmeti_id:
-
-            predmet = Predmet.objects.filter(id=i['predmet'])
-            if i['obvezen']:
-                predmeti_obvezni.append(predmet)
-          
-            else:
-                predmeti_izbirni.append(predmet)
-    #3 letnik
-    else:
-        so_moduli = True
-        predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, ima_modul=False).values('predmet', 'obvezen')
-        for i in predmeti_id:
-
-            predmet = Predmet.objects.filter(id=i['predmet'])
-            if i['obvezen']:
-                predmeti_obvezni.append(predmet)
-
-            else:
-                predmeti_izbirni.append(predmet)
-
-        num = Modul.objects.count()
+            predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik).values('predmet', 'obvezen')
+            
     
-        for m in range(1, num+1):
-            modul = Modul.objects.get(id=m)
+            for i in predmeti_id:
 
-            temp=[]
-            for p in modul.predmetniki.all().values():
-    
-                temp.append(Predmet.objects.filter(id=p["predmet_id"]))
+                predmet = Predmet.objects.filter(id=i['predmet'])
+                if i['obvezen']:
+                    predmeti_obvezni.append(predmet)
+            
+                else:
+                    predmeti_izbirni.append(predmet)
+        #3 letnik
+        else:
+            so_moduli = True
+            predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, ima_modul=False).values('predmet', 'obvezen')
+            for i in predmeti_id:
 
-            predmeti_modul.append(temp)
+                predmet = Predmet.objects.filter(id=i['predmet'])
+                if i['obvezen']:
+                    predmeti_obvezni.append(predmet)
+
+                else:
+                    predmeti_izbirni.append(predmet)
+
+            num = Modul.objects.count()
+        
+            for m in range(1, num+1):
+                modul = Modul.objects.get(id=m)
+
+                temp=[]
+                for p in modul.predmetniki.all().values():
+        
+                    temp.append(Predmet.objects.filter(id=p["predmet_id"]))
+
+                predmeti_modul.append(temp)
 
 
-    context = {
-        'predmeti_o': predmeti_obvezni,
-        'predmeti_i': predmeti_izbirni,
-        'predmeti_m': predmeti_modul,
-        'letnik': letnik,
-        'so_moduli': so_moduli
-    }
-    return render(request,'vpis/predmetnik.html', context)
+        context = {
+            'predmeti_o': predmeti_obvezni,
+            'predmeti_i': predmeti_izbirni,
+            'predmeti_m': predmeti_modul,
+            'letnik': letnik,
+            'so_moduli': so_moduli
+        }
+        return render(request,'vpis/predmetnik.html', context)
 
 
 #shrani predmete primernemu studentu
