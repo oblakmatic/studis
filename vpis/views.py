@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django import forms
@@ -7,20 +7,16 @@ from django import forms
 from .forms import *
 from student.models import Vpis
 
-
-
-def index_vpis(request):
+def index2_vpis(request):
 
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        
-        # example Posta --> PostaForm
+        # create a form instance and populate it with data from the request
 
-        possible_student = vrniStudenta(request.user.email)
-        print(request.POST)
+        if is_kandidat(request.user.email):
+            form = VpisForm(request.POST)
+        else:
 
-        form = VpisForm(request.POST)
-        
+            pass
 
 
         # check whether it's valid:
@@ -45,7 +41,7 @@ def index_vpis(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        opozorilo = None
+        opozorilo = ""
         form = None
         context = None
         #preveri kdo je 
@@ -53,7 +49,24 @@ def index_vpis(request):
         #print(p)
         
         # preveri ce je student 
-        if is_student(request.user):
+        if is_kandidat(request.user):
+            kandidat = vrniKandidata(request.user.email)
+            studentform = None
+
+            form = VpisForm()
+            id_kandidata = kandidat[0].vpisna_stevilka
+            data = Kandidat.objects.filter(pk= id_kandidata).values()[0]
+            studentform = NameStudentForm(initial= data)
+            #kandidat 
+            context = {
+                'form': form,
+                'student' : kandidat[0],
+                'opozorilo' : opozorilo,
+                'studentform' : studentform
+                }
+
+
+        elif is_student(request.user):
             najden_student = vrniStudenta(request.user.email)
 
             # Preveri, da se lahko vpiše samo študent, ki ima žeton ali je novinec. 
@@ -61,7 +74,10 @@ def index_vpis(request):
             studentform = None
 
             if zeton:
+
                 form = VpisForm()
+                form.fields["studijski_program"].queryset = StudijskiProgram.objects.filter(id=1000475)
+
                 opozorilo = ""
                 id_studenta = najden_student[0].vpisna_stevilka
                 data = Student.objects.filter(pk= id_studenta).values()[0]
@@ -69,11 +85,13 @@ def index_vpis(request):
                     'drzava' : najden_student[0].drzava,
                     'posta' : najden_student[0].posta,
                     'obcina' : najden_student[0].obcina,
+                    'drzava_rojstva' : najden_student[0].drzava_rojstva,
+                    'obcina_rojstva' : najden_student[0].obcina_rojstva,
                  } 
-                
-                print({**data , **data_2})
+                data = {**data , **data_2}
+                #print({**data , **data_2})
 
-                studentform = NameStudentForm(initial= {**data , **data_2})
+                studentform = NameStudentForm(initial= data)
             else:
                 opozorilo= "Nimaš žetona"
             
@@ -83,11 +101,116 @@ def index_vpis(request):
                 'opozorilo' : opozorilo,
                 'studentform' : studentform
                 }
-
         else:
             opozorilo="Samo študenti se lahko vpišejo"
             context = {
                     'form': form,
+                    'opozorilo' : opozorilo,
+                    }
+        
+        return render(request,'vpis/index_vpis2.html',context)  
+
+def index_vpis(request):
+
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request
+
+        if is_kandidat(request.user):
+
+            form = NameStudentForm(request.POST)
+
+            if form.is_valid():
+                
+                form.save()
+                return HttpResponseRedirect('/')
+                
+            else:
+                context = {
+                'form': form,
+                'opozorilo': 'Prišlo je do napake, ponovno vnesite podatke'
+                }
+                return render(request,'vpis/index_vpis.html',context)
+
+        elif is_student(request.user):
+            student = vrniStudenta(request.user.email)
+            form = NameStudentForm(request.POST, instance=student[0])
+            print("eno")
+            if form.is_valid():
+                print("dva")
+                form.save()
+                return HttpResponseRedirect('/')
+                
+            else:
+                context = {
+                'form': form,
+                'opozorilo': 'Prišlo je do napake, ponovno vnesite podatke'
+                }
+                return render(request,'vpis/index_vpis.html',context)
+        else:
+            context = {
+                'opozorilo': 'Niste študent pa ste vseeno nekaj POST-al'
+                }
+            return render(request,'vpis/index_vpis.html',context)
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        opozorilo = ""
+        context = None
+        #preveri kdo je 
+        #p = VpisForm()
+        #print(p)
+        
+        # preveri ce je student 
+        if is_kandidat(request.user):
+            kandidat = vrniKandidata(request.user.email)
+            studentform = None
+            id_kandidata = kandidat[0].vpisna_stevilka
+            data = Kandidat.objects.filter(pk= id_kandidata).values()[0]
+            studentform = NameStudentForm(initial= data)
+            #kandidat 
+            context = {
+                'student' : kandidat[0],
+                'opozorilo' : opozorilo,
+                'studentform' : studentform
+                }
+
+        elif is_student(request.user):
+            najden_student = vrniStudenta(request.user.email)
+
+            # Preveri, da se lahko vpiše samo študent, ki ima žeton ali je novinec. 
+            zeton =  Zeton.objects.filter(student = najden_student[0])
+            studentform = None
+
+            if zeton:
+
+                form = VpisForm()
+                form.fields["studijski_program"].queryset = StudijskiProgram.objects.filter(id=1000475)
+
+                opozorilo = ""
+                id_studenta = najden_student[0].vpisna_stevilka
+                data = Student.objects.filter(pk= id_studenta).values()[0]
+                data_2 = {
+                    'drzava' : najden_student[0].drzava,
+                    'posta' : najden_student[0].posta,
+                    'obcina' : najden_student[0].obcina,
+                    'drzava_rojstva' : najden_student[0].drzava_rojstva,
+                    'obcina_rojstva' : najden_student[0].obcina_rojstva,
+                 } 
+                data = {**data , **data_2}
+                #print({**data , **data_2})
+
+                studentform = NameStudentForm(initial= data)
+            else:
+                opozorilo= "Nimaš žetona"
+            
+            context = {
+                'student' : najden_student[0],
+                'opozorilo' : opozorilo,
+                'studentform' : studentform
+                }
+        else:
+            opozorilo="Samo študenti se lahko vpišejo"
+            context = {
                     'opozorilo' : opozorilo,
                     }
         
@@ -102,9 +225,20 @@ def vrniStudenta(njegovEmail):
     else:
         raise Exception('Ni bilo studenta v tabeli')
 
-def is_student(user):
-    return user.groups.filter(name='student').exists()
+def vrniKandidata(njegovEmail):
+    kandidat = Kandidat.objects.filter(email=njegovEmail)
+    
+    if kandidat:
+        return kandidat
+    else:
+        raise Exception('Ni bilo studenta v tabeli')
 
+def is_student(user):
+    return user.groups.filter(name='students').exists()
+
+def is_kandidat(user):
+    #return Kandidat.objects.filter(email=user.email).exists()
+    return user.groups.filter(name='candidates').exists()
 def emso_verify(emso):
         """
         vnesi emso v stringu in ce dobis rez. isti kot emso je emso kul

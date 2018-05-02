@@ -4,17 +4,18 @@
 {% block content %}
 
 <div class="container sifrant">
-    <p>{{opozorilo}}</p>
     {% if student %}
-    <p>Študent z vpisno številko {{student.vpisna_stevilka }} se lahko vpišeš</p>
-    <h3>Prvi korak:</h3>
-    <h2>Podatki o študentu</h2>
+    <p>Študent z vpisno številko {{student.vpisna_stevilka }} se lahko vpišeš :</p>
     {% endif %}
-    
-    
+    <p>{{opozorilo}}</p>
+
     <form action="/vpis/" method="post">
         {% csrf_token %}
+        <h2>Podatki o študentu</h2>
         {{ studentform }}
+        <h2>Podatki o vpisu</h2>
+        {{ form.as_p }}
+
         <button type="submit" class="btn btn-outline-primary">Dodaj</button>
     </form>
 </div>
