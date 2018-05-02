@@ -14,6 +14,7 @@ Field.default_error_messages = {
     'unique': ugettext_lazy("Ta zapis že obstaja"),
     'max_decimal_places' : ugettext_lazy("Ta zapis že obstaja"),
     'max_digit' : ugettext_lazy("Ta zapis že obstaja"),
+    'invalid_choice' : ugettext_lazy("Vnesite pravilno vrednost"),
 }
 class SearchForm(forms.Form):
     isci_element = forms.CharField(label='Isci element po atributu:',max_length=100)

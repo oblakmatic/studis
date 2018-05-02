@@ -12,6 +12,8 @@
     {% endif %}
     <form action="" method="POST">
         {% csrf_token %}
+        
+        <!--
         <div class="form-group">
             <label for="stud">Vpisna številka študenta</label>
             <input type="number" class="form-control" name="stud" id="stud" value = "{{id}}" required>
@@ -57,6 +59,10 @@
                 <label for="predmet_choice">Pravica do proste izbire predmetov</label>
                 <input type="checkbox" class="form-control" name="predmet_choice" id="predmet_choice"  {% if data.izbira %} selected {% endif %}>
             </div>
+        -->
+        <table>
+            {{ tokenForm.as_table }}
+        </table>
         <button type="submit" class="btn btn-outline-success">Ustvari žeton za vpis</button>
       
     </form>

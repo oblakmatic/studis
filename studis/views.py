@@ -1,12 +1,21 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect
 from django.contrib import auth
 from django.template.context_processors import csrf
 import datetime
 
+max_attempts = 6
 attempts = 0
 ip = -1
 block_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
+
+
+def home_view(request):
+
+	if request.user.is_authenticated:
+		return render(request, 'home.html')
+
+	return HttpResponseRedirect('/user/login')
 
 def login(request):
 	
@@ -30,13 +39,13 @@ def auth_view(request):
 	global attempts
 	attempts = attempts + 1
 
-	if user is not None and attempts<3:
+	if user is not None and attempts<max_attempts:
 
 		auth.login(request, user)
 		attempts=0
 		return HttpResponseRedirect('/')
 	else:
-		if attempts == 3: 
+		if attempts == max_attempts: 
 			global ip
 			ip = get_client_ip(request)
 
@@ -59,7 +68,7 @@ def logout(request):
 #if ip is blocked redirect here
 def invalid(request):
 	print("attempts %d", attempts)
-	if attempts < 3:
+	if attempts < max_attempts:
 		return HttpResponseRedirect('/user/login')
 	else:
 		context = {'ip': ip}
@@ -77,7 +86,7 @@ def get_client_ip(request):
 #checks if ip is being blocked
 def is_blocked(request):
 	global attempts
-	if attempts < 3:
+	if attempts < max_attempts:
 		return False
 
 	now = datetime.datetime.now()

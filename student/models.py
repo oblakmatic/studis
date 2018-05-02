@@ -25,6 +25,9 @@ class Student(models.Model):
     # ce je ze izkoristil absolventa
     dodatno_leto = models.BooleanField(default = True)
 
+    def __str__(self):
+        return str(self.vpisna_stevilka) + ", " + self.priimek + " " + self.ime
+
 class Kandidat(models.Model):
     vpisna_stevilka = models.IntegerField(primary_key = True)
     ime = models.CharField(max_length = 30)
@@ -45,6 +48,8 @@ class Zeton(models.Model):
     vrsta_studija  = models.ForeignKey(VrstaStudija, null=True, on_delete= models.SET_NULL)
     # ce ima pravico do proste izbire predmetov v 3.letniku
     pravica_do_izbire = models.BooleanField(default = False)
+    #ali je bil zeton izkoriscen, torej ce ga je student ze uporabil za vpis
+    izkoriscen = models.BooleanField(default=False)
 
 
 class Vpis(models.Model):
@@ -64,8 +69,7 @@ class Vpis(models.Model):
     potrjen = models.BooleanField(default = False)
     #pravica do proste izbire predmetov v 3. letniku
     prosta_izbira = models.BooleanField(default = False)
-    #ali je bil zeton izkoriscen, torej ce ga je student ze uporabil za vpis
-    izkoriscen = models.BooleanField(default=False)
+    
 
 class Predmetnik(models.Model):
     studijski_program = models.ForeignKey(StudijskiProgram,  primary_key = True, on_delete= models.CASCADE)
@@ -73,4 +77,3 @@ class Predmetnik(models.Model):
     letnik = models.ForeignKey(Letnik, null=True, on_delete= models.SET_NULL)
     predmet = models.ForeignKey(Predmet, null=True, on_delete= models.SET_NULL)
     obvezen = models.BooleanField(default = True)
-
