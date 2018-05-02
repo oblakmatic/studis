@@ -1,10 +1,91 @@
 
 .login{
 	width: 30%;
+	padding-top:200px;
+}
+
+.parent-rotated{
+    position:absolute;
+
+    width:100%;
+    height: 200px;
+    overflow: hidden;
+    z-index: -1;
+ 
+}
+.parent-rotated2{
+    position:absolute;
+    bottom:0px;
+    width:100%;
+    height: 200px;
+    overflow: hidden;
+ 
+}
+.rotated {
+	position: absolute;
+	width: 110%;
+	height: 300px;
+	top:-190px;
+	overflow: hidden;
+	background-color: rgba(41, 129, 227, 0.15);
+	-ms-transform: rotate(5deg); /* IE 9 */
+    -webkit-transform: rotate(5deg); /* Safari */
+    transform: rotate(5deg); /* Standard syntax */
+    
+ 	
+}
+
+.rotated2 {
+	position: absolute;
+	width: 110%;
+	height: 300px;
+	top:-220px;
+	
+	overflow: hidden;
+	background-color: rgba(41, 129, 227, 0.3);
+	-ms-transform: rotate(4deg); /* IE 9 */
+    -webkit-transform: rotate(4deg); /* Safari */
+    transform: rotate(4deg); /* Standard syntax */
+    
+ 	
+}
+
+.rotated3 {
+	position: absolute;
+	width: 200%;
+	height: 300px;
+	left:-50%;
+	top:-215px;
+	overflow: hidden;
+	background-color: rgba(41, 129, 227, 0.15);
+	-ms-transform: rotate(2deg); /* IE 9 */
+    -webkit-transform: rotate(2deg); /* Safari */
+    transform: rotate(2deg); /* Standard syntax */
+    
+ 	
+}
+
+.rotated4 {
+	position: absolute;
+	width: 200%;
+	height: 300px;
+	top:-240px;
+	left:-50%;
+	overflow: hidden;
+	background-color: #2780E3;
+	-ms-transform: rotate(1deg); /* IE 9 */
+    -webkit-transform: rotate(1deg); /* Safari */
+    transform: rotate(1deg); /* Standard syntax */
+    
+ 	
+}
+.bg-primary{
+	background-color: #00000000 !important;
 }
 
 .sifrant{
 	margin-top: 20px;
+	margin-bottom: 40px;
 	
 }
 

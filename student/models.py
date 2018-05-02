@@ -74,4 +74,3 @@ class Predmetnik(models.Model):
     letnik = models.ForeignKey(Letnik, null=True, on_delete= models.SET_NULL)
     predmet = models.ForeignKey(Predmet, null=True, on_delete= models.SET_NULL)
     obvezen = models.BooleanField(default = True)
-

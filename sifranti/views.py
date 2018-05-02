@@ -261,23 +261,23 @@ def naredi_bazo(request):
 	a_3Letnik= Letnik(ime="3.")
 	a_3Letnik.save()
 
+	vsi_predmeti()
 
+	#Aljaz dodal ampak je matic spremenil
+	a_teh = Predmet.objects.get(ime = "Tehnologija programske opreme")
 
-	#Aljaz dodal->
-	a_teh = Predmet(ime = "Tehnologija programske opreme")
-	a_teh.save()
-	a_obl = Predmet(ime = "Osnove oblikovanja")
-	a_obl.save()
-	a_ep = Predmet(ime = "Ekonomika in podjetništvo")
-	a_ep.save()
-	a_oim = Predmet(ime = "Organizacija in management")
-	a_oim.save()
-	a_P1 = Predmet(ime = "Programiranje 1")
-	a_P1.save()
-	a = Predmet(ime = "Programiranje 2")
-	a.save()
-	a_aps1 = Predmet(ime = "Algoritmi in podatkovne strukture 1")
-	a_aps1.save()
+	a_obl = Predmet.objects.get(ime = "Osnove oblikovanja")
+	
+	a_ep = Predmet.objects.get(ime = "Ekonomika in podjetništvo")
+
+	a_oim = Predmet.objects.get(ime = "Organizacija in management")
+
+	a_P1 = Predmet.objects.get(ime = "Programiranje 1")
+
+	a = Predmet.objects.get(ime = "Programiranje 2")
+
+	a_aps1 = Predmet.objects.get(ime = "Algoritmi in podatkovne strukture 1")
+
 
 	a = StudijskoLeto(ime = "2016/2017")
 	a.save()
@@ -447,4 +447,122 @@ def naredi_bazo(request):
 	user.save()
 
 	return HttpResponse("Narejena baza!")
+
+
+def vsi_predmeti():
+
+	#1 letnik
+	a = Predmet(ime = "Programiranje 1")
+	a.save()
+	a = Predmet(ime = "Programiranje 2")
+	a.save()
+	a = Predmet(ime = "Diskretne strukture")
+	a.save()
+	a = Predmet(ime = "Fizika")
+	a.save()
+	a = Predmet(ime = "Osnove digitalnih vezij")
+	a.save()
+	a = Predmet(ime = "Osnove matematične analize")
+	a.save()
+	a = Predmet(ime = "Linearna algebra")
+	a.save()
+	a = Predmet(ime = "Osnove informacijskih sistemov")
+	a.save()
+	a = Predmet(ime = "Računalniške komunikacije")
+	a.save()
+	a = Predmet(ime = "Arhitektura računalniških sistemov")
+	a.save()
+
+	#2 letnik obvezni
+	a = Predmet(ime = "Verjetnost in statistika")
+	a.save()
+	a = Predmet(ime = "Algoritmi in podatkovne strukture 1")
+	a.save()
+	a = Predmet(ime = "Osnove podatkovnih baz")
+	a.save()
+	a = Predmet(ime = "Organizacija računalniških sistemov")
+	a.save()
+	a = Predmet(ime = "Izračunljivost in računska zahtevnost")
+	a.save()
+	a = Predmet(ime = "Teorija informacij in sistemov")
+	a.save()
+	a = Predmet(ime = "Algoritmi in podatkovne strukture 2")
+	a.save()
+	a = Predmet(ime = "Operacijski sistemi")
+	a.save()
+
+	#2 letnik strokovni
+	a = Predmet(ime = "Principi programskih jezikov")
+	a.save()
+	a = Predmet(ime = "Računalniške tehnologije")
+	a.save()
+	a = Predmet(ime = "Matematično modeliranje")
+	a.save()
+
+	#3 letnik obvezni
+	a = Predmet(ime = "Osnove umetne inteligence")
+	a.save()
+	a = Predmet(ime = "Ekonomika in podjetništvo")
+	a.save()
+	a = Predmet(ime = "Diplomski seminar")
+	a.save()
+
+	#informacijski sistemi
+	a = Predmet(ime = "Elektronsko poslovanje")
+	a.save()
+	a = Predmet(ime = "Poslovna inteligenca")
+	a.save()
+	a = Predmet(ime = "Organizacija in management")
+	a.save()
+
+	#obladovanje informatike
+	a = Predmet(ime = "Razvoj informacijskih sistemov")
+	a.save()
+	a = Predmet(ime = "Tehnologija upravljanja podatkov")
+	a.save()
+	a = Predmet(ime = "Planiranje in upravljanje informatike")
+	a.save()
+
+	#racunalniska omrezja
+	a = Predmet(ime = "Modeliranje računalniških omrežij")
+	a.save()
+	a = Predmet(ime = "Komunikacijski protokoli")
+	a.save()
+	a = Predmet(ime = "Brezžična in mobilna omrežja")
+	a.save()
+
+	#umetna inteligenca
+	a = Predmet(ime = "Inteligentni sistemi")
+	a.save()
+	a = Predmet(ime = "Umetno zaznavanje")
+	a.save()
+	a = Predmet(ime = "Razvoj inteligentnih sistemov")
+	a.save()
+
+	#razvoj programske opreme
+	a = Predmet(ime = "Postopki razvoja programske opreme")
+	a.save()
+	a = Predmet(ime = "Spletno programiranje")
+	a.save()
+	a = Predmet(ime = "Tehnologija programske opreme")
+	a.save()
+
+	#medijske tehnologije
+	a = Predmet(ime = "Računalniška grafika in tehnologija iger")
+	a.save()
+	a = Predmet(ime = "Multimedijski sistemi")
+	a.save()
+	a = Predmet(ime = "Osnove oblikovanja")
+	a.save()
+
+	#splosno izbirni predmeti
+	a = Predmet(ime = "Tehnične veščine")
+	a.save()
+	a = Predmet(ime = "Angleški jezik")
+	a.save()
+	a = Predmet(ime = "Računalništvo v praksi")
+	a.save()
+
+
+
 

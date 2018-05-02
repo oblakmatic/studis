@@ -17,11 +17,11 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
-from studis.views import login, auth_view, logout, invalid
+from studis.views import login, auth_view, logout, invalid, home_view
 from sifranti.views import naredi_bazo
 
 urlpatterns = [
-	path('', TemplateView.as_view(template_name='home.html'), name='home'),
+	path('', home_view, name='home'),
     path('admin/', admin.site.urls),
     path('sifranti/', include('sifranti.urls')),
     path('vpis/', include('vpis.urls')),
