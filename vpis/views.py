@@ -6,7 +6,9 @@ from django.contrib.auth.models import User, Group
 
 # Create your views here.
 from .forms import *
-from student.models import Vpis
+from student.models import Vpis, Predmetnik, Modul
+from sifranti.models import StudijskiProgram, StudijskoLeto, Letnik, Predmet
+from izpiti.models import PredmetiStudenta
 
 nas_leto = "2018/2019"
 nas_leto_ob = StudijskoLeto.objects.filter(ime=nas_leto)
@@ -274,3 +276,90 @@ def emso_verify(emso):
         emso_sum = sum([emso_digit_list[i] * emso_factor_map[i] for i in range(12)])
         control_digit = 0 if emso_sum % 11 == 0 else 11 - (emso_sum % 11)
         return str(emso)[:12] + str(control_digit)
+
+def predmetnik(request):
+
+    #A preko request.POST dobis spodnje vrednosti in jih das v get
+    #p_id = request.POST.get('program-id', '') namesto 1000468 npr
+    program = StudijskiProgram.objects.get(id=1000468)
+    leto = StudijskoLeto.objects.get(ime="2018/2019")
+    letnik = Letnik.objects.get(ime="2.")
+
+
+
+    predmeti_obvezni = []
+    predmeti_izbirni = []
+    predmeti_modul = []
+  
+    so_moduli = False
+
+    #1 in 2 letnik
+    if letnik != Letnik.objects.get(ime="3."):
+       
+        predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik).values('predmet', 'obvezen')
+        
+ 
+        for i in predmeti_id:
+
+            predmet = Predmet.objects.filter(id=i['predmet'])
+            if i['obvezen']:
+                predmeti_obvezni.append(predmet)
+          
+            else:
+                predmeti_izbirni.append(predmet)
+    #3 letnik
+    else:
+        so_moduli = True
+        predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, ima_modul=False).values('predmet', 'obvezen')
+        for i in predmeti_id:
+
+            predmet = Predmet.objects.filter(id=i['predmet'])
+            if i['obvezen']:
+                predmeti_obvezni.append(predmet)
+
+            else:
+                predmeti_izbirni.append(predmet)
+
+        num = Modul.objects.count()
+    
+        for m in range(1, num+1):
+            modul = Modul.objects.get(id=m)
+
+            temp=[]
+            for p in modul.predmetniki.all().values():
+    
+                temp.append(Predmet.objects.filter(id=p["predmet_id"]))
+
+            predmeti_modul.append(temp)
+
+
+    context = {
+        'predmeti_o': predmeti_obvezni,
+        'predmeti_i': predmeti_izbirni,
+        'predmeti_m': predmeti_modul,
+        'letnik': letnik,
+        'so_moduli': so_moduli
+    }
+    return render(request,'vpis/predmetnik.html', context)
+
+
+#shrani predmete primernemu studentu
+def koncaj_predmetnik(request):
+
+    izbrani_predmeti = request.POST.get('vsi-id', '').split(",")
+    izbrani_predmeti = list(map(int, izbrani_predmeti))
+    predmeti = Predmet.objects.filter(id__in=izbrani_predmeti)
+
+    #TODO manjka vpis key, treba ga je preko predmetnik.html dati sem ali pa kako drugace
+    predmetiStudenta = PredmetiStudenta()
+    predmetiStudenta.save()
+
+    #shrani predmete
+    for p in predmeti:
+        predmetiStudenta.predmeti.add(p)
+
+    context = {
+        'predmeti': predmeti,
+    }
+
+    return render(request,'vpis/predmetnik_izpis.html', context)
