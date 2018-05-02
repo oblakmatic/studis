@@ -125,7 +125,7 @@ def prijava(request):
             
             predmet = IzvedbaPredmeta.objects.filter(rok__id = rok_id)[0]
             # stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
-            stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet).count()
+            stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
             print("polaganja skupaj", stevilo_dosedanjih_polaganj)
             if(stevilo_dosedanjih_polaganj >= 4):
                 print('WARNING! Placljivo polaganje!')
@@ -144,7 +144,7 @@ def prijava(request):
             
             # polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
             trenutno_studijsko_leto = StudijskoLeto.objects.filter(ime = trenutno_leto)[0]
-            polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
+            polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
             if(polaganja_trenutno_leto >= 3):
                 print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!')
             print("polaganja letos", polaganja_trenutno_leto)
@@ -160,7 +160,7 @@ def prijava(request):
 
             vnesi_rok = Rok.objects.filter(id = rok_id)[0]
 
-            zadnje_prijave = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).order_by("-id")
+            zadnje_prijave = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).order_by("-id")
             if(zadnje_prijave.count() != 0):
                 print(vars(zadnje_prijave[0]))
                 datum_zadnje_prijave = zadnje_prijave[0].created_at
