@@ -20,6 +20,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from student.forms import TokenForm
+from django.db.models import Q
 
 # Create your views here.
 def upload_file(request):
@@ -27,11 +28,23 @@ def upload_file(request):
 	return render(request,'import_students.html')
 
 def students(request):
-	all_students = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email').order_by('priimek')
-	context = {
-		'arr': all_students
-	}
-	return render(request,'students.html', context)
+	if(request.user.groups.all()[0].name == "students"):
+		return redirect('/student/podatki')
+	else:
+		if(request.user.groups.all()[0].name == "referent"):
+			all_students = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email').order_by('priimek')
+		elif(request.user.groups.all()[0].name == "professors"):
+			# student <- vpis ->  predmeti studenta -> predmet -> izvedba predmeta -> ucitelj 1, 2, 3
+			all_students = Student.objects.filter(Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_1__email = request.user.email) \
+												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_2__email = request.user.email) \
+												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_3__email = request.user.email))\
+												.distinct().values('priimek', 'ime', 'vpisna_stevilka', 'email').order_by('priimek')
+		for student in all_students:
+			print(student)
+		context = {
+			'arr': all_students
+		}
+		return render(request,'students.html', context)
 
 def import_students(request):
 	content = request.FILES['students'].read().splitlines()
@@ -135,9 +148,9 @@ def students_search(request):
 	'''
 	return render(request,'search.html', context)
 
-def token_add(request):
+def token_add(request, id):
 	if request.method == 'POST':
-		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pridemo do posta ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+		# print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pridemo do posta ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 		student = Student.objects.filter(id=request.POST.get('stud'))
 		program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))
 		letnik = Letnik.objects.filter(ime=request.POST.get('letnik'))
@@ -183,7 +196,10 @@ def token_add(request):
 		# 	'id': id
 		# }
 		context =  {}
-		tokenForm = TokenForm()
+		if (id):
+			tokenForm = TokenForm(initial={'student': str(id)})
+		else:
+			tokenForm = TokenForm()
 		context['tokenForm'] = tokenForm
 		'''if(vpisi.count() > 0):
 			data = {}
@@ -288,6 +304,22 @@ def all_data(request, id):
 
 	return render(request, 'student_data.html', context)
 	
+def student_data(request):
+	if(request.user.groups.all()[0].name == "students"):
+		student = Student.objects.get(email = request.user.email)
+		vpisi = Vpis.objects.filter(student = student)
+		# if student.naslov_zacasno_bivalisce == '':
+		# 	student.naslov_stalno_bivalisce = student.naslov_zacasno_bivalisce
+		
+		context = {
+			'student': student,
+			'vpisi': vpisi
+		}
+
+		return render(request, 'student_data.html', context)
+	else:
+		return redirect('/student/')
+
 def export_csv(request):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="studenti.csv"'

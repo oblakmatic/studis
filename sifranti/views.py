@@ -287,7 +287,7 @@ def naredi_bazo(request):
 	a = StudijskoLeto(ime = "2018/2019")
 	a.save()
 
-	a_vilijan = Ucitelj(ime = "Viljan", priimek = "Mahnič", email = "vilijan.mahnic@fri.uni-lj.si")
+	a_vilijan = Ucitelj(ime = "Viljan", priimek = "Mahnič", email = "viljan.mahnic@fri.uni-lj.si")
 	a_vilijan.save()
 	a_vilijan.predmeti.add(a_teh,a_P1)
 	a_narvika = Ucitelj(ime = "Narvika", priimek = "Bovcon", email = "narvika.bavcon@fri.uni-lj.si")
@@ -434,7 +434,7 @@ def naredi_bazo(request):
 
 	user.save()
 
-	user, created = User.objects.get_or_create(username="vilijanmahnic", email="vilijan.mahnic@fri.uni-lj.si")
+	user, created = User.objects.get_or_create(username="viljanmahnic", email="viljan.mahnic@fri.uni-lj.si")
 	user.first_name = "Vilijan"
 	user.last_name = "Mahnic"
 		
