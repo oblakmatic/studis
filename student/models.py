@@ -28,7 +28,7 @@ class Student(models.Model):
     def __str__(self):
         return str(self.vpisna_stevilka) + ", " + self.priimek + " " + self.ime
     class Meta:
-        ordering = ['-priimek', '-ime', '-vpisna_stevilka']
+        ordering = ['priimek', 'ime', 'vpisna_stevilka']
 
 class Kandidat(models.Model):
     vpisna_stevilka = models.IntegerField(primary_key = True)

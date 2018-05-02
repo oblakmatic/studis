@@ -32,13 +32,13 @@ def students(request):
 		return redirect('/student/podatki')
 	else:
 		if(request.user.groups.all()[0].name == "referent"):
-			all_students = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email').order_by('priimek')
+			all_students = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
 		elif(request.user.groups.all()[0].name == "professors"):
 			# student <- vpis ->  predmeti studenta -> predmet -> izvedba predmeta -> ucitelj 1, 2, 3
 			all_students = Student.objects.filter(Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_1__email = request.user.email) \
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_2__email = request.user.email) \
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_3__email = request.user.email))\
-												.distinct().values('priimek', 'ime', 'vpisna_stevilka', 'email').order_by('priimek')
+												.distinct().values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
 		for student in all_students:
 			print(student)
 		context = {
