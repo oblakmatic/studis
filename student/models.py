@@ -25,6 +25,9 @@ class Student(models.Model):
     # ce je ze izkoristil absolventa
     dodatno_leto = models.BooleanField(default = True)
 
+    def __str__(self):
+        return str(self.vpisna_stevilka) + ", " + self.priimek + " " + self.ime
+
 class Kandidat(models.Model):
     vpisna_stevilka = models.IntegerField(primary_key = True)
     ime = models.CharField(max_length = 30)

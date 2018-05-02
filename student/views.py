@@ -19,6 +19,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
+from student.forms import TokenForm
 
 # Create your views here.
 def upload_file(request):
@@ -134,8 +135,9 @@ def students_search(request):
 	'''
 	return render(request,'search.html', context)
 
-def token_add(request, id):
+def token_add(request):
 	if request.method == 'POST':
+		print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pridemo do posta ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 		student = Student.objects.filter(id=request.POST.get('stud'))
 		program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))
 		letnik = Letnik.objects.filter(ime=request.POST.get('letnik'))
@@ -174,21 +176,23 @@ def token_add(request, id):
 			zeton.save()
 			return token_list(request, 'Žeton uspešno dodan!')
 	else:
-		vpisi = Vpis.objects.select_related().filter(student__pk = id).order_by('-pk')
-		print(vpisi)
+		# vpisi = Vpis.objects.select_related().filter(student__pk = id).order_by('-pk')
+		# print(vpisi)
 
-		context = {
-			'id': id
-		}
-		
-		if(vpisi.count() > 0):
+		# context = {
+		# 	'id': id
+		# }
+		context =  {}
+		tokenForm = TokenForm()
+		context['tokenForm'] = tokenForm
+		'''if(vpisi.count() > 0):
 			data = {}
 			data['prog'] = vpisi[0].studijski_program.ime
 			data['letnik'] = '2.' if vpisi[0].letnik.ime == '1.' else '3.'  
 			data['vrsta_vp'] = vpisi[0].vrsta_vpisa.ime
 			data['nac_stud'] = vpisi[0].nacin_studija
 			data['vrst_stud'] = vpisi[0].vrsta_studija
-			context['data'] = data
+			context['data'] = data'''
 		
 		return render(request, 'token_add.html', context )
 
