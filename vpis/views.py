@@ -7,6 +7,7 @@ from django import forms
 from .forms import *
 from student.models import Vpis, Predmetnik, Modul
 from sifranti.models import StudijskiProgram, StudijskoLeto, Letnik, Predmet
+from izpiti.models import PredmetiStudenta
 
 def index_vpis(request):
 
@@ -119,14 +120,19 @@ def emso_verify(emso):
         return str(emso)[:12] + str(control_digit)
 
 def predmetnik(request):
+
+    #A preko request.POST dobis spodnje vrednosti in jih das v get
+    #p_id = request.POST.get('program-id', '') namesto 1000468 npr
     program = StudijskiProgram.objects.get(id=1000468)
     leto = StudijskoLeto.objects.get(ime="2018/2019")
-    letnik = Letnik.objects.get(ime="3.")
+    letnik = Letnik.objects.get(ime="2.")
+
+
 
     predmeti_obvezni = []
     predmeti_izbirni = []
     predmeti_modul = []
-    KT = 0
+  
     so_moduli = False
 
     #1 in 2 letnik
@@ -137,10 +143,10 @@ def predmetnik(request):
  
         for i in predmeti_id:
 
-            predmet = Predmet.objects.get(id=i['predmet'])
+            predmet = Predmet.objects.filter(id=i['predmet'])
             if i['obvezen']:
                 predmeti_obvezni.append(predmet)
-                KT=KT+6
+          
             else:
                 predmeti_izbirni.append(predmet)
     #3 letnik
@@ -149,10 +155,10 @@ def predmetnik(request):
         predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, ima_modul=False).values('predmet', 'obvezen')
         for i in predmeti_id:
 
-            predmet = Predmet.objects.get(id=i['predmet'])
+            predmet = Predmet.objects.filter(id=i['predmet'])
             if i['obvezen']:
                 predmeti_obvezni.append(predmet)
-                KT=KT+6
+
             else:
                 predmeti_izbirni.append(predmet)
 
@@ -164,7 +170,7 @@ def predmetnik(request):
             temp=[]
             for p in modul.predmetniki.all().values():
     
-                temp.append(Predmet.objects.get(id=p["predmet_id"]))
+                temp.append(Predmet.objects.filter(id=p["predmet_id"]))
 
             predmeti_modul.append(temp)
 
@@ -174,7 +180,28 @@ def predmetnik(request):
         'predmeti_i': predmeti_izbirni,
         'predmeti_m': predmeti_modul,
         'letnik': letnik,
-        'so_moduli': so_moduli,
-        'KT': KT
+        'so_moduli': so_moduli
     }
     return render(request,'vpis/predmetnik.html', context)
+
+
+#shrani predmete primernemu studentu
+def koncaj_predmetnik(request):
+
+    izbrani_predmeti = request.POST.get('vsi-id', '').split(",")
+    izbrani_predmeti = list(map(int, izbrani_predmeti))
+    predmeti = Predmet.objects.filter(id__in=izbrani_predmeti)
+
+    #TODO manjka vpis key, treba ga je preko predmetnik.html dati sem ali pa kako drugace
+    predmetiStudenta = PredmetiStudenta()
+    predmetiStudenta.save()
+
+    #shrani predmete
+    for p in predmeti:
+        predmetiStudenta.predmeti.add(p)
+
+    context = {
+        'predmeti': predmeti,
+    }
+
+    return render(request,'vpis/predmetnik_izpis.html', context)
