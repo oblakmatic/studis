@@ -22,7 +22,7 @@ class Drzava(models.Model):
     tromestna_oznaka = models.CharField(max_length=3, unique = True, verbose_name="Tromestna oznaka")
     iso_naziv = models.CharField(max_length=100, verbose_name="ISO naziv")
     slovenski_naziv = models.CharField(max_length=100, verbose_name="Slovenski naziv")
-    opomba = models.CharField(max_length=100, verbose_name="Opomba")
+    opomba = models.CharField(max_length=400, verbose_name="Opomba")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
     objects = Veljavni()
@@ -48,7 +48,7 @@ class Posta(models.Model):
     
     #id je sifra obcine
     id = models.IntegerField(primary_key=True, verbose_name="Poštna številka" )
-    kraj = models.CharField(max_length=100, unique = True , verbose_name="Kraj")
+    kraj = models.CharField(max_length=100 , verbose_name="Kraj")
     veljaven = models.BooleanField(default = True, verbose_name="Veljavnost šifranta")
 
     objects = Veljavni()
@@ -131,7 +131,7 @@ class OblikaStudija(models.Model):
 
 class Predmet(models.Model):
 
-    ime = models.CharField(max_length=100,unique=True)
+    ime = models.CharField(max_length=100,unique=True,verbose_name="Ime predmeta")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     
     objects = Veljavni()
