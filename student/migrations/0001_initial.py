@@ -46,6 +46,9 @@ class Migration(migrations.Migration):
                 ('email', models.CharField(max_length=60, unique=True, verbose_name='e-pošta')),
                 ('dodatno_leto', models.BooleanField(default=True)),
             ],
+            options={
+                'ordering': ['priimek', 'ime', 'vpisna_stevilka'],
+            },
         ),
         migrations.CreateModel(
             name='Zeton',
