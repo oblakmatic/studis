@@ -454,7 +454,7 @@ def naredi_bazo(request):
 	user.save()
 
 	user, created = User.objects.get_or_create(username="viljanmahnic", email="viljan.mahnic@fri.uni-lj.si")
-	user.first_name = "Vilijan"
+	user.first_name = "Viljan"
 	user.last_name = "Mahnic"
 		
 	if created:
