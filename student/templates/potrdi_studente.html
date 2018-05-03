@@ -10,7 +10,7 @@
 
         <thead>
             <tr>
-                <th scope="col">Vpisna stevilka</th>
+                <th scope="col">Vpisna številka</th>
                 <th scope="col">Ime in priimek</th>
                 <th scope="col">Vrsta vpisa</th>
                 <th scope="col">Letnik/dodatno leto</th>
@@ -37,6 +37,7 @@
                     {% if vpis.potrjen == False %}
                     <button type="submit" name="potrdi_studenta" class="btn btn-outline-primary mt-2">Potrdi vpis</button>
                     {% endif %}
+                    <input type="hidden" name="vpis_email" value={{ vpis.student.email }}>
 
                 </td>
                 

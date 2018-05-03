@@ -336,6 +336,7 @@ def potrdi_studente(request):
 			
 			for vpis in Vpis.objects.all():
 				if str(vpis.student.email) == vpis_student_email:
+					
 					if vpis.potrjen == False:
 						vpis.potrjen = True
 						vpis.save()
