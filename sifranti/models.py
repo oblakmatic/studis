@@ -4,6 +4,16 @@ from django.db import models
 # Add ONLY if the table does not have foreign keys (sifrant)
 # IF you add new sifrant here, add name into table diff_names (views.py)
 # AND you have to add Form Class in forms.py, go and see it is easy
+
+#razred ki je odgovoren za default query
+# ce je query Sifrant.objects.all() se ubistvu izvede Sifrant.objects.filter(veljaven=True)
+
+#ce zelis vse sifrante, tudi neveljavne daj Sifrant.all_objects.all()
+
+class Veljavni(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(veljaven=True)
+
 class Drzava(models.Model):
 
     # id je numerična oznaka
@@ -14,6 +24,9 @@ class Drzava(models.Model):
     slovenski_naziv = models.CharField(max_length=100, verbose_name="Slovenski naziv")
     opomba = models.CharField(max_length=100, verbose_name="Opomba")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+
+    objects = Veljavni()
+    all_objects = models.Manager()
 
     def __str__(self):
         return str(self.id) + " " + self.slovenski_naziv
@@ -27,6 +40,9 @@ class Obcina(models.Model):
     def __str__(self):
         return str(self.id) + " " + self.ime
 
+    objects = Veljavni()
+    all_objects = models.Manager()
+
 
 class Posta(models.Model):
     
@@ -35,6 +51,8 @@ class Posta(models.Model):
     kraj = models.CharField(max_length=100, unique = True , verbose_name="Kraj")
     veljaven = models.BooleanField(default = True, verbose_name="Veljavnost šifranta")
 
+    objects = Veljavni()
+    all_objects = models.Manager()
 
     def __str__(self):
         return str(self.id) + " " + self.kraj
@@ -49,6 +67,10 @@ class StudijskiProgram(models.Model):
     semestri = models.IntegerField(verbose_name="Število semestrov")
     naziv = models.CharField(max_length=100,verbose_name="Naziv")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+
+    objects = Veljavni()
+    all_objects = models.Manager()
+
     def __str__(self):
         return self.naziv
 class VrstaStudija(models.Model):
@@ -60,6 +82,9 @@ class VrstaStudija(models.Model):
     raven_klasius = models.IntegerField(verbose_name="Raven izobrazbe po KLASIUS-SRV")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
+    objects = Veljavni()
+    all_objects = models.Manager()
+
     def __str__(self):
         return str(self.id) + " " + self.opis 
 
@@ -70,6 +95,8 @@ class VrstaVpisa(models.Model):
     mozni_letniki = models.CharField(max_length=200, verbose_name="Možni letniki študija")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
+    objects = Veljavni()
+    all_objects = models.Manager()
     def __str__(self):
         return self.opis
 
@@ -80,6 +107,10 @@ class NacinStudija(models.Model):
     opis = models.CharField(max_length=100, verbose_name="Opis")
     ang_opis = models.CharField(max_length=100, verbose_name="Angleški opis")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+
+    objects = Veljavni()
+    all_objects = models.Manager()    
+
     def __str__(self):
         return self.opis   
 
@@ -90,20 +121,33 @@ class OblikaStudija(models.Model):
     opis = models.CharField(max_length=100, verbose_name="Opis")
     ang_opis = models.CharField(max_length=100, verbose_name="Angleški opis")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+
+    objects = Veljavni()
+    all_objects = models.Manager()
+
     def __str__(self):
         return str(self.id) + " " + self.opis
+
 
 class Predmet(models.Model):
 
     ime = models.CharField(max_length=100,unique=True)
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+    
+    objects = Veljavni()
+    all_objects = models.Manager()
+
     def __str__(self):
         return self.ime
+
 
 class StudijskoLeto(models.Model):
 # 2017/2018, 2018/2019
     ime = models.CharField(max_length=100, unique=True,verbose_name="Ime")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+
+    objects = Veljavni()
+    all_objects = models.Manager()
 
     def __str__(self):
         return self.ime
@@ -111,5 +155,9 @@ class StudijskoLeto(models.Model):
 class Letnik(models.Model):
     ime = models.CharField(max_length=100, unique=True,verbose_name="Ime")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
+
+    objects = Veljavni()
+    all_objects = models.Manager()
+
     def __str__(self):
         return self.ime
