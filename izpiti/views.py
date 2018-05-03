@@ -10,7 +10,8 @@ from datetime import datetime
 from django.core.exceptions import ValidationError
 import pytz
 from datetime import timedelta
-
+from django.db.models import Q
+from .forms import *
 
 # Create your views here.
 def index_izpiti(request):
@@ -267,3 +268,53 @@ def prijava(request):
 
 
    
+def vnesi_ocene(request):
+    if(request.user.groups.all()[0].name == "professors"):
+        curr_roki = []
+        email_ = request.user.email
+        roki = Rok.objects.filter( Q(izvedba_predmeta__ucitelj_1__email = email_) | Q(izvedba_predmeta__ucitelj_2__email = email_) | Q(izvedba_predmeta__ucitelj_3__email = email_) , Q(datum__lte=datetime.now().date()))
+
+        context = {
+            'arr': roki
+            }
+
+        return render(request,'vnesi_ocene.html', context)
+
+    else:
+        return HttpResponse("Nimaš dovoljenja.")
+
+def vnesi_ocene_predmeta(request):
+    if(request.user.groups.all()[0].name == "professors"):
+        if request.method == 'POST' and 'vnesi_ocene' in request.POST:
+            rok_id = request.POST['id_rok']
+
+            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True)
+            
+            form = ocenaForm()
+
+            context = {
+                'arr': prijave,
+                'form': form
+                }
+
+            return render(request,'vnesi_ocene_predmeta.html',context)
+
+        if request.method == 'POST' and 'vnos_ocene' in request.POST:
+            ocena_ = request.POST['ocena']
+            id_prijava = request.POST['id_prijava']
+            print(request.POST.get('my_field'))
+            prijava = Prijava.objects.filter(id = id_prijava)[0]
+            prijava.ocena = int(ocena_)
+            prijava.save()
+
+            rok_id = request.POST['id_rok']
+            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True)
+            
+            context = {
+                'arr': prijave
+                }
+
+            return render(request,'vnesi_ocene_predmeta.html',context)
+
+    else:
+        return HttpResponse("Nimaš dovoljenja.")

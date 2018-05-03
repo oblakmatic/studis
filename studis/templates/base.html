@@ -73,6 +73,12 @@
                     </li>
                     {% endif %}
 
+                    {% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/izpiti/vnesi_ocene/">Izberi rok</a>
+                    </li>
+                    {% endif %}
+
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <span class="navbar-text mr-4">

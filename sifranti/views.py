@@ -379,7 +379,7 @@ def naredi_bazo(request):
 	a_vpisVerlic = Vpis(student=a_verlic, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vrstaVpisa,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
 	a_vpisVerlic.save()
 	
-    
+	
 
 	#a_aljaz.vpisi.add(a_vpisAljaz)
   
@@ -395,16 +395,24 @@ def naredi_bazo(request):
 	a_predmetiStudentaVerlic.predmeti.add(a_teh,a_oim,a_ep,a_obl,a_aps1)
 	a_predmetiStudentaVerlic.save()
 
-	a_prijave_aljaz = PrijaveStudenta(student = a_aljaz)
-	a_prijave_aljaz.save()
-
-	a_prijave_verlic = PrijaveStudenta(student = a_verlic)
-	a_prijave_verlic.save()
 
 	new_date = datetime.datetime(2013, 6, 9, 11, 13)
 	a = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
 	a.save()
-	
+
+	#podatki za vpis ocen izpita
+	new_date = datetime.datetime(2018, 3, 3, 14, 15)
+	a_rok = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
+	a_rok.save()
+
+	new_date = datetime.datetime(2018, 2, 15, 14, 30)
+	a_prijava1 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaAljaz, rok = a_rok, zaporedna_stevilka_polaganja = 1)
+	a_prijava1.save()
+
+	new_date = datetime.datetime(2018, 2, 16, 14, 20)
+	a_prijava2 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaVerlic, rok = a_rok, zaporedna_stevilka_polaganja = 1)
+	a_prijava2.save()
+
 
 	#naredi referenta
 	user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")

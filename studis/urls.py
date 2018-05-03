@@ -26,6 +26,7 @@ urlpatterns = [
     path('sifranti/', include('sifranti.urls')),
     path('vpis/', include('vpis.urls')),
 	path('izpiti/', include('izpiti.urls')),
+    path('izpiti/vnesi_ocene/', include('izpiti.urls')),
     path('student/', include('student.urls')),
     path('student/potrdi_studente/', include('student.urls')),
     path('user/login/', login, name="login"),

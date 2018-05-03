@@ -33,10 +33,4 @@ class Prijava(models.Model):
     zaporedna_stevilka_polaganja = models.IntegerField() #ubistvu se ne rab ce gremo po novem.
     podatki_o_placilu = models.CharField(max_length = 260, default=None, blank=True, null=True)
     aktivna_prijava = models.BooleanField(default = True)
-
-class PrijaveStudenta(models.Model):
-    student = models.ForeignKey(Student, primary_key = True, on_delete= models.CASCADE)
-    prijave = models.ManyToManyField(Prijava, null = True)
-    
-
-    
+    ocena = models.IntegerField(default=None,null=True)
