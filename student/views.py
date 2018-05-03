@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+﻿from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from student.models import Student, Zeton, Vpis, Kandidat
@@ -21,6 +21,11 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from student.forms import TokenForm
 from django.db.models import Q
+
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
+
 
 # Create your views here.
 def upload_file(request):
@@ -423,40 +428,48 @@ def preveri_seznam(request):
 			magName = "Pythonista"
 			issueNum = 12
 			subPrice = "99.00"
- 
+
+			
+
 			formatted_time = datetime.date.today()
 			full_name = vpis_.student.ime + " " +  vpis_.student.priimek 
 			address_parts = vpis_.student.naslov_stalno_bivalisce.split(",")
  
 			im = Image(logo, 2*inch, 2*inch)
 			Story.append(im)
- 
+			
 			styles=getSampleStyleSheet()
 			styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
+			p = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera')
 			ptext = '<font size=12>%s</font>' % formatted_time
- 
-			Story.append(Paragraph(ptext, styles["Normal"]))
+			par = Paragraph(ptext, p)
+			Story.append(par)
 			Story.append(Spacer(1, 12))
  
 			# Create return address
 			ptext = '<font size=12>%s</font>' % full_name
-			Story.append(Paragraph(ptext, styles["Normal"]))       
+			par = Paragraph(ptext, p)
+			Story.append(par)
 			for part in address_parts:
 				ptext = '<font size=12>%s</font>' % part.strip()
-				Story.append(Paragraph(ptext, styles["Normal"]))   
+				par = Paragraph(ptext, p)
+				Story.append(par)
 			
 			Story.append(Spacer(1, 12))
 			ptext = '<font size=12>POTRDILO O VPISU</font>'
-			Story.append(Paragraph(ptext, styles["Normal"]))
+			par = Paragraph(ptext, p)
+			Story.append(par)
 			Story.append(Spacer(1, 12))
  
 			ptext = '<font size=12>Vpisna številka : %d <br/>Priimek, ime: %s, %s<br/>Država rojstva: %s<br/>Študijsko leto: %s<br/>Vrsta vpisa: %s<br/>Način in oblika študija: %s<br/>Letnik,dodatno leto: %s<br/>Študijski program: %s<br/>Vrsta in stopnja študija: %d %s</font>' % (vpis_.student.vpisna_stevilka,vpis_.student.priimek,vpis_.student.ime,vpis_.student.drzava_rojstva.slovenski_naziv,vpis_.studijsko_leto.ime,vpis_.vrsta_vpisa.opis,vpis_.nacin_studija.opis,vpis_.letnik.ime,vpis_.studijski_program.naziv,vpis_.studijski_program.id,vpis_.studijski_program.stopnja)
-			Story.append(Paragraph(ptext, styles["Normal"]))
+			par = Paragraph(ptext, p)
+			Story.append(par)
 			Story.append(Spacer(1, 48))
  
  
 			ptext = '<font size=12>prof. dr. Bojan Orel<br/>dekan</font>'
-			Story.append(Paragraph(ptext, styles["Justify"]))
+			par = Paragraph(ptext, p)
+			Story.append(par)
 			Story.append(Spacer(1, 12))
 
 			
