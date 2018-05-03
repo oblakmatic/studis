@@ -4,9 +4,29 @@
 {% block content %}
 
 <div class="container sifrant">
-    <p>{{opozorilo}}</p>
+    {% if opozorilo%}
+    <div class="alert alert-warning">
+       {{opozorilo}}
+    </div>
+    {% endif %}
     {% if student %}
-    <p>Študent z vpisno številko {{student.vpisna_stevilka }} se lahko vpišeš</p>
+    <p>Študent z vpisno številko {{student.vpisna_stevilka }} in email-om {{student.email}} se lahko vpišeš</p>
+        {% if vpisi %}
+        <table class="table">
+            <tr>
+                <td>Vpis za leto</td>
+                <td>Sprejet</td>
+            </tr>
+            {% for vpis in vpisi %}
+            <tr>
+                <td>{{ vpis.studijsko_leto.ime }}</td>
+                <td>{{ vpis.potrjen }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+
+        {% endif %}
     <h3>Prvi korak:</h3>
     <h2>Podatki o študentu</h2>
     {% endif %}
@@ -15,7 +35,7 @@
     <form action="/vpis/" method="post">
         {% csrf_token %}
         {{ studentform }}
-        <button type="submit" class="btn btn-outline-primary">Dodaj</button>
+        <button type="submit" class="btn btn-outline-primary">Naslednji korak</button>
     </form>
 </div>
 {% endblock %}

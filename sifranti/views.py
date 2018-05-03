@@ -342,6 +342,16 @@ def naredi_bazo(request):
 	a_vv2.save()
 	a = VrstaVpisa(id=3, opis="Nadaljevanje letnika", mozni_letniki="Vpis ni več dovoljen.")
 	a.save()
+	a = VrstaVpisa(id=4, opis="Podalšanje statuda študenta", mozni_letniki="Vsi letniki, dodatno leto")
+	a.save()
+	a = VrstaVpisa(id=5, opis="Vpis v semester skupnega št. programa", mozni_letniki="Vsi letniki razen prvega, dodatno leto ni dovoljeno")
+	a.save()
+	a = VrstaVpisa(id=6, opis="Nadaljevanje letnika", mozni_letniki="Vsi letniki, samo za skupne študijske programe")
+	a.save()
+	a = VrstaVpisa(id=7, opis="Nadaljevanje letnika", mozni_letniki="Vsi letniki, dodatno letno ni dovoljeno")
+	a.save()
+	a = VrstaVpisa(id=98, opis="Nadaljevanje letnika", mozni_letniki="Zadnji letnik. Namenjeno samo strokovmim delavcem v študentskem referatu")
+	a.save()
 
 	a_ns1 = NacinStudija(id=1, opis="redni",ang_opis="full-time")
 	a_ns1.save()
@@ -349,7 +359,7 @@ def naredi_bazo(request):
 	a_ns2.save()
 	#naredi 2 zetona za studenta
 
-	zeton = Zeton(student=primozt,studijski_program=a_stud,letnik=a_2Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs1)
+	zeton = Zeton(student=primozt,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_2Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs1)
 	zeton.save()
 	zeton2 = Zeton(student=primozt,studijski_program=a_stud2,letnik=a_1Letnik,vrsta_vpisa=a_vv2,nacin_studija=a_ns2,vrsta_studija=a_vs2)
 	zeton2.save()
@@ -372,6 +382,7 @@ def naredi_bazo(request):
 	a.save()
 	a = OblikaStudija(id=3, opis="e-studij", ang_opis="e-learning" )
 	a.save()
+
 
 	a_vpisAljaz = Vpis(student=a_aljaz, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vrstaVpisa,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
 	a_vpisAljaz.save()
@@ -467,6 +478,9 @@ def naredi_bazo(request):
 		prof_group.user_set.add(user)
 
 	user.save()
+
+	#PREDMETNIK
+	naredi_predmetnik()
 
 	return HttpResponse("Narejena baza!")
 
@@ -585,6 +599,82 @@ def vsi_predmeti():
 	a = Predmet(ime = "Računalništvo v praksi")
 	a.save()
 
+def naredi_predmetnik():
 
+	UNI = StudijskiProgram.objects.get(id=1000468)
+	LETO = StudijskoLeto.objects.get(ime="2018/2019")
+	LETNIK = Letnik.objects.get(ime="1.")
 
+	#naredi za 1 letnik
+	for i in range(1, 11):
+		predmet_1 = Predmet.objects.get(id=i)
+		predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1)
+		predmetnik.save()
 
+	LETNIK = Letnik.objects.get(ime="2.")
+
+	#naredi za 2 letnik obvezni
+	for i in range(11, 19):
+		predmet_1 = Predmet.objects.get(id=i)
+		predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1)
+		
+		predmetnik.save()
+
+	#naredi za 2 letnik strokovni
+	for i in range(19, 22):
+		predmet_1 = Predmet.objects.get(id=i)
+		predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1, obvezen=False)
+		
+		predmetnik.save()
+
+	LETNIK = Letnik.objects.get(ime="3.")
+	#naredi za 3 letnik obvezni
+	for i in range(22, 25):
+		predmet_1 = Predmet.objects.get(id=i)
+		predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1)
+		
+		predmetnik.save()
+
+	#za module
+	for i in range(25, 43):	
+		predmet_1 = Predmet.objects.get(id=i)
+		predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1, obvezen=False, ima_modul=True)
+		predmetnik.save()
+
+	modul = Modul(ime="Informacijski sistemi")
+	modul.save()
+	modul = Modul(ime="Obladovanje informatike")
+	modul.save()
+	modul = Modul(ime="Računalniška omrežja")
+	modul.save()
+	modul = Modul(ime="Umetna inteligenca")
+	modul.save()
+	modul = Modul(ime="Razvoj programske opreme")
+	modul.save()
+	modul = Modul(ime="Medijske tehnologije")
+	modul.save()
+
+	count = 1
+	for i in range (25, 43, 3):
+	
+		modul = Modul.objects.get(id=count)
+		modul.predmetniki.add(Predmetnik.objects.get(id=i))
+		modul.predmetniki.add(Predmetnik.objects.get(id=i+1))
+		modul.predmetniki.add(Predmetnik.objects.get(id=i+2))
+		modul.save()
+		
+		count=count+1
+
+	#izbirni 2. letnik??
+	LETNIK = Letnik.objects.get(ime="2.")
+	for i in range(43, 46):	
+		predmet_1 = Predmet.objects.get(id=i)
+		predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1, obvezen=False)
+		predmetnik.save()
+
+	#izbirni 3. letnik??
+	LETNIK = Letnik.objects.get(ime="3.")
+	for i in range(43, 46):	
+		predmet_1 = Predmet.objects.get(id=i)
+		predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1, obvezen=False)
+		predmetnik.save()

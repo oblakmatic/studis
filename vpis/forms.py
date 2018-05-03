@@ -7,13 +7,12 @@ from student.models import *
 class NameStudentForm(ModelForm):
 	class Meta:
 		model = Student
-		exclude = ['vpisna_stevilka','dodatno_leto']
+		exclude = ['vpisna_stevilka','dodatno_leto','email']
 
 	def __init__(self, *args, **kwargs):
 		super(NameStudentForm, self).__init__(*args, **kwargs)
 		for visible in self.visible_fields():
 			visible.field.widget.attrs['class'] = 'form-control'
-
 
 class VpisForm(ModelForm):
 

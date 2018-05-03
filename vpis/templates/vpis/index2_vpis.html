@@ -4,19 +4,55 @@
 {% block content %}
 
 <div class="container sifrant">
-    {% if student %}
-    <p>Študent z vpisno številko {{student.vpisna_stevilka }} se lahko vpišeš :</p>
-    {% endif %}
     <p>{{opozorilo}}</p>
+    {% if zeton1.student %}
+    <h3>Drugi korak:</h3>
+    <h2>Podatki o študiju</h2>
+    <p>Študent z vpisno številko {{ zeton1.student.vpisna_stevilka }} se lahko vpišeš</p>
+    <p>{{ info }}</p>
 
-    <form action="/vpis/" method="post">
-        {% csrf_token %}
-        <h2>Podatki o študentu</h2>
-        {{ studentform }}
-        <h2>Podatki o vpisu</h2>
-        {{ form.as_p }}
 
-        <button type="submit" class="btn btn-outline-primary">Dodaj</button>
-    </form>
+    {% endif %}
+
+    <div class="row">
+        <div class="col">
+            <ul class="list-group">
+                <li class="list-group-item">Študijski program: <b>{{ zeton1.studijski_program }}</b></li>
+                <li class="list-group-item">Letnik: <b>{{ zeton1.letnik }}</b></li>
+                <li class="list-group-item">Vrsta vpisa: <b>{{ zeton1.vrsta_vpisa }}</b></li>
+                <li class="list-group-item">Način študija: <b>{{ zeton1.nacin_studija }}</b></li>
+                <li class="list-group-item">Vrsta študija: <b>{{ zeton1.vrsta_studija }}</b></li>
+                
+            </ul>
+
+            <form action="/vpis/studij/0/" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-primary">Izberi vpis</button>
+            </form>
+            
+        </div>
+        {% if zeton2 %}
+        <div class="col">
+            <ul class="list-group">
+                    <li class="list-group-item">Študijski program: <b>{{ zeton2.studijski_program }}</b></li>
+                    <li class="list-group-item">Letnik: <b>{{ zeton2.letnik }}</b></li>
+                    <li class="list-group-item">Vrsta vpisa: <b>{{ zeton2.vrsta_vpisa }}</b></li>
+                    <li class="list-group-item">Način študija: <b>{{ zeton2.nacin_studija }}</b></li>
+                    <li class="list-group-item">Vrsta študija: <b>{{ zeton2.vrsta_studija }}</b></li>
+                    </ul>
+
+                    <form action="/vpis/studij/1/" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary">Izberi vpis</button>
+                    </form>            
+
+        </div>
+        {% endif %}
+      </div>
+
+
+    
+    
+    
 </div>
 {% endblock %}

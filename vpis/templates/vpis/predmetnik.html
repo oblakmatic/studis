@@ -1,0 +1,80 @@
+{% include "base.html" %}
+
+
+{% block content %}
+
+<div class="container sifrant">
+    
+    <h2>Predmeti za {{letnik}} letnik</h2>
+  
+    <div class="row mt-4" id="predmeti">
+
+
+        <ul class="list-group mycard">
+            <li class="list-group-item list-group-item-dark">Obvezni predmeti</li>
+            {% for t in predmeti_o %}
+                {% for v in t %}
+                <li class="list-group-item" >
+                    {{ v.ime }}
+                    <input type="checkbox" class="form-check-input" checked hidden name="izbran-predmet"  id= {{ v.id }} >
+                </li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    
+     
+        <ul class="list-group mycard" id="izbirni-predmeti">
+            <li class="list-group-item list-group-item-primary">Izbirni predmeti</li>
+            {% for t in predmeti_i %}
+                {% for v in t %}
+                <li class="list-group-item">
+                    {{ v.ime }} 
+                    <span style="float: right"><input type="checkbox" class="form-check-input" name="izbran-predmet" id= {{ v.id }} ></span>
+                </li>
+            {% endfor %}
+            {% endfor %}
+        </ul>
+       
+
+        {% if so_moduli  %}
+        
+        <ul class="list-group mycard" id="modul-predmeti">
+            <li class="list-group-item list-group-item-success">Moduli</li>
+        {% for t in predmeti_m %}
+            <li class="list-group-item ">
+        
+                <input type="checkbox" class="form-check-input pl-4" name="modul-box">
+                <ul class="list-group list-group-flush ">
+
+                {% for p in t %}
+                    {% for v in p %}
+                    <li class="list-group-item no-border">{{ v }}<span style="float: right; margin-right: -15%"><input type="checkbox" class="form-check-input" name="izbran-predmet" id= {{ v.id }}></span></li>
+                     {% endfor %}
+                {% endfor %}
+                 </ul>
+                
+            </li>
+
+        {% endfor %}
+        </ul>
+       
+        {% endif %}
+
+    <div>
+        <h4>Skupaj kreditnih točk: <span id="skupaj-kt-tock">{{ KT }}</span></h4>
+        <div class="alert alert-success d-none" id="ok">
+            Izpolnjeni pogoji.
+            <form method="post" action="izpis/">
+                {% csrf_token %}
+                <input type="text" hidden value="" name="vsi-id" id="vsi-id">
+                <button class="btn btn-outline-success" type="submit">Končaj vpis</button>
+            </form>
+        </div>
+        <div class="alert alert-warning d-none" id="notok">
+            Potrebnih je 60 kreditnih točk.
+        </div>
+    </div>
+    </div>
+    
+</div>
+{% endblock %}
