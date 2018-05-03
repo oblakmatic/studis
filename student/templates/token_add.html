@@ -12,51 +12,10 @@
     {% endif %}
     <form action="" method="POST">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="stud">Vpisna številka študenta</label>
-            <input type="number" class="form-control" name="stud" id="stud" value = "{{id}}" required>
-        </div>
-        <div class="form-group">
-                <label for="stud_prog">Študijski program</label>
-                <select class="form-control" name="stud_prog" id="stud_prog">
-                    <option value="DIPL" {% if data.prog == 'DIPL' or not data%} selected {% endif %}>DIPL</option>
-                    <option value="MAG" {% if data.prog == 'MAG'%} selected {% endif %}>MAG</option>
-                    <option value="DR" {% if data.prog == 'DR'%} selected {% endif %}>DR</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="letnik">Letnik</label>
-                <select class="form-control" name="letnik" id="letnik">
-                    <option value="1." {% if data.letnik == '1.'  or not data%} selected {% endif %}>1. letnik</option>
-                    <option value="2." {% if data.letnik == '2.'%} selected {% endif %}>2. letnik</option>
-                    <option value="3." {% if data.letnik == '3.'%} selected {% endif %}>3. letnik</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="vrsta_vpisa">Vrsta vpisa</label>
-                <select class="form-control" name="vrsta_vpisa" id="vrsta_vpisa">
-                    <option value="PRVI" {% if data.vrsta_vp == 'PRVI'  or not data%} selected {% endif %}>Prvi</option>
-                    <option value="PONO" {% if data.vrsta_vp == 'PONO'%} selected {% endif %}>Ponovni</option>                
-                    <option value="ABSO" {% if data.vrsta_vp == 'ABSO'%} selected {% endif %}>Absolvent</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="nac_stud">Način študija</label>
-                <select class="form-control" name="nac_stud" id="nac_stud">
-                    <option value="RED" {% if data.nac_stud == 'RED'  or not data%} selected {% endif %}>Redni</option>
-                    <option value="IZR" {% if data.nac_stud == 'IZR'%} selected {% endif %}>Izredni</option>
-                </select>
-                <label for="vrst_stud">Način študija</label>
-                <select class="form-control" name="vrst_stud" id="vrst_stud">
-                    <option value="UNI" {% if data.vrst_stud == 'UNI' or not data%} selected {% endif %}>Univerzitetni</option>
-                    <option value="VSŠ" {% if data.vrst_stud == 'VSŠ'%} selected {% endif %}>Visokošolski</option>
-                </select>
-    
-            </div>
-            <div class="form-group">
-                <label for="predmet_choice">Pravica do proste izbire predmetov</label>
-                <input type="checkbox" class="form-control" name="predmet_choice" id="predmet_choice"  {% if data.izbira %} selected {% endif %}>
-            </div>
+        
+        <table>
+            {{ tokenForm.as_table }}
+        </table>
         <button type="submit" class="btn btn-outline-success">Ustvari žeton za vpis</button>
       
     </form>

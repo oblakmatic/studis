@@ -16,7 +16,7 @@ class Drzava(models.Model):
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
     def __str__(self):
-        return self.slovenski_naziv
+        return str(self.id) + " " + self.slovenski_naziv
 
 class Obcina(models.Model):
 
@@ -25,7 +25,7 @@ class Obcina(models.Model):
     ime = models.CharField(max_length=100, verbose_name="Ime")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     def __str__(self):
-        return self.ime
+        return str(self.id) + " " + self.ime
 
 
 class Posta(models.Model):
@@ -37,7 +37,7 @@ class Posta(models.Model):
 
 
     def __str__(self):
-        return str(self.id) +" " + self.kraj
+        return str(self.id) + " " + self.kraj
 
 class StudijskiProgram(models.Model):
 #dodiplomski, magisterki, doktorski,
@@ -61,7 +61,7 @@ class VrstaStudija(models.Model):
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
     def __str__(self):
-        return self.opis 
+        return str(self.id) + " " + self.opis 
 
 class VrstaVpisa(models.Model):
 
@@ -91,7 +91,7 @@ class OblikaStudija(models.Model):
     ang_opis = models.CharField(max_length=100, verbose_name="Angleški opis")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     def __str__(self):
-        return self.opis
+        return str(self.id) + " " + self.opis
 
 class Predmet(models.Model):
 

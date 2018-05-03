@@ -9,7 +9,7 @@ class Student(models.Model):
     emso = models.CharField(max_length = 13, verbose_name= "EMŠO")
     priimek = models.CharField(max_length = 30, verbose_name= "Priimek")
     ime = models.CharField(max_length = 30, verbose_name= "Ime")
-    naslov_stalno_bivalisce = models.CharField(max_length = 260, verbose_name= "Stalno prebivališče")
+    naslov_stalno_bivalisce = models.CharField(max_length = 260, verbose_name= "Stalno prebivališče") #Formata: Godešič 163, 4220 Škofja Loka --> Za izpis potrdila o vpisu
     naslov_zacasno_bivalisce = models.CharField(max_length = 260, blank=True, null=True, verbose_name= "Začasno prebivališče")
     
     drzava_rojstva = models.ForeignKey(Drzava, null=True, on_delete = models.SET_NULL, verbose_name= "Država rojstva",related_name="drzava_rojstva")
@@ -24,6 +24,11 @@ class Student(models.Model):
     # one to many se izrazi z foreign keyom
     # ce je ze izkoristil absolventa
     dodatno_leto = models.BooleanField(default = True)
+
+    def __str__(self):
+        return str(self.vpisna_stevilka) + ", " + self.priimek + " " + self.ime
+    class Meta:
+        ordering = ['priimek', 'ime', 'vpisna_stevilka']
 
 class Kandidat(models.Model):
     vpisna_stevilka = models.IntegerField(primary_key = True)

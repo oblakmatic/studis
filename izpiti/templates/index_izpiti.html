@@ -6,59 +6,62 @@
 {% block content %}
 <div class="container sifrant">
     <h3>Izpiti</h3>
-
-    <table class="table">
-        <thead>
+    <form action="/izpiti/izpiti-message/" method="post">
+        {% csrf_token %}
+        <button type="submit" name="prikaz_rokov" class="btn btn-outline-primary mt-2">Prikaz razpisanih rokov</button>
+    </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Predmet</th>
+                    <th scope="col">Studijsko leto</th>
+                    <th scope="col">Ucitelj</th>
+                    <th scope="col">Datum</th>
+                    <th scope="col">Dodaj rok izpita</th>
+                </tr>
+            </thead>
+            {% for IzvedbaPredmeta in arr %}
             <tr>
-                <th scope="col">Predmet</th>
-                <th scope="col">Studijsko leto</th>
-                <th scope="col">Ucitelj</th>
-                <th scope="col">Datum</th>
-                <th scope="col">Dodaj rok izpita</th>
+                <td>{{ IzvedbaPredmeta.predmet }}</td>
+                <td>{{ IzvedbaPredmeta.studijsko_leto }}</td>
+
+                {% if IzvedbaPredmeta.ucitelj_3 != null %}
+                <td>
+                    {{ IzvedbaPredmeta.ucitelj_1.ime }}
+                    {{ IzvedbaPredmeta.ucitelj_1.priimek }},
+                    {{ IzvedbaPredmeta.ucitelj_2.ime }}
+                    {{ IzvedbaPredmeta.ucitelj_2.priimek }},
+                    {{ IzvedbaPredmeta.ucitelj_3.ime }}
+                    {{ IzvedbaPredmeta.ucitelj_3.priimek }}
+                </td>
+                {% elif IzvedbaPredmeta.ucitelj_2 != null %}
+                <td>
+                    {{ IzvedbaPredmeta.ucitelj_1.ime }}
+                    {{ IzvedbaPredmeta.ucitelj_1.priimek }},
+                    {{ IzvedbaPredmeta.ucitelj_2.ime }}
+                    {{ IzvedbaPredmeta.ucitelj_2.priimek }}
+                </td>
+                {% elif IzvedbaPredmeta.ucitelj_1 != null %}
+                <td>
+                    {{ IzvedbaPredmeta.ucitelj_1.ime }}
+                    {{ IzvedbaPredmeta.ucitelj_1.priimek }}
+                </td>
+                {% endif %}
+                <form action="/izpiti/izpiti-message/" method="post">
+                    {% csrf_token %}
+
+                    <td>
+                        <input id="choose_date{{ forloop.counter0 }}" name="datum" oninput="myFunction(this)" type="datetime-local" min={{ curr_date }} value="" required />
+                    </td>
+
+                    <td>
+                        <input type="hidden" name="id_IzvedbaPredmeta" value={{ IzvedbaPredmeta.id }}>
+                        <button type="submit" name="dodaj_izpit" class="btn btn-outline-primary mt-2">Dodaj izpitni rok</button>
+                    </td>
+                </form>
+
             </tr>
-        </thead>
-        {% for IzvedbaPredmeta in arr %}
-        <tr>
-            <td>{{ IzvedbaPredmeta.predmet }}</td>
-            <td>{{ IzvedbaPredmeta.studijsko_leto }}</td>
-
-            {% if IzvedbaPredmeta.ucitelj_3 != null %}
-            <td>
-                {{ IzvedbaPredmeta.ucitelj_1.ime }}
-                {{ IzvedbaPredmeta.ucitelj_1.priimek }},
-                {{ IzvedbaPredmeta.ucitelj_2.ime }}
-                {{ IzvedbaPredmeta.ucitelj_2.priimek }},
-                {{ IzvedbaPredmeta.ucitelj_3.ime }}
-                {{ IzvedbaPredmeta.ucitelj_3.priimek }}
-            </td>
-            {% elif IzvedbaPredmeta.ucitelj_2 != null %}
-            <td>
-                {{ IzvedbaPredmeta.ucitelj_1.ime }}
-                {{ IzvedbaPredmeta.ucitelj_1.priimek }},
-                {{ IzvedbaPredmeta.ucitelj_2.ime }}
-                {{ IzvedbaPredmeta.ucitelj_2.priimek }}
-            </td>
-            {% elif IzvedbaPredmeta.ucitelj_1 != null %}
-            <td>
-                {{ IzvedbaPredmeta.ucitelj_1.ime }}
-                {{ IzvedbaPredmeta.ucitelj_1.priimek }}
-            </td>
-            {% endif %}
-            <form action="/izpiti/izpiti-message/" method="post">
-                {% csrf_token %}
-
-                <td>
-                    <input id="choose_date{{ forloop.counter0 }}" name="datum" oninput="myFunction(this)" type="datetime-local" min={{ curr_date }} value="" required />
-                </td>
-
-                <td>
-                    <input type="hidden" name="id_IzvedbaPredmeta" value={{ IzvedbaPredmeta.id }}>
-                    <button type="submit" name="dodaj_izpit" class="btn btn-outline-primary mt-2">Dodaj izpitni rok</button>
-                </td>
-            </form>
-
-        </tr>
-        {% endfor %}
+            {% endfor %}
 
 </div>
 
@@ -99,15 +102,15 @@
         }
        
 
-        var day = new Date(datum).getUTCDay();
+        var day = new Date(datum).getDay();
         
         if (flag == true) {
             getEl.setCustomValidity("Na praznik ni mogoce razpisati roka za vpis.");
         }
-        else if (day == 5) {
+        else if (day == 6) {
             getEl.setCustomValidity("V soboto ni mogoce razpisati roka za izpit.");
         }
-        else if (day == 6) {
+        else if (day == 0) {
             getEl.setCustomValidity("V nedeljo ni mogoce razpisati roka za izpit.");
         }
         else {

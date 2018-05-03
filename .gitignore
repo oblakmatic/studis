@@ -113,5 +113,9 @@ ENV/
 
 \.vscode/
 
+\.vs/
+
 *.pyc
 db.sqlite3
+
+\*/migrations/

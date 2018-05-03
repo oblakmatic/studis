@@ -7,6 +7,7 @@ from izpiti.models import *
 from student.models import *
 from .forms import *
 from .models import *
+import datetime
 
 # Create your views here.
 #diff_ names is array with all possible models
@@ -286,7 +287,7 @@ def naredi_bazo(request):
 	a = StudijskoLeto(ime = "2018/2019")
 	a.save()
 
-	a_vilijan = Ucitelj(ime = "Viljan", priimek = "Mahnič", email = "vilijan.mahnic@fri.uni-lj.si")
+	a_vilijan = Ucitelj(ime = "Viljan", priimek = "Mahnič", email = "viljan.mahnic@fri.uni-lj.si")
 	a_vilijan.save()
 	a_vilijan.predmeti.add(a_teh,a_P1)
 	a_narvika = Ucitelj(ime = "Narvika", priimek = "Bovcon", email = "narvika.bavcon@fri.uni-lj.si")
@@ -305,8 +306,9 @@ def naredi_bazo(request):
 	a = Ucitelj(ime = "Igor", priimek = "Kononenko", email = "igor.kononenko@fri.uni-lj.si")
 	a.save()
 
-	a = IzvedbaPredmeta(predmet = a_teh, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
-	a.save()
+	a_izv_teh = IzvedbaPredmeta(predmet = a_teh, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
+	a_izv_teh.save()
+
 	a = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
 	a.save()
 	a = IzvedbaPredmeta(predmet = a_ep, studijsko_leto = a_17_18, ucitelj_1 = a_darja, ucitelj_2 = a_jaka, ucitelj_3 = a_mateja)
@@ -367,11 +369,11 @@ def naredi_bazo(request):
 	a = IzvedbaPredmeta(predmet = a_P1, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
 	a.save()
 
-	a_aljaz = Student(vpisna_stevilka = "63150255", emso = "5869362456789", priimek="Rupar", ime="Aljaž", naslov_stalno_bivalisce="Škofja Loka", drzava=a_slo, drzava_rojstva = a_slo, posta= a_sklPosta, obcina=a_sklObcina,obcina_rojstva= a_ljObcina, telefon="031866686", email="ar1961@student.uni-lj.si")
+	a_aljaz = Student(vpisna_stevilka = "63150255", emso = "5869362456789", priimek="Rupar", ime="Aljaž", naslov_stalno_bivalisce="Godešič 163, 4220 Škofja Loka", drzava=a_slo, drzava_rojstva = a_slo, posta= a_sklPosta, obcina=a_sklObcina,obcina_rojstva= a_ljObcina, telefon="031866686", email="ar1961@student.uni-lj.si")
 	a_aljaz.save()
 
 
-	a_verlic = Student(vpisna_stevilka = "63150256", emso = "5869362456755", priimek="Verlič", ime="Aljaž", naslov_stalno_bivalisce="Ljubljana Trnovo", drzava=a_slo,drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina, posta= a_ljPosta, obcina=a_ljObcina, telefon="041786345", email="av1974@student.uni-lj.si")
+	a_verlic = Student(vpisna_stevilka = "63150256", emso = "5869362456755", priimek="Verlič", ime="Aljaž", naslov_stalno_bivalisce="Voje 55, 1290 Grosuplje", drzava=a_slo,drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina, posta= a_ljPosta, obcina=a_ljObcina, telefon="041786345", email="av1974@student.uni-lj.si")
 	a_verlic.save()
 
 	a = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )
@@ -387,6 +389,8 @@ def naredi_bazo(request):
 
 	a_vpisVerlic = Vpis(student=a_verlic, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vrstaVpisa,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
 	a_vpisVerlic.save()
+	
+	
 
 	#a_aljaz.vpisi.add(a_vpisAljaz)
   
@@ -402,7 +406,25 @@ def naredi_bazo(request):
 	a_predmetiStudentaVerlic.predmeti.add(a_teh,a_oim,a_ep,a_obl,a_aps1)
 	a_predmetiStudentaVerlic.save()
 
-	
+
+	new_date = datetime.datetime(2013, 6, 9, 11, 13)
+	a = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
+	a.save()
+
+	#podatki za vpis ocen izpita
+	new_date = datetime.datetime(2018, 3, 3, 14, 15)
+	a_rok = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
+	a_rok.save()
+
+	new_date = datetime.datetime(2018, 2, 15, 14, 30)
+	a_prijava1 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaAljaz, rok = a_rok, zaporedna_stevilka_polaganja = 1)
+	a_prijava1.save()
+
+	new_date = datetime.datetime(2018, 2, 16, 14, 20)
+	a_prijava2 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaVerlic, rok = a_rok, zaporedna_stevilka_polaganja = 1)
+	a_prijava2.save()
+
+
 	#naredi referenta
 	user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")
 	user.first_name = "Tatjana"
@@ -431,8 +453,8 @@ def naredi_bazo(request):
 
 	user.save()
 
-	user, created = User.objects.get_or_create(username="vilijanmahnic", email="vilijan.mahnic@fri.uni-lj.si")
-	user.first_name = "Vilijan"
+	user, created = User.objects.get_or_create(username="viljanmahnic", email="viljan.mahnic@fri.uni-lj.si")
+	user.first_name = "Viljan"
 	user.last_name = "Mahnic"
 		
 	if created:

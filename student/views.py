@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+﻿from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from student.models import Student, Zeton, Vpis, Kandidat
@@ -13,17 +13,43 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter, A4, landscape
 from reportlab.lib import colors 
 
+import time
+from reportlab.lib.enums import TA_JUSTIFY
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from student.forms import TokenForm
+from django.db.models import Q
+
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
+
+
 # Create your views here.
 def upload_file(request):
 
 	return render(request,'import_students.html')
 
 def students(request):
-	all_students = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email').order_by('priimek')
-	context = {
-		'arr': all_students
-	}
-	return render(request,'students.html', context)
+	if(request.user.groups.all()[0].name == "students"):
+		return redirect('/student/podatki')
+	else:
+		if(request.user.groups.all()[0].name == "referent"):
+			all_students = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
+		elif(request.user.groups.all()[0].name == "professors"):
+			# student <- vpis ->  predmeti studenta -> predmet -> izvedba predmeta -> ucitelj 1, 2, 3
+			all_students = Student.objects.filter(Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_1__email = request.user.email) \
+												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_2__email = request.user.email) \
+												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_3__email = request.user.email))\
+												.distinct().values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
+		for student in all_students:
+			print(student)
+		context = {
+			'arr': all_students
+		}
+		return render(request,'students.html', context)
 
 def import_students(request):
 	content = request.FILES['students'].read().splitlines()
@@ -129,59 +155,70 @@ def students_search(request):
 
 def token_add(request, id):
 	if request.method == 'POST':
-		student = Student.objects.filter(id=request.POST.get('stud'))
-		program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))
-		letnik = Letnik.objects.filter(ime=request.POST.get('letnik'))
-		vrsta_vpisa = VrstaVpisa.objects.filter(ime=request.POST.get('vrsta_vpisa'))
-		nacin_studija = NacinStudija.objects.filter(ime=request.POST.get('nac_stud'))
-		vrsta_studija = VrstaStudija.objects.filter(ime=request.POST.get('vrst_stud'))
-		prosta_izbira = request.POST.get('predmet_choice', False)
+		form = TokenForm(request.POST)
+		if (form.is_valid()):
+			# print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pridemo do posta ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+			student = form.cleaned_data['student']
+			program = form.cleaned_data['studijski_program']
+			letnik = form.cleaned_data['letnik']
+			vrsta_vpisa = form.cleaned_data['vrsta_vpisa']
+			nacin_studija = form.cleaned_data['nacin_studija']
+			vrsta_studija = form.cleaned_data['vrsta_studija']
+			prosta_izbira = form.cleaned_data['pravica_do_izbire']
 
-		if prosta_izbira == 'on':
-			prosta_izbira = True
-
-		data = {
-			'student': student,
-			'program': program,
-			'letnik': letnik,
-			'vrsta_vpisa': vrsta_vpisa,
-			'nacin_studija': nacin_studija,
-			'prosta_izbira': prosta_izbira
-		}
-		# print(data)
-		if(student.count() != 1 or program.count() != 1 or letnik.count() != 1 or vrsta_vpisa.count() != 1 or nacin_studija.count() != 1):
-			context = {
-				'message': 'Prosimo, vnesite vse zahtevane podatke!'
+			data = {
+				'student': student,
+				'program': program,
+				'letnik': letnik,
+				'vrsta_vpisa': vrsta_vpisa,
+				'nacin_studija': nacin_studija,
+				'prosta_izbira': prosta_izbira
 			}
-			return render(request, 'token_add.html', context)
-		
-
-		else:
+			# print(data)
+			'''if(student.count() != 1 or program.count() != 1 or letnik.count() != 1 or vrsta_vpisa.count() != 1 or nacin_studija.count() != 1):
+				context = {
+					'message': 'Prosimo, vnesite vse zahtevane podatke!'
+				}
+				return render(request, 'token_add.html', context)'''
 			
-			if Zeton.objects.filter(student=student[0]).count() >= 2:
+
+			#else:
+				
+			'''if Zeton.objects.filter(student=student[0]).count() >= 2:
 				context = {
 					'message': 'Student že ima 2 žetona!'
 				}
 				return render(request, 'token_add.html', context)
 			zeton = Zeton(student=student[0], studijski_program=program[0], letnik=letnik[0], vrsta_vpisa=vrsta_vpisa[0], nacin_studija=nacin_studija[0], vrsta_studija=vrsta_studija[0], pravica_do_izbire=prosta_izbira)
-			zeton.save()
+			zeton.save()'''
 			return token_list(request, 'Žeton uspešno dodan!')
-	else:
-		vpisi = Vpis.objects.select_related().filter(student__pk = id).order_by('-pk')
-		print(vpisi)
-
-		context = {
-			'id': id
-		}
+		else:
+			context = {
+				'message': 'Prosimo, vnesite vse zahtevane podatke!'
+			}
+			return render(request, 'token_add.html', context)
 		
-		if(vpisi.count() > 0):
+	else:
+		# vpisi = Vpis.objects.select_related().filter(student__pk = id).order_by('-pk')
+		# print(vpisi)
+
+		# context = {
+		# 	'id': id
+		# }
+		context =  {}
+		if (id):
+			tokenForm = TokenForm(initial={'student': str(id)})
+		else:
+			tokenForm = TokenForm()
+		context['tokenForm'] = tokenForm
+		'''if(vpisi.count() > 0):
 			data = {}
 			data['prog'] = vpisi[0].studijski_program.ime
 			data['letnik'] = '2.' if vpisi[0].letnik.ime == '1.' else '3.'  
 			data['vrsta_vp'] = vpisi[0].vrsta_vpisa.ime
 			data['nac_stud'] = vpisi[0].nacin_studija
 			data['vrst_stud'] = vpisi[0].vrsta_studija
-			context['data'] = data
+			context['data'] = data'''
 		
 		return render(request, 'token_add.html', context )
 
@@ -194,12 +231,12 @@ def token_list(request, msg=None):
 		# print(dir(token))
 		zeton = {
 			'id': token.pk,
-			'student': token.student.pk,
-			'studijski_program': token.studijski_program.ime,
+			'student': token.student.vpisna_stevilka,
+			'studijski_program': token.studijski_program.naziv,
 			'letnik': token.letnik.ime,
-			'vrsta_vpisa': token.vrsta_vpisa.ime,
-			'nacin_studija': token.nacin_studija.ime,
-			'vrsta_studija': token.vrsta_studija.ime,
+			'vrsta_vpisa': token.vrsta_vpisa.opis,
+			'nacin_studija': token.nacin_studija.opis,
+			'vrsta_studija': token.vrsta_studija.opis,
 			'pravica_do_izbire': 'DA' if token.pravica_do_izbire else 'NE' if token.letnik.ime == '3.' else '/'
 		}
 		zetoni.append(zeton)
@@ -266,9 +303,14 @@ def token_edit(request, edit_id):
 
 def all_data(request, id):
 	student = Student.objects.get(pk = id)
-	vpisi = Vpis.objects.filter(student = student)
-	# if student.naslov_zacasno_bivalisce == '':
-	# 	student.naslov_stalno_bivalisce = student.naslov_zacasno_bivalisce
+	if(student.naslov_zacasno_bivalisce is None):
+		student.naslov_zacasno_bivalisce = '/'
+	print(student)
+	vpisi = Vpis.objects.filter(student = student).order_by('-studijsko_leto').select_related()
+	'''.values('studijsko_leto',\
+								 'studijski_program', 'letnik', 'vrsta_vpisa', \
+								 'nacin_studija', 'vrsta_studija')'''
+	print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",vpisi)
 	
 	context = {
 		'student': student,
@@ -277,6 +319,22 @@ def all_data(request, id):
 
 	return render(request, 'student_data.html', context)
 	
+def student_data(request):
+	if(request.user.groups.all()[0].name == "students"):
+		student = Student.objects.get(email = request.user.email)
+		vpisi = Vpis.objects.filter(student = student.vpisna_stevilka)
+		if(student.naslov_zacasno_bivalisce is None):
+			student.naslov_zacasno_bivalisce = '/'
+		print(student)
+		context = {
+			'student': student,
+			'vpisi': vpisi
+		}
+
+		return render(request, 'student_data.html', context)
+	else:
+		return redirect('/student/')
+
 def export_csv(request):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="studenti.csv"'
@@ -316,3 +374,120 @@ def export_pdf(request):
 
 	doc.build(elements)
 	return response
+
+def potrdi_studente(request):
+	if(request.user.groups.all()[0].name == "referent"):
+		if request.method == 'POST' and 'potrdi_studenta' in request.POST:
+
+			vpis_student_email = request.POST.get('vpis_email')
+			
+			for vpis in Vpis.objects.all():
+				if str(vpis.student.email) == vpis_student_email:
+					
+					if vpis.potrjen == False:
+						vpis.potrjen = True
+						vpis.save()
+
+
+	else:
+		return HttpResponse("Nimaš dovoljenja.")
+
+	all_vpis = Vpis.objects.all()
+	potrjeni = []
+	for vpis in all_vpis:
+		if vpis.potrjen == False:
+			potrjeni.append(vpis)
+	
+	context = {
+		'arr': potrjeni
+		}
+
+	return render(request, 'potrdi_studente.html',context)
+
+def preveri_seznam(request):
+
+	if(request.user.groups.all()[0].name == "referent"):
+
+		if request.method == 'POST' and 'natisni' in request.POST:
+
+			vpis_student_email = request.POST.get('vpis_email')
+			vpis_ = None
+			for vpis in Vpis.objects.all():
+				if str(vpis.student.email) == vpis_student_email:
+					vpis_ = vpis
+
+
+			response = HttpResponse(content_type='application/pdf')
+			response['Content-Disposition'] = 'inline; filename="studenti.pdf"'
+			
+			doc = SimpleDocTemplate(response,pagesize=letter,
+						rightMargin=72,leftMargin=72,
+						topMargin=72,bottomMargin=18)
+			Story=[]
+			logo = "student/Logo_UL_FRI.png"
+			magName = "Pythonista"
+			issueNum = 12
+			subPrice = "99.00"
+
+			
+
+			formatted_time = datetime.date.today()
+			full_name = vpis_.student.ime + " " +  vpis_.student.priimek 
+			address_parts = vpis_.student.naslov_stalno_bivalisce.split(",")
+ 
+			im = Image(logo, 2*inch, 2*inch)
+			Story.append(im)
+			
+			styles=getSampleStyleSheet()
+			styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
+			p = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera')
+			ptext = '<font size=12>%s</font>' % formatted_time
+			par = Paragraph(ptext, p)
+			Story.append(par)
+			Story.append(Spacer(1, 12))
+ 
+			# Create return address
+			ptext = '<font size=12>%s</font>' % full_name
+			par = Paragraph(ptext, p)
+			Story.append(par)
+			for part in address_parts:
+				ptext = '<font size=12>%s</font>' % part.strip()
+				par = Paragraph(ptext, p)
+				Story.append(par)
+			
+			Story.append(Spacer(1, 12))
+			ptext = '<font size=12>POTRDILO O VPISU</font>'
+			par = Paragraph(ptext, p)
+			Story.append(par)
+			Story.append(Spacer(1, 12))
+ 
+			ptext = '<font size=12>Vpisna številka : %d <br/>Priimek, ime: %s, %s<br/>Država rojstva: %s<br/>Študijsko leto: %s<br/>Vrsta vpisa: %s<br/>Način in oblika študija: %s<br/>Letnik,dodatno leto: %s<br/>Študijski program: %s<br/>Vrsta in stopnja študija: %d %s</font>' % (vpis_.student.vpisna_stevilka,vpis_.student.priimek,vpis_.student.ime,vpis_.student.drzava_rojstva.slovenski_naziv,vpis_.studijsko_leto.ime,vpis_.vrsta_vpisa.opis,vpis_.nacin_studija.opis,vpis_.letnik.ime,vpis_.studijski_program.naziv,vpis_.studijski_program.id,vpis_.studijski_program.stopnja)
+			par = Paragraph(ptext, p)
+			Story.append(par)
+			Story.append(Spacer(1, 48))
+ 
+ 
+			ptext = '<font size=12>prof. dr. Bojan Orel<br/>dekan</font>'
+			par = Paragraph(ptext, p)
+			Story.append(par)
+			Story.append(Spacer(1, 12))
+
+			
+			
+			doc.build(Story)
+			return response
+
+		if request.method == 'POST' and 'prikaz_seznama' in request.POST:
+
+			seznam = []
+			for vpis in Vpis.objects.all():
+				if vpis.potrjen == True:
+					seznam.append(vpis)
+
+			context = {
+				'arr': seznam
+				}
+
+			return render(request, 'preveri_seznam.html',context)
+	else:
+		return HttpResponse("Nimaš dovoljenja.")

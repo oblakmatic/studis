@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container sifrant">
+    <h3>Seznam vpisanih studentov</h3>
+    <table class="table">
+
+        <thead>
+            <tr>
+                <th scope="col">Vpisna stevilka</th>
+                <th scope="col">Ime in priimek</th>
+                <th scope="col">Vrsta vpisa</th>
+                <th scope="col">Letnik/dodatno leto</th>
+                <th scope="col">Studijski program</th>
+                <th scope="col">Potrjen</th>
+                <th scope="col">Natisni potrdilo o vpisu</th>
+            </tr>
+        </thead>
+        {% for vpis in arr %}
+        <tr>
+            <td>{{ vpis.student.vpisna_stevilka }}</td>
+            <td>{{ vpis.student.priimek }}, {{ vpis.student.ime }}</td>
+            <td>{{ vpis.vrsta_vpisa.opis }}</td>
+            <td>{{ vpis.letnik.ime }}</td>
+            <td>{{ vpis.studijski_program.naziv }}</td>
+            {% if vpis.potrjen == False %}
+            <td>Ne</td>
+            {% else %}
+            <td>Da</td>
+            {% endif %}
+            <form action="/student/preveri_seznam/" method="post">
+                {% csrf_token %}
+                <td>
+                    {% if vpis.potrjen == True %}
+                    <button type="submit" name="natisni" class="btn btn-outline-primary mt-2">Natisni</button>
+                    {% else %}
+                    <button type="submit" name="natisni" class="btn btn-outline-primary mt-2" disabled>Natisni</button>
+                    {% endif %}
+                    <input type="hidden" name="vpis_email" value={{ vpis.student.email }}>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+
+</div>
+
+
+{% endblock %}
