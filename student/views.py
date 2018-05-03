@@ -14,7 +14,7 @@ from reportlab.lib.pagesizes import letter, A4, landscape
 from reportlab.lib import colors 
 
 import time
-from reportlab.lib.enums import TA_JUSTIFY
+from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -27,6 +27,8 @@ from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+
 
 # Create your views here.
 def upload_file(request):
@@ -438,9 +440,11 @@ def preveri_seznam(request):
 			issueNum = 12
 			subPrice = "99.00"
 
-			
 
 			formatted_time = datetime.date.today()
+			formatted_time = str(formatted_time)
+			tabela = formatted_time.split("-")
+			formatted_time = tabela[2] + "." + tabela[1] + "." + tabela[0]
 			full_name = vpis_.student.ime + " " +  vpis_.student.priimek 
 			address_parts = vpis_.student.naslov_stalno_bivalisce.split(",")
  
@@ -450,8 +454,10 @@ def preveri_seznam(request):
 			styles=getSampleStyleSheet()
 			styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
 			p = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera')
+			p1 = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera',alignment=TA_RIGHT)
+			p2 = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera',alignment=TA_CENTER)
 			ptext = '<font size=12>%s</font>' % formatted_time
-			par = Paragraph(ptext, p)
+			par = Paragraph(ptext, p1)
 			Story.append(par)
 			Story.append(Spacer(1, 12))
  
@@ -464,26 +470,29 @@ def preveri_seznam(request):
 				par = Paragraph(ptext, p)
 				Story.append(par)
 			
-			Story.append(Spacer(1, 12))
-			ptext = '<font size=12>POTRDILO O VPISU</font>'
-			par = Paragraph(ptext, p)
+			Story.append(Spacer(1, 50))
+
+			text = "POTRDILO O VPISU"
+			ptext = '<font size=13>%s</font>' % text
+			par = Paragraph(ptext, p2)
 			Story.append(par)
-			Story.append(Spacer(1, 12))
+			Story.append(Spacer(1, 20))
  
 			ptext = '<font size=12>Vpisna številka : %d <br/>Priimek, ime: %s, %s<br/>Država rojstva: %s<br/>Študijsko leto: %s<br/>Vrsta vpisa: %s<br/>Način in oblika študija: %s<br/>Letnik,dodatno leto: %s<br/>Študijski program: %s<br/>Vrsta in stopnja študija: %d %s</font>' % (vpis_.student.vpisna_stevilka,vpis_.student.priimek,vpis_.student.ime,vpis_.student.drzava_rojstva.slovenski_naziv,vpis_.studijsko_leto.ime,vpis_.vrsta_vpisa.opis,vpis_.nacin_studija.opis,vpis_.letnik.ime,vpis_.studijski_program.naziv,vpis_.studijski_program.id,vpis_.studijski_program.stopnja)
 			par = Paragraph(ptext, p)
 			Story.append(par)
 			Story.append(Spacer(1, 48))
- 
- 
-			ptext = '<font size=12>prof. dr. Bojan Orel<br/>dekan</font>'
-			par = Paragraph(ptext, p)
+			
+			
+			ptext = '<font size=12>prof. dr. Bojan Orel, dekan</font>'
+			par = Paragraph(ptext, p1)
 			Story.append(par)
 			Story.append(Spacer(1, 12))
+			Story.append(PageBreak())
 
-			
-			
+			Story = Story + Story + Story + Story + Story + Story
 			doc.build(Story)
+
 			return response
 
 		if request.method == 'POST' and 'prikaz_seznama' in request.POST:
