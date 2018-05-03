@@ -7,50 +7,96 @@
 
 <h3>Vsi študenti</h3>
 
-<table class="table">
-	<thead>
-	    <tr>
-	      <th scope="col">#</th>
-	      <th scope="col">Priimek</th>
-	      <th scope="col">Ime</th>
-	      <th scope="col">Vpisna številka</th>
-	      <th scope="col">Email</th>
-	      <th scope="col"></th>
-	      <th scope="col"></th>
-	    </tr>
-  	</thead>
-{% for t in arr %}
-	
-	<td>{{ forloop.counter }}</td>
-	
-	{% for k,v in t.items %}
-	
-		<td>{{ v }}</td>
-	
+	<div class="row">
+		<form action="/student/isci/" method="post">
+			{% csrf_token %}
+			<input type="text" name="search_text">
+			<button type="submit" class="btn btn-primary mb-2 mr-2 ml-1">Išči</button>
+		</form>
+		<form action="/student/seznam-zetonov/" method="post">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-outline-primary mb-2 mr-2">Seznam vpisnih žetonov</button>
+		</form>
+		<form action="/student/izvoz/pdf/" method="post">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-outline-secondary mb-2 mr-2">Izvozi PDF</button>
+		</form>
+
+		<form action="/student/izvoz/csv/" method="post">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-outline-secondary mb-2 mr-2">Izvozi CSV</button>
+		</form>
+	</div>
+
+	<table class="table">
+		<thead>
+		    <tr>
+		      <th scope="col">#</th>
+		      <th scope="col">Priimek</th>
+		      <th scope="col">Ime</th>
+		      <th scope="col">Vpisna številka</th>
+		      <th scope="col">Email</th>
+		      <th scope="col"></th>
+		      <th scope="col"></th>
+		    </tr>
+	  	</thead>
+
+	{% for t in students %}
+		
+			<td>{{ forloop.counter|add:students.start_index|add:"-1"}}</td>
+			<td>{{ t.priimek }}</td>
+			<td>{{ t.ime }}</td>
+			<td>{{ t.vpisna_stevilka }}</td>
+			<td>{{ t.email }}</td>
+
+			<td><a href="ustvari-zeton/{{ t.vpisna_stevilka }}">Ustvari vpisni žeton</a></td>
+			<td><a href="podatki/{{ t.vpisna_stevilka }}">Izpiši vse podatke</a></td>
+		</tr>
+
 	{% endfor %}
-	<td><a href="ustvari-zeton/{{ t.vpisna_stevilka }}">Ustvari vpisni žeton</a></td>
-	<td><a href="podatki/{{ t.vpisna_stevilka }}">Izpiši vse podatke</a></td>
-	</tr>
-{% endfor %}
+	</table>
 
 
-	<form action="/student/isci/" method="post">
-		{% csrf_token %}
-		<input type="text" name="search_text">
-    	<button type="submit" class="btn btn-primary mb-2 mr-2 ml-1">Išči</button>
-	</form>
-	<form action="/student/seznam-zetonov/" method="post">
-		{% csrf_token %}
-    	<button type="submit" class="btn btn-outline-primary mb-2 mr-2">Seznam vpisnih žetonov</button>
-	</form>
-	<form action="/student/izvoz/pdf/" method="post">
-		{% csrf_token %}
-    	<button type="submit" class="btn btn-outline-secondary mb-2 mr-2">Izvozi PDF</button>
-	</form>
+	<div>
+		<ul class="pagination">
+		 
+        {% if students.has_previous %}
+	        <li class="page-item">
+	        	<a href="?page={{ students.previous_page_number }}" class="page-link">&laquo;</a>
+	        </li>
+	    {% else %}
+	        <li class="page-item disbled">
+	        	<a class="page-link">&laquo;</a>
+	        </li>
+        {% endif %}
 
-	<form action="/student/izvoz/csv/" method="post">
-		{% csrf_token %}
-    	<button type="submit" class="btn btn-outline-secondary mb-2 mr-2">Izvozi CSV</button>
-	</form>
-</div>
+      	{% for pg in students.paginator.page_range %}
+	        {% if students.number == pg %}
+	          <li class="page-item active">
+	          	<a href="?page={{pg}}" class="page-link">{{pg}}</a>
+	          </li>
+	        {% else %}
+	          <li class="page-item">
+	          	<a href="?page={{pg}}" class="page-link">{{pg}}</a>
+	          </li>
+	        {% endif %}
+	    {% endfor %}
+	   
+
+	    {% if students.has_next %}
+	        <li class="page-item">
+	        	<a href="?page={{ students.next_page_number }}" class="page-link">&raquo;</a>
+	        </li>
+	    {% else %}
+	        <li class="page-item disbled">
+	        	<a class="page-link">&raquo;</a>
+	        </li>
+        {% endif %}
+
+		   
+		</ul>
+	</div>
+
+</div>	
+
 {% endblock %}
