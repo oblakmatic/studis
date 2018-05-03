@@ -27,6 +27,8 @@ class Student(models.Model):
 
     def __str__(self):
         return str(self.vpisna_stevilka) + ", " + self.priimek + " " + self.ime
+    class Meta:
+        ordering = ['priimek', 'ime', 'vpisna_stevilka']
 
 class Kandidat(models.Model):
     vpisna_stevilka = models.IntegerField(primary_key = True)
@@ -69,11 +71,23 @@ class Vpis(models.Model):
     potrjen = models.BooleanField(default = False)
     #pravica do proste izbire predmetov v 3. letniku
     prosta_izbira = models.BooleanField(default = False)
+
+    class Meta:
+        unique_together = (('student', 'studijsko_leto'),)
     
 
 class Predmetnik(models.Model):
-    studijski_program = models.ForeignKey(StudijskiProgram,  primary_key = True, on_delete= models.CASCADE)
+    studijski_program = models.ForeignKey(StudijskiProgram, on_delete= models.CASCADE)
     studijsko_leto = models.ForeignKey(StudijskoLeto, null=True, on_delete= models.SET_NULL)
     letnik = models.ForeignKey(Letnik, null=True, on_delete= models.SET_NULL)
     predmet = models.ForeignKey(Predmet, null=True, on_delete= models.SET_NULL)
     obvezen = models.BooleanField(default = True)
+    ima_modul = models.BooleanField(default = False)
+    class Meta:
+        unique_together = (('studijski_program', 'studijsko_leto', 'letnik', 'predmet'),)
+
+class Modul(models.Model):
+    ime = models.CharField(max_length=100, unique=True,verbose_name="Ime Modula")
+    predmetniki = models.ManyToManyField(Predmetnik, null=True)
+
+

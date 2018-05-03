@@ -4,6 +4,19 @@
 	padding-top:200px;
 }
 
+.mycard{
+	width: 17rem; 
+	margin-right: 1%; 
+	height: 100%;
+}
+
+.no-border{
+	border-top-style: none;
+    border-left-style: none;
+    border-right-style: none;
+    border-bottom-style: none;
+}
+
 .parent-rotated{
     position:absolute;
 

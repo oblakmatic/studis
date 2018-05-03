@@ -134,7 +134,7 @@ def prijava(request):
             if(stevilo_dosedanjih_polaganj >= 6):
                 print('WARNING! Stevilo najvec moznih polaganj predmeta prekoraceno!')
 
-            utc = pytz.UTC
+            '''utc = pytz.UTC
             trenutni_datum = utc.localize(datetime.now()).date()
             
             # print(trenutni_datum.year-1, trenutni_datum.year, trenutni_datum.year+1)
@@ -144,8 +144,9 @@ def prijava(request):
                 trenutno_leto = str(trenutni_datum.year-1) + "/" + str(trenutni_datum.year)
             
             # polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
-            trenutno_studijsko_leto = StudijskoLeto.objects.filter(ime = trenutno_leto)[0]
-            polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
+            trenutno_studijsko_leto = StudijskoLeto.objects.filter(ime = trenutno_leto)[0]'''
+            trenutno_studijsko_leto = ptsl()
+            polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
             if(polaganja_trenutno_leto >= 3):
                 print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!')
             print("polaganja letos", polaganja_trenutno_leto)
@@ -266,6 +267,19 @@ def prijava(request):
 
     return render(request,'prijava.html',context)
 
+def pridobi_trenutno_studijsko_leto():
+    utc = pytz.UTC
+    trenutni_datum = utc.localize(datetime.now()).date()
+            
+    # print(trenutni_datum.year-1, trenutni_datum.year, trenutni_datum.year+1)
+    if (trenutni_datum.month >= 10 and trenutni_datum.day >= 1):
+        trenutno_leto = str(trenutni_datum.year) + "/" + str(trenutni_datum.year+1)
+    else:
+        trenutno_leto = str(trenutni_datum.year-1) + "/" + str(trenutni_datum.year)
+            
+    # polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
+    trenutno_studijsko_leto = StudijskoLeto.objects.filter(ime = trenutno_leto)[0]
+    return trenutno_studijsko_leto
 
    
 def vnesi_ocene(request):
@@ -318,3 +332,6 @@ def vnesi_ocene_predmeta(request):
 
     else:
         return HttpResponse("Nimaš dovoljenja.")
+        
+def ptsl():
+    return pridobi_trenutno_studijsko_leto()

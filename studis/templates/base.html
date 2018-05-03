@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/theme.bootstrap.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/mystyle.css' %}" />
     <script src="{% static 'js/jquery-1.9.1.min.js' %}"></script>
-
+    <script src="{% static 'js/myscript.js' %}"></script>
     <title>{% block title %}Title{% endblock %}</title>
 	
 </head>
@@ -44,7 +44,7 @@
 
                     {% if user.groups.all.0.name == "students" %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/student/">Moji podatki</a>
+                        <a class="nav-link" href="/student/podatki">Moji podatki</a>
                     </li>
                     {% endif %}
 
