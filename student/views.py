@@ -283,32 +283,19 @@ def token_edit(request, edit_id):
 		if(zeton == None):
 			return redirect('/student/seznam-zetonov/', 'Ta žeton ne obstaja!')
 		else:
-			context = {
-				'data': {
-					'vpisna_stevilka': zeton.student.pk,
-					'studijski_program': zeton.studijski_program.pk,
-					'letnik': zeton.letnik.pk,
-					'vrsta_vpisa': zeton.vrsta_vpisa.pk,
-					'nacin_studija': zeton.nacin_studija.pk,
-					'vrsta_studija': zeton.vrsta_studija.pk,
-					'pravica_do_izbire': zeton.pravica_do_izbire
-				}
-			}
-			return render(request, 'token_edit.html', context)
-
-		context =  {}
-		tokenForm = TokenForm(initial={
-			'vpisna_stevilka': zeton.student.pk,
-			'studijski_program': zeton.studijski_program.pk,
-			'letnik': zeton.letnik.pk,
-			'vrsta_vpisa': zeton.vrsta_vpisa.pk,
-			'nacin_studija': zeton.nacin_studija.pk,
-			'vrsta_studija': zeton.vrsta_studija.pk,
-			'pravica_do_izbire': zeton.pravica_do_izbire})
-		
-		context['tokenForm'] = tokenForm
-		
-		return render(request, 'token_edit.html', context )
+			context = {}
+			tokenForm = TokenForm(initial={
+				'student': zeton.student.vpisna_stevilka,
+				'studijski_program': zeton.studijski_program.id,
+				'letnik': zeton.letnik.id,
+				'vrsta_vpisa': zeton.vrsta_vpisa.id,
+				'nacin_studija': zeton.nacin_studija.id,
+				'vrsta_studija': zeton.vrsta_studija.id,
+				'pravica_do_izbire': zeton.pravica_do_izbire})
+			
+			context['tokenForm'] = tokenForm
+			
+			return render(request, 'token_edit.html', context )
 
 def all_data(request, id):
 	student = Student.objects.get(pk = id)
