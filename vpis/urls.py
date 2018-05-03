@@ -7,6 +7,7 @@ urlpatterns = [
     path('',views.index_vpis,name='index_vpis'),
     path('studij/',views.index2_vpis,name='index2_vpis'),
     path('studij/<int:index>/',views.index2_vpis_post,name='index2_vpis_post'),
+    path('vpisni/<int:ind_student>/<str:ind_studleto>/<str:ind_studleto2>/',views.vpisni_list,name='vpisni_list'),
     #path('<str:diff>/',views.changesif,name='changesif'),
     #path('<str:diff>/<int:index>/',views.update,name='update'),
     #path('<str:diff>/<int:index>/delete/',views.delete,name='delete')

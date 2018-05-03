@@ -13,6 +13,29 @@ from izpiti.models import PredmetiStudenta
 nas_leto = "2018/2019"
 nas_leto_ob = StudijskoLeto.objects.filter(ime=nas_leto)
 
+
+
+def vpisni_list(request, ind_student, ind_studleto,ind_studleto2):
+
+    student = Student.objects.filter(vpisna_stevilka= ind_student)
+    ime_stud = ind_studleto+"/"+ind_studleto2
+    stud_leto = StudijskoLeto.objects.filter(ime=ime_stud)
+    vpis1 = Vpis.objects.filter(student= student[0]).filter(studijsko_leto=stud_leto[0])[0]
+
+    predmentiStudenta = PredmetiStudenta.objects.filter(vpis=vpis1)[0]
+    
+    
+
+    context ={
+        'student' : student,
+        'vpis': vpis1,
+        'predmeti_studenta' : predmentiStudenta,
+
+    }
+
+    return render(request,'vpis/vpisni_list.html',context) 
+
+
 def index2_vpis_post(request,index):
     #index je index zetona od nekega studenta, ki ga dobimo po querysetu
     if request.method == 'POST':
@@ -356,14 +379,19 @@ def koncaj_predmetnik(request):
     izbrani_predmeti = list(map(int, izbrani_predmeti))
     predmeti = Predmet.objects.filter(id__in=izbrani_predmeti)
 
+    student = vrniStudenta(request.user.email)
+    vpis1 = Vpis.objects.filter(potrjen=False).filter(student=student[0])[0]
+
     #TODO manjka vpis key, treba ga je preko predmetnik.html dati sem ali pa kako drugace
     predmetiStudenta = PredmetiStudenta()
+    predmetiStudenta.vpis = vpis1
     predmetiStudenta.save()
 
     #shrani predmete
     for p in predmeti:
         predmetiStudenta.predmeti.add(p)
 
+    predmetiStudenta.save()
     context = {
         'predmeti': predmeti,
     }

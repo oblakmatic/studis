@@ -66,6 +66,9 @@ class Vpis(models.Model):
     potrjen = models.BooleanField(default = False)
     #pravica do proste izbire predmetov v 3. letniku
     prosta_izbira = models.BooleanField(default = False)
+
+    class Meta:
+        unique_together = (('student', 'studijsko_leto'),)
     
 
 class Predmetnik(models.Model):
