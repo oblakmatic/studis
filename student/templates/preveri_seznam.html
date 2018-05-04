@@ -6,6 +6,7 @@
 
         <thead>
             <tr>
+                <th scope="col">Zaporedna stevilka</th>
                 <th scope="col">Vpisna stevilka</th>
                 <th scope="col">Ime in priimek</th>
                 <th scope="col">Vrsta vpisa</th>
@@ -17,6 +18,7 @@
         </thead>
         {% for vpis in arr %}
         <tr>
+            <td>{{ forloop.counter }}.</td>
             <td>{{ vpis.student.vpisna_stevilka }}</td>
             <td>{{ vpis.student.priimek }}, {{ vpis.student.ime }}</td>
             <td>{{ vpis.vrsta_vpisa.opis }}</td>
