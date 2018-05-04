@@ -77,12 +77,13 @@ class OblikaStudijaForm(ModelForm):
         model = OblikaStudija
         exclude = ['id']
 
-class PostaForm(ModelForm):
+
+
+class PostaForm2(ModelForm):
     class Meta:
         model = Posta
         exclude = ['id'] #['ime', 'postna_stevilka']
         
-
 
 class DrzavaForm2(ModelForm):
     class Meta:
