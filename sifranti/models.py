@@ -131,7 +131,9 @@ class OblikaStudija(models.Model):
 
 class Predmet(models.Model):
 
+    id = models.IntegerField(primary_key=True,verbose_name="Šifra")
     ime = models.CharField(max_length=100,unique=True,verbose_name="Ime predmeta")
+    kreditne_tocke=models.IntegerField(default=6, verbose_name="Kreditne točke")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     
     objects = Veljavni()

@@ -124,9 +124,26 @@ def naredi_bazo(request):
     a_3Letnik= Letnik(ime="3.")
     a_3Letnik.save()
 
+    a_stud = StudijskiProgram(id=1000475,sifra="L2",stopnja="C - (predbolonjski) univerzitetni", semestri=9, naziv= "RAČUNAL. IN INFORMATIKA UN")
+    a_stud.save()
+    a_stud2 = StudijskiProgram(id=1000471,sifra="L1",stopnja="L - druga stopnja: magistrski", semestri=4, naziv= "RAČUNALN. IN INFORM. MAG II.ST")
+    a_stud2.save()
+    a = StudijskiProgram(id=1000468 ,sifra="VT",stopnja="K - prva stopnja: univerzitetni", semestri=6, naziv= "RAČUNALN. IN INFORM. UN-I.ST")
+    a.save()
+    a = StudijskiProgram(id=1000470 ,sifra="VU",stopnja="J - prva stopnja: visokošolski strokovni", semestri=6, naziv= "RAČUNALN. IN INFORM. VS-I.ST")
+    a.save()
+
+
+    a = StudijskoLeto(ime = "2016/2017")
+    a.save()
+    a_17_18 = StudijskoLeto(ime = "2017/2018")
+    a_17_18.save()
+    a = StudijskoLeto(ime = "2018/2019")
+    a.save()
+
     vsi_predmeti()
 
-    #Aljaz dodal ampak je matic spremenil
+    #
     a_teh = Predmet.objects.get(ime = "Tehnologija programske opreme")
 
     a_obl = Predmet.objects.get(ime = "Osnove oblikovanja")
@@ -140,14 +157,6 @@ def naredi_bazo(request):
     a = Predmet.objects.get(ime = "Programiranje 2")
 
     a_aps1 = Predmet.objects.get(ime = "Algoritmi in podatkovne strukture 1")
-
-
-    a = StudijskoLeto(ime = "2016/2017")
-    a.save()
-    a_17_18 = StudijskoLeto(ime = "2017/2018")
-    a_17_18.save()
-    a = StudijskoLeto(ime = "2018/2019")
-    a.save()
 
     a_vilijan = Ucitelj(ime = "Viljan", priimek = "Mahnič", email = "viljan.mahnic@fri.uni-lj.si")
     a_vilijan.save()
@@ -174,20 +183,6 @@ def naredi_bazo(request):
     a = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
     a.save()
     a = IzvedbaPredmeta(predmet = a_ep, studijsko_leto = a_17_18, ucitelj_1 = a_darja, ucitelj_2 = a_jaka, ucitelj_3 = a_mateja)
-
-    a = Posta(id=1231, kraj="Ljubljana-Črnuče")
-    a.save()
-    a = Posta(id=1215, kraj="Medvode")
-    a.save()
-
-    a_stud = StudijskiProgram(id=1000475,sifra="L2",stopnja="C - (predbolonjski) univerzitetni", semestri=9, naziv= "RAČUNAL. IN INFORMATIKA UN")
-    a_stud.save()
-    a_stud2 = StudijskiProgram(id=1000471,sifra="L1",stopnja="L - druga stopnja: magistrski", semestri=4, naziv= "RAČUNALN. IN INFORM. MAG II.ST")
-    a_stud2.save()
-    a = StudijskiProgram(id=1000468 ,sifra="VT",stopnja="K - prva stopnja: univerzitetni", semestri=6, naziv= "RAČUNALN. IN INFORM. UN-I.ST")
-    a.save()
-    a = StudijskiProgram(id=1000470 ,sifra="VU",stopnja="J - prva stopnja: visokošolski strokovni", semestri=6, naziv= "RAČUNALN. IN INFORM. VS-I.ST")
-    a.save()
 
     a_vs1 = VrstaStudija(id=12001,opis="Osnovnošolska izobrazba", nacin_zakljucka="zaključena osnovna šola", raven_klasius=1)
     a_vs1.save()
@@ -341,204 +336,280 @@ def naredi_bazo(request):
 
     user.save()
 
-    #PREDMETNIK
-    naredi_predmetnik()
 
+    print('\x1b[6;30;42m' + 'Uspešno dodana baza! ' + '\x1b[0m')
     return HttpResponse("Narejena baza!")
 
 
 def vsi_predmeti():
 
-    #1 letnik
-    a = Predmet(ime = "Programiranje 1")
-    a.save()
-    a = Predmet(ime = "Programiranje 2")
-    a.save()
-    a = Predmet(ime = "Diskretne strukture")
-    a.save()
-    a = Predmet(ime = "Fizika")
-    a.save()
-    a = Predmet(ime = "Osnove digitalnih vezij")
-    a.save()
-    a = Predmet(ime = "Osnove matematične analize")
-    a.save()
-    a = Predmet(ime = "Linearna algebra")
-    a.save()
-    a = Predmet(ime = "Osnove informacijskih sistemov")
-    a.save()
-    a = Predmet(ime = "Računalniške komunikacije")
-    a.save()
-    a = Predmet(ime = "Arhitektura računalniških sistemov")
-    a.save()
-
-    #2 letnik obvezni
-    a = Predmet(ime = "Verjetnost in statistika")
-    a.save()
-    a = Predmet(ime = "Algoritmi in podatkovne strukture 1")
-    a.save()
-    a = Predmet(ime = "Osnove podatkovnih baz")
-    a.save()
-    a = Predmet(ime = "Organizacija računalniških sistemov")
-    a.save()
-    a = Predmet(ime = "Izračunljivost in računska zahtevnost")
-    a.save()
-    a = Predmet(ime = "Teorija informacij in sistemov")
-    a.save()
-    a = Predmet(ime = "Algoritmi in podatkovne strukture 2")
-    a.save()
-    a = Predmet(ime = "Operacijski sistemi")
-    a.save()
-
-    #2 letnik strokovni
-    a = Predmet(ime = "Principi programskih jezikov")
-    a.save()
-    a = Predmet(ime = "Računalniške tehnologije")
-    a.save()
-    a = Predmet(ime = "Matematično modeliranje")
-    a.save()
-
-    #3 letnik obvezni
-    a = Predmet(ime = "Osnove umetne inteligence")
-    a.save()
-    a = Predmet(ime = "Ekonomika in podjetništvo")
-    a.save()
-    a = Predmet(ime = "Diplomski seminar")
-    a.save()
-
-    #informacijski sistemi
-    a = Predmet(ime = "Elektronsko poslovanje")
-    a.save()
-    a = Predmet(ime = "Poslovna inteligenca")
-    a.save()
-    a = Predmet(ime = "Organizacija in management")
-    a.save()
-
-    #obladovanje informatike
-    a = Predmet(ime = "Razvoj informacijskih sistemov")
-    a.save()
-    a = Predmet(ime = "Tehnologija upravljanja podatkov")
-    a.save()
-    a = Predmet(ime = "Planiranje in upravljanje informatike")
-    a.save()
-
-    #racunalniska omrezja
-    a = Predmet(ime = "Modeliranje računalniških omrežij")
-    a.save()
-    a = Predmet(ime = "Komunikacijski protokoli")
-    a.save()
-    a = Predmet(ime = "Brezžična in mobilna omrežja")
-    a.save()
-
-    #umetna inteligenca
-    a = Predmet(ime = "Inteligentni sistemi")
-    a.save()
-    a = Predmet(ime = "Umetno zaznavanje")
-    a.save()
-    a = Predmet(ime = "Razvoj inteligentnih sistemov")
-    a.save()
-
-    #razvoj programske opreme
-    a = Predmet(ime = "Postopki razvoja programske opreme")
-    a.save()
-    a = Predmet(ime = "Spletno programiranje")
-    a.save()
-    a = Predmet(ime = "Tehnologija programske opreme")
-    a.save()
-
-    #medijske tehnologije
-    a = Predmet(ime = "Računalniška grafika in tehnologija iger")
-    a.save()
-    a = Predmet(ime = "Multimedijski sistemi")
-    a.save()
-    a = Predmet(ime = "Osnove oblikovanja")
-    a.save()
-
-    #splosno izbirni predmeti
-    a = Predmet(ime = "Tehnične veščine")
-    a.save()
-    a = Predmet(ime = "Angleški jezik")
-    a.save()
-    a = Predmet(ime = "Računalništvo v praksi")
-    a.save()
-
-def naredi_predmetnik():
-
     UNI = StudijskiProgram.objects.get(id=1000468)
     LETO = StudijskoLeto.objects.get(ime="2018/2019")
     LETNIK = Letnik.objects.get(ime="1.")
 
-    #naredi za 1 letnik
-    for i in range(1, 11):
-        predmet_1 = Predmet.objects.get(id=i)
-        predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1)
-        predmetnik.save()
+    #1 letnik
+    a = Predmet(ime = "Programiranje 1", id="63277")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Programiranje 2", id="63278")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Diskretne strukture", id="63203")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Fizika", id="63205")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Osnove digitalnih vezij", id="63204")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Osnove matematične analize", id="63202")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Linearna algebra", id="63207")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Osnove informacijskih sistemov", id="63215")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Računalniške komunikacije", id="63209")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Arhitektura računalniških sistemov", id="63212")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
 
     LETNIK = Letnik.objects.get(ime="2.")
 
-    #naredi za 2 letnik obvezni
-    for i in range(11, 19):
-        predmet_1 = Predmet.objects.get(id=i)
-        predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1)
-        
-        predmetnik.save()
+    #2 letnik obvezni
+    a = Predmet(ime = "Verjetnost in statistika", id="63213")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Algoritmi in podatkovne strukture 1", id="63279")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Osnove podatkovnih baz", id="63208")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Organizacija računalniških sistemov", id="63218")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Izračunljivost in računska zahtevnost", id="63283")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Teorija informacij in sistemov", id="63216")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Algoritmi in podatkovne strukture 2", id="63280")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Operacijski sistemi", id="63217")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
 
-    #naredi za 2 letnik strokovni
-    for i in range(19, 22):
-        predmet_1 = Predmet.objects.get(id=i)
-        predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1, obvezen=False)
-        
-        predmetnik.save()
+    #2 letnik strokovni
+    a = Predmet(ime = "Principi programskih jezikov", id="63220", )
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, strokoven=True)
+    pr.save()
+    a = Predmet(ime = "Računalniške tehnologije", id="63221")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, strokoven=True)
+    pr.save()
+    a = Predmet(ime = "Matematično modeliranje", id="63219")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, strokoven=True)
+    pr.save()
 
     LETNIK = Letnik.objects.get(ime="3.")
-    #naredi za 3 letnik obvezni
-    for i in range(22, 25):
-        predmet_1 = Predmet.objects.get(id=i)
-        predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1)
-        
-        predmetnik.save()
 
-    #za module
-    for i in range(25, 43):	
-        predmet_1 = Predmet.objects.get(id=i)
-        predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1, obvezen=False, ima_modul=True)
-        predmetnik.save()
+    #3 letnik obvezni
+    a = Predmet(ime = "Osnove umetne inteligence", id="63214")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Ekonomika in podjetništvo", id="63248")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
+    a = Predmet(ime = "Diplomski seminar", id="63281")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
+    pr.save()
 
-    modul = Modul(ime="Informacijski sistemi")
-    modul.save()
-    modul = Modul(ime="Obladovanje informatike")
-    modul.save()
-    modul = Modul(ime="Računalniška omrežja")
-    modul.save()
-    modul = Modul(ime="Umetna inteligenca")
-    modul.save()
-    modul = Modul(ime="Razvoj programske opreme")
-    modul.save()
-    modul = Modul(ime="Medijske tehnologije")
-    modul.save()
 
-    count = 1
-    for i in range (25, 43, 3):
+    #moduli
+    modul1 = Modul(ime="Informacijski sistemi")
+    modul1.save()
+    modul2 = Modul(ime="Obvladovanje informatike")
+    modul2.save()
+    modul3 = Modul(ime="Računalniška omrežja")
+    modul3.save()
+    modul4 = Modul(ime="Umetna inteligenca")
+    modul4.save()
+    modul5 = Modul(ime="Razvoj programske opreme")
+    modul5.save()
+    modul6 = Modul(ime="Medijske tehnologije")
+    modul6.save()
+
+
+    #informacijski sistemi
+    a = Predmet(ime = "Elektronsko poslovanje", id="63249")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul1)
+    pr.save()
+    a = Predmet(ime = "Poslovna inteligenca", id="63251")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul1)
+    pr.save()
+    a = Predmet(ime = "Organizacija in management", id="63250")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul1)
+    pr.save()
+
+    #obladovanje informatike
+    a = Predmet(ime = "Razvoj informacijskih sistemov", id="63252")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul2)
+    pr.save()
+    a = Predmet(ime = "Tehnologija upravljanja podatkov", id="63226")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul2)
+    pr.save()
+    a = Predmet(ime = "Planiranje in upravljanje informatike", id="63253")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul2)
+    pr.save()
+
+    #racunalniska omrezja
+    a = Predmet(ime = "Modeliranje računalniških omrežij", id="63257")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul3)
+    pr.save()
+    a = Predmet(ime = "Komunikacijski protokoli", id="63258")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul3)
+    pr.save()
+    a = Predmet(ime = "Brezžična in mobilna omrežja", id="63259")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul3)
+    pr.save()
+
+    #umetna inteligenca
+    a = Predmet(ime = "Inteligentni sistemi", id="63266")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul4)
+    pr.save()
+    a = Predmet(ime = "Umetno zaznavanje", id="63267")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul4)
+    pr.save()
+    a = Predmet(ime = "Razvoj inteligentnih sistemov", id="63262")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul4)
+    pr.save()
+
+    #razvoj programske opreme
+    a = Predmet(ime = "Postopki razvoja programske opreme", id="63254")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul5)
+    pr.save()
+    a = Predmet(ime = "Spletno programiranje", id="63255")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul5)
+    pr.save()
+    a = Predmet(ime = "Tehnologija programske opreme", id="63256")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul5)
+    pr.save()
+
+    #medijske tehnologije
+    a = Predmet(ime = "Računalniška grafika in tehnologija iger", id="63269")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul6)
+    pr.save()
+    a = Predmet(ime = "Multimedijski sistemi", id="63270")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul6)
+    pr.save()
+    a = Predmet(ime = "Osnove oblikovanja", id="63271")
+    a.save()
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, modul=modul6)
+    pr.save()
+
+    LETNIK = Letnik.objects.get(ime="2.")
+
+    #splosno izbirni predmeti
+    a = Predmet(ime = "Tehnične veščine", id="63284", kreditne_tocke=3)
+    a.save()
+    LETNIK = Letnik.objects.get(ime="2.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+    LETNIK = Letnik.objects.get(ime="3.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+
+    a = Predmet(ime = "Angleški jezik nivo A", id="63222", kreditne_tocke=3)
+    a.save()
+    LETNIK = Letnik.objects.get(ime="2.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+    LETNIK = Letnik.objects.get(ime="3.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+
+    a = Predmet(ime = "Angleški jezik nivo B", id="63746", kreditne_tocke=3)
+    a.save()
+    LETNIK = Letnik.objects.get(ime="2.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+    LETNIK = Letnik.objects.get(ime="3.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+
+    a = Predmet(ime = "Angleški jezik nivo C", id="63747", kreditne_tocke=3)
+    a.save()
+    LETNIK = Letnik.objects.get(ime="2.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+    LETNIK = Letnik.objects.get(ime="3.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+
+    a = Predmet(ime = "Računalništvo v praksi I", id="63752", kreditne_tocke=3)
+    a.save()
+    LETNIK = Letnik.objects.get(ime="2.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+    LETNIK = Letnik.objects.get(ime="3.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+
+    a = Predmet(ime = "Računalništvo v praksi II", id="63242", kreditne_tocke=3)
+    a.save()
+    LETNIK = Letnik.objects.get(ime="2.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+    LETNIK = Letnik.objects.get(ime="3.")
+    pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
+    pr.save()
+
     
-        modul = Modul.objects.get(id=count)
-        modul.predmetniki.add(Predmetnik.objects.get(id=i))
-        modul.predmetniki.add(Predmetnik.objects.get(id=i+1))
-        modul.predmetniki.add(Predmetnik.objects.get(id=i+2))
-        modul.save()
-        
-        count=count+1
-
-    #izbirni 2. letnik??
-    LETNIK = Letnik.objects.get(ime="2.")
-    for i in range(43, 46):	
-        predmet_1 = Predmet.objects.get(id=i)
-        predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1, obvezen=False)
-        predmetnik.save()
-
-    #izbirni 3. letnik??
-    LETNIK = Letnik.objects.get(ime="3.")
-    for i in range(43, 46):	
-        predmet_1 = Predmet.objects.get(id=i)
-        predmetnik = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = predmet_1, obvezen=False)
-        predmetnik.save()
-
-    print('\x1b[6;30;42m' + 'Uspešno dodana baza! ' + '\x1b[0m')
