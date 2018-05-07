@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container sifrant">
+    <h3>Vnesi ocene</h3>
+
+    <table class="table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Vpisna stevilka</th>
+                    <th scope="col">Priimek in ime</th>
+                    <th scope="col">Vrnjena prijava/cas odjave/odjavitelj</th>
+                    <th scope="col">Stevilo tock izpita</th>
+                </tr>
+            </thead>
+            {% for prijava in arr %}
+            <tr>
+                <td>
+                    {{ prijava.predmeti_studenta.vpis.student.vpisna_stevilka }}
+                </td>
+                <td>
+                    {{ prijava.predmeti_studenta.vpis.student.priimek }},
+                    {{ prijava.predmeti_studenta.vpis.student.ime }}
+                </td>
+                <td>
+                    {% if prijava.aktivna_prijava == False %}
+                    DA/{{ prijava.cas_odjave }}/{{ prijava.odjavitelj }}
+                    {% else %}
+                    NE
+                    {% endif %}
+                </td>
+                <td>
+                    {% if prijava.ocena == None %}
+                    Ocena se ni vpisana
+                    {% else %}
+                    {{ prijava.ocena }}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+</div>
+
+{% endblock %}

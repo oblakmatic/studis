@@ -5,3 +5,4 @@ from django.forms import Field
 
 class ocenaForm(forms.Form):
     ocena = forms.IntegerField(widget=forms.TextInput(attrs={'class': 'btn btn-outline-primary mt-2'}), max_value=100, min_value = 0)
+    odjava = forms.BooleanField(required=False)

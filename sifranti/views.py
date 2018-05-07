@@ -309,9 +309,11 @@ def naredi_bazo(request):
 	a_izv_teh = IzvedbaPredmeta(predmet = a_teh, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
 	a_izv_teh.save()
 
-	a = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
-	a.save()
+	a_izv_obl = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
+	a_izv_obl.save()
+
 	a = IzvedbaPredmeta(predmet = a_ep, studijsko_leto = a_17_18, ucitelj_1 = a_darja, ucitelj_2 = a_jaka, ucitelj_3 = a_mateja)
+	a.save()
 
 	a = Posta(id=1231, kraj="Ljubljana-Črnuče")
 	a.save()
@@ -416,12 +418,21 @@ def naredi_bazo(request):
 	a_rok = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
 	a_rok.save()
 
+	#se rok za referentko
+	new_date = datetime.datetime(2018, 4, 4, 15, 15)
+	a_rok_obl = Rok(izvedba_predmeta = a_izv_obl, datum = new_date)
+	a_rok_obl.save()
+
 	new_date = datetime.datetime(2018, 2, 15, 14, 30)
 	a_prijava1 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaAljaz, rok = a_rok, zaporedna_stevilka_polaganja = 1)
 	a_prijava1.save()
 
 	new_date = datetime.datetime(2018, 2, 16, 14, 20)
 	a_prijava2 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaVerlic, rok = a_rok, zaporedna_stevilka_polaganja = 1)
+	a_prijava2.save()
+
+	new_date = datetime.datetime(2018, 2, 18, 14, 35)
+	a_prijava2 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaAljaz, rok = a_rok_obl, zaporedna_stevilka_polaganja = 1)
 	a_prijava2.save()
 
 
