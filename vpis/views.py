@@ -141,8 +141,11 @@ def index_vpis(request):
 
 			if form.is_valid():
 
+				
 				ta_emso = form.cleaned_data['emso']
-				if emso_verify(str(ta_emso)) == str(ta_emso):
+				ta_datum = form.cleaned_data['datum_rojstva']
+				if preveri_emso_datum(ta_emso,ta_datum):
+					#tukaj naredimo iz kandidata studenta in mu dodelimo zeton
 					student1 = form.save(commit=False)
 					student1.vpisna_stevilka = candi.vpisna_stevilka
 					student1.email = candi.email
@@ -152,19 +155,28 @@ def index_vpis(request):
 					request.user.groups.remove(can_group)
 					request.user.save()
 					student1.save()
-					return HttpResponseRedirect('/vpis/')
+
+					studentek = vrniStudenta(request.user.email)
+					print(studentek)
+					narediZetonZaKandidata(studentek,candi)
+					return HttpResponseRedirect('/vpis/studij/')
 				else:
 					kandidat = vrniKandidata(request.user.email)
 					studentform = None
 					id_kandidata = kandidat[0].vpisna_stevilka
 					data = Kandidat.objects.filter(pk= id_kandidata).values()[0]
 					studentform = NameStudentForm(initial= data)
-					#kandidat 
-		   
+					opozorilo = ""
+					
+					if emso_verify(ta_emso) != ta_emso:
+						opozorilo = "EMŠO je nepravilen, ponovno ga vnesite"
+					else:
+						opozorilo = "Datum in EMŠO se ne ujemata"
+
 					context = {
 					'student' : kandidat[0],
 					'studentform' : form,
-					'opozorilo': 'EMŠO je nepravilen, ponovno ga vnesite'
+					'opozorilo': opozorilo
 					}
 					return render(request,'vpis/index_vpis.html',context)
 
@@ -179,15 +191,32 @@ def index_vpis(request):
 		elif is_student(request.user):
 			student = vrniStudenta(request.user.email)
 			form = NameStudentForm(request.POST, instance=student[0])
-			print("eno")
 			if form.is_valid():
-				print("dva")
-				form.save()
-				return HttpResponseRedirect('/vpis/studij/')
-				
+				ta_emso = form.cleaned_data['emso']
+				ta_datum = form.cleaned_data['datum_rojstva']
+				if preveri_emso_datum(ta_emso,ta_datum):
+					form.save()
+					return HttpResponseRedirect('/vpis/studij/')
+				else:
+					opozorilo = ""
+					
+					if emso_verify(ta_emso) != ta_emso:
+						opozorilo = "EMŠO je nepravilen, ponovno ga vnesite"
+					else:
+						opozorilo = "Datum in EMŠO se ne ujemata"
+
+					context = {
+					'vpisi' : Vpis.objects.filter(student=student[0]).filter(dokoncan_vpis=True),
+					'student': student[0],
+					'studentform': form,
+					'opozorilo': opozorilo
+					}
+					return render(request,'vpis/index_vpis.html',context)
 			else:
 				context = {
-				'form': form,
+				'vpisi' : Vpis.objects.filter(student=student[0]).filter(dokoncan_vpis=True),
+				'student': student[0],
+				'studentform': form,
 				'opozorilo': 'Prišlo je do napake, ponovno vnesite podatke'
 				}
 				return render(request,'vpis/index_vpis.html',context)
@@ -249,7 +278,7 @@ def index_vpis(request):
 				opozorilo= "Nimaš žetona"
 			
 			context = {
-				'vpisi' : Vpis.objects.filter(student=najden_student[0]),
+				'vpisi' : Vpis.objects.filter(student=najden_student[0]).filter(dokoncan_vpis=True),
 				'student' : najden_student[0],
 				'opozorilo' : opozorilo,
 				'studentform' : studentform
@@ -408,5 +437,52 @@ def koncaj_predmetnik(request):
 	context = {
 		'predmeti': predmeti,
 	}
-
+	vpis1.dokoncan_vpis = True
+	vpis1.save()
 	return render(request,'vpis/predmetnik_izpis.html', context)
+
+
+def preveri_emso_datum(emso, datum):
+
+	if emso_verify(emso) == emso and datum[8:10] == emso[0:2] and emso[2:4] == datum[5:7] and emso[4:7] == datum[1:4]:
+		return True
+	else:
+		return False
+
+#naredi zeton za kandidata (ki je pa v tem momentu postal student)
+#student, kandidat sta ista oseba, iz kandidat izluscimo kateri studijski
+# program hoce delati, zeton dodelimo studentu
+def narediZetonZaKandidata(student1,kandidat):
+	
+	print(student1)
+	print(kandidat)
+	print("neki")
+	if Zeton.objects.filter(student=student1[0]).exists():
+		return
+	
+	print("neki")
+	letnik = Letnik.objects.get(ime="1.")
+	studij_prog = kandidat.studijski_program
+	vrsta_studija = None
+	nacin_studija = NacinStudija.objects.get(id=1)
+	vrsta_vpisa = VrstaVpisa.objects.get(id=1)
+	print("neki")
+	if studij_prog.id == 1000470:
+		vrsta_studija = VrstaStudija.objects.get(id=16203)
+	elif studij_prog.id == 1000468:
+		vrsta_studija = VrstaStudija.objects.get(id=16203)
+	else:
+		raise Exception("ne bi se smel tale else izvediti")
+
+	
+	
+	nov_zeton = Zeton(student = student1[0], 
+					studijski_program = studij_prog,
+					letnik = letnik,
+					vrsta_studija = vrsta_studija,
+					nacin_studija = nacin_studija,
+					vrsta_vpisa = vrsta_vpisa)
+	nov_zeton.save()
+	print("nekisad")
+	return
+	
