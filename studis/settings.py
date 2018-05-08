@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'wkhtmltopdf',
     'sifranti.apps.SifrantiConfig',
     'vpis.apps.VpisConfig',
     'student.apps.StudentConfig',

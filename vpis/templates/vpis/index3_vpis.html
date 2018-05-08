@@ -1,22 +1,13 @@
-{% include "base.html" %}
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+  </head>
+<html>
+<body>
 
+<h1>My First Heading</h1>
 
-{% block content %}
+<p>My first psadaragraph.čžš</p>
 
-<div class="container sifrant">
-    {% if student %}
-    <p>Študent z vpisno številko {{student.vpisna_stevilka }} se lahko vpišeš :</p>
-    {% endif %}
-    <p>{{opozorilo}}</p>
-
-    <form action="/vpis/" method="post">
-        {% csrf_token %}
-        <h2>Podatki o študentu</h2>
-        {{ studentform }}
-        <h2>Podatki o vpisu</h2>
-        {{ form.as_p }}
-
-        <button type="submit" class="btn btn-outline-primary">Dodaj</button>
-    </form>
-</div>
-{% endblock %}
+</body>
+</html>
