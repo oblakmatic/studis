@@ -268,7 +268,7 @@ def prijava(request):
                     predmet = rok.izvedba_predmeta
             
                     trenutno_studijsko_leto = ptsl()
-                    polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
+                    polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
                     if(polaganja_trenutno_leto >= 3):
 
                         print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!', polaganja_trenutno_leto)
