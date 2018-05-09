@@ -512,15 +512,67 @@ def narediZetonZaKandidata(student1,kandidat):
     return
     
 
-def narediVpisniList(student,vpis,predmetnik):
+def narediVpisniList():
+    student = Student.objects.all()
+    vpis = Vpis.objects.all()
+    #prvoleto = Vpis.objects.filter(student=student).order_by('studijsko_leto')[0]
+    #prvoleto = prvoleto.studijsko_leto
 
-   
+    drzava = na(str(student[0].drzava))
+    obcina = na(str(student[0].obcina))
+    posta = na(str(student[0].posta))
+    posta_zacasno = na(str(student[0].posta_zacasno))
+    naslov_zacasno_bivalisce = na(str(student[0].naslov_zacasno_bivalisce))
+    drzava_zacasno = na(str(student[0].drzava_zacasno))
+    obcina_zacasno = na(str(student[0].obcina_zacasno))
+    drzava_rojstva = na(str(student[0].drzava_rojstva))
+    obcina_rojstva = na(str(student[0].obcina_rojstva))
+
+    merge = {** student.values()[0], 
+    'drzava' : drzava,
+     'obcina': obcina,
+     'posta': posta,
+     'posta_zacasno':posta_zacasno,
+     'naslov_zacasno_bivalisce':naslov_zacasno_bivalisce,
+     'drzava_zacasno':drzava_zacasno,
+     'obcina_zacasno':obcina_zacasno,
+      'drzava_rojstva':drzava_rojstva,
+      'obcina_rojstva':obcina_rojstva,}
+
+    #print(merge)
+
+    studijsko_leto = na(str(vpis[0].studijsko_leto))
+    studijski_program = na(str(vpis[0].studijski_program))
+    letnik = na(str(vpis[0].letnik))
+    vrsta_vpisa = na(str(vpis[0].vrsta_vpisa))
+    nacin_studija = na(str(vpis[0].nacin_studija))
+    vrsta_studija = na(str(vpis[0].vrsta_studija))
 
 
-    
-    html_string =  render_to_string('vpis/index3_vpis.html',{})
+
+    merge2 = {** vpis.values()[0],
+
+    'studijsko_leto':studijsko_leto,
+     'studijski_program':studijski_program,
+     'letnik':letnik,
+     'vrsta_vpisa':vrsta_vpisa,
+     'nacin_studija':nacin_studija,
+     'vrsta_studija':vrsta_studija,
+    }
+    context = {
+       'student' : merge ,
+       'vpis' : merge2,
+
+   }
+
+    html_string =  render_to_string('vpis/index3_vpis.html',context)
+    print(html_string)
     pdfkit.from_string( html_string, 'out.pdf')
 
 
-
+def na(objekt):
+    if objekt == "None":
+        return ""
+    else:
+        return objekt
     
