@@ -72,7 +72,7 @@ class StudijskiProgram(models.Model):
     all_objects = models.Manager()
 
     def __str__(self):
-        return self.naziv
+        return str("(%d) " % (self.id)) + self.naziv
 class VrstaStudija(models.Model):
 #univerzitetni, visokosolski
 
@@ -98,7 +98,7 @@ class VrstaVpisa(models.Model):
     objects = Veljavni()
     all_objects = models.Manager()
     def __str__(self):
-        return self.opis
+        return str("(%d) " % (self.id)) + self.opis
 
 class NacinStudija(models.Model):
 #redni, izredni
@@ -112,7 +112,7 @@ class NacinStudija(models.Model):
     all_objects = models.Manager()    
 
     def __str__(self):
-        return self.opis   
+        return str("(%d) " % (self.id)) + self.opis   
 
 
 class OblikaStudija(models.Model):
@@ -140,7 +140,7 @@ class Predmet(models.Model):
     all_objects = models.Manager()
 
     def __str__(self):
-        return self.ime
+        return str("(%07d) " % (self.id)) + self.ime
 
 
 class StudijskoLeto(models.Model):

@@ -3,59 +3,76 @@
 
 <div class="container sifrant">
     <h3>Vnesi ocene</h3>
-
+    
     <table class="table">
-        <table class="table">
-            
+            <thead>
                 <tr>
-                    <th scope="col">Vpisna stevilka</th>
+                    <th scope="col" width="20">Zaporedna številka</th>
+                    <th scope="col">Vpisna številka</th>
                     <th scope="col">Priimek in ime</th>
-                    <th scope="col">Ocena</th>
-                    <th scope="col">Vpisi oceno</th>
-                    <th scope="col">Trenutna ocena</th>
+                    <th scope="col">Vrnjena prijava</th>
+                    <th scope="col">Vnesi točke izpita</th>
+                    <th scope="col">Vnesi oceno izpita</th>
+                    <th scope="col">Stevilo tock izpita</th>
+                    <th scope="col">Ocena izpita</th>
                 </tr>
             </thead>
-            {% for prijava in arr %}
-            <tr>
-                <td>
-                    {{ prijava.predmeti_studenta.vpis.student.vpisna_stevilka }}
-                </td>
-                <td>
-                    {{ prijava.predmeti_studenta.vpis.student.priimek }},
-                    {{ prijava.predmeti_studenta.vpis.student.ime }}
-                </td>
-
-                <form action="/izpiti/vnesi_ocene_predmeta/" method="post">
-                    {% csrf_token %}
+            <form action="/izpiti/vnesi_ocene_predmeta/" method="post">
+                {% csrf_token %}
+                {{ formset.management_form }}
+                {% for form in formset %}
+                {% for prijava in arr %}
+                {% if forloop.counter == forloop.parentloop.counter %}
+                <tr>
+                    <td>{{ forloop.counter }}.</td>
                     <td>
-                        {% for field in form %}
-                        <input type="number" id="{{ field.id_for_label }}" name="{{ field.html_name }}" value="{{ field.value }}" class="btn btn-outline-primary mt-2" />
-                        {% endfor %}
+                        {{ prijava.predmeti_studenta.vpis.student.vpisna_stevilka }}
                     </td>
-
                     <td>
-                        <input type="hidden" name="id_prijava" value={{ prijava.id }}>
-                        <input type="hidden" name="id_rok" value={{ prijava.rok.id }}>
-
+                        {{ prijava.predmeti_studenta.vpis.student.priimek }},
+                        {{ prijava.predmeti_studenta.vpis.student.ime }}
+                    </td>
+                    <td>
+                        {{ form.odjava }}
+                    </td>
+                    <td>
+                        {{ form.ocena }}
+                    </td>
+                    <td>
+                        {{ form.ocena_izpita }}
+                    </td>
+                    <td>
                         {% if prijava.ocena == None %}
-                        <button type="submit" name="vnos_ocene" class="btn btn-outline-primary mt-2">Vnos ocene</button>
+                        Ocena se ni vpisana
+                        {% elif prijava.ocena == -1 %}
+                        VP
                         {% else %}
-                        <button type="submit" name="vnos_ocene" class="btn btn-outline-primary mt-2">Posodobi oceno</button>
+                        {{ prijava.ocena }}
                         {% endif %}
                     </td>
-                </form>
-                <td>
-                    {% if prijava.ocena == None %}
-                    Ocena se ni vpisana
-                    {% else %}
-                    {{ prijava.ocena }}
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
+                    <td>
+                        {% if prijava.ocena_izpita == None %}
+                        Ocena se ni vpisana
+                        {% elif prijava.ocena_izpita == -1 %}
+                        VP
+                        {% else %}
+                        {{ prijava.ocena_izpita }}
+                        {% endif %}
+                    </td>
+                </tr>
 
-            <button type="submit" name="vnesi_vec_ocen" onclick="myFunction()" class="btn btn-outline-primary mt-2">Vnos vseh vpisanih ocen</button>
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
 
+                <input type="hidden" name="id_rok" value={{ rok_id }}>
+                <button type="submit" name="vnesi_vec_ocen" class="btn btn-outline-primary mt-2">Vnos vseh vpisanih ocen</button>
+            </form>
+            <form action="/izpiti/seznam_ocen/" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="id_rok" value={{ rok_id }}>
+                <button type="submit" name="seznam_ocen" class="btn btn-outline-primary mt-2">Seznam ocen</button>
+            </form>
 </div>
 
 {% endblock %}

@@ -178,32 +178,21 @@ def token_add(request, id):
 			vrsta_studija = form.cleaned_data['vrsta_studija']
 			prosta_izbira = form.cleaned_data['pravica_do_izbire']
 
-			data = {
-				'student': student,
-				'program': program,
-				'letnik': letnik,
-				'vrsta_vpisa': vrsta_vpisa,
-				'nacin_studija': nacin_studija,
-				'prosta_izbira': prosta_izbira
-			}
-			# print(data)
-			'''if(student.count() != 1 or program.count() != 1 or letnik.count() != 1 or vrsta_vpisa.count() != 1 or nacin_studija.count() != 1):
-				context = {
-					'message': 'Prosimo, vnesite vse zahtevane podatke!'
-				}
-				return render(request, 'token_add.html', context)'''
 			
 
-			#else:
 				
-			'''if Zeton.objects.filter(student=student[0]).count() >= 2:
+			if Zeton.objects.filter(student=student[0]).count() >= 2:
 				context = {
 					'message': 'Student že ima 2 žetona!'
 				}
 				return render(request, 'token_add.html', context)
-			zeton = Zeton(student=student[0], studijski_program=program[0], letnik=letnik[0], vrsta_vpisa=vrsta_vpisa[0], nacin_studija=nacin_studija[0], vrsta_studija=vrsta_studija[0], pravica_do_izbire=prosta_izbira)
-			zeton.save()'''
-			return token_list(request, 'Žeton uspešno dodan!')
+			if (program.id == 1000471 and letnik.ime == "3."):
+				context = {
+					'message': 'Neveljavna kombinacija program / letnik!'
+				}
+				return render(request, 'token_add.html', context)
+			zeton = Zeton(student=student, studijski_program=program, letnik=letnik, vrsta_vpisa=vrsta_vpisa, nacin_studija=nacin_studija, vrsta_studija=vrsta_studija, pravica_do_izbire=prosta_izbira)
+			zeton.save()
 		else:
 			context = {
 				'message': 'Prosimo, vnesite vse zahtevane podatke!'
@@ -236,6 +225,7 @@ def token_add(request, id):
 
 def token_list(request, msg=None):
 	all_tokens = Zeton.objects.select_related()
+	
 	zetoni = []
 	for token in all_tokens:
 		# print(token)
@@ -253,8 +243,11 @@ def token_list(request, msg=None):
 		}
 		zetoni.append(zeton)
 	# print(all_tokens)
+	paginator = Paginator(zetoni, 10)
+	page = request.GET.get('page')
+	ostranjeni_zetoni = paginator.get_page(page)
 	context = {
-		'arr': zetoni
+		'arr': ostranjeni_zetoni
 	}
 	if (not msg is None):
 		context['message'] = msg

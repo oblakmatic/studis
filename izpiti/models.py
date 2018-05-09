@@ -1,13 +1,16 @@
 from django.db import models
 from sifranti.models import *
 from student.models import *
-
+from django.conf import settings
 
 class Ucitelj(models.Model):
     ime = models.CharField(max_length = 30)
     priimek = models.CharField(max_length = 30)
     email = models.CharField(max_length = 60, unique = True)
     predmeti = models.ManyToManyField(Predmet, null = True)#dodv da ves kere mu pokazat za vpis roka
+
+    def __str__(self):
+        return str("(%07d) %s %s" % (self.id, self.ime, self.priimek))
 
 class IzvedbaPredmeta(models.Model):
     predmet = models.ForeignKey(Predmet, on_delete = models.SET_NULL, null = True)
@@ -19,6 +22,7 @@ class IzvedbaPredmeta(models.Model):
 class Rok(models.Model):
     izvedba_predmeta = models.ForeignKey(IzvedbaPredmeta, on_delete = models.SET_NULL, null = True)
     datum = models.DateTimeField()
+    prostor_izvajanja = models.CharField(max_length = 30)
 
 class PredmetiStudenta(models.Model):
     vpis = models.ForeignKey(Vpis, on_delete = models.SET_NULL, null = True)#
@@ -34,3 +38,7 @@ class Prijava(models.Model):
     podatki_o_placilu = models.CharField(max_length = 260, default=None, blank=True, null=True)
     aktivna_prijava = models.BooleanField(default = True)
     ocena = models.IntegerField(default=None,null=True)
+    ocena_izpita = models.IntegerField(default=None,null=True)
+    #dodav, ko ucitelj odjavi izpit--> se zabelezijo podatki o odjavilteju in cas odjave
+    cas_odjave = models.DateTimeField(default=None,null=True)
+    odjavitelj = models.CharField(max_length = 100, default=None, blank=True, null=True)
