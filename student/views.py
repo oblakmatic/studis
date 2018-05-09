@@ -235,6 +235,7 @@ def token_add(request, id):
 
 def token_list(request, msg=None):
 	all_tokens = Zeton.objects.select_related()
+	
 	zetoni = []
 	for token in all_tokens:
 		# print(token)
@@ -252,8 +253,11 @@ def token_list(request, msg=None):
 		}
 		zetoni.append(zeton)
 	# print(all_tokens)
+	paginator = Paginator(zetoni, 10)
+	page = request.GET.get('page')
+	ostranjeni_zetoni = paginator.get_page(page)
 	context = {
-		'arr': zetoni
+		'arr': ostranjeni_zetoni
 	}
 	if (not msg is None):
 		context['message'] = msg
