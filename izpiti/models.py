@@ -10,7 +10,7 @@ class Ucitelj(models.Model):
     predmeti = models.ManyToManyField(Predmet, null = True)#dodv da ves kere mu pokazat za vpis roka
 
     def __str__(self):
-        return str("(%07d) " % (self.id)) + " " + self.priimek + ", " + self.ime
+        return str("(%07d) %s %s" % (self.id, self.ime, self.priimek))
 
 class IzvedbaPredmeta(models.Model):
     predmet = models.ForeignKey(Predmet, on_delete = models.SET_NULL, null = True)
