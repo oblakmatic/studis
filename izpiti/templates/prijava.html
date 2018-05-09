@@ -62,7 +62,7 @@
                     <input type="hidden" name="rok_" value={{ rok.id }}>
                     {% if rok in disabled %}
                     <p>Prijava onemogočena!</p>
-                    {% if rok in disabled_odjava %}
+                    {% elif rok in disabled_odjava %}
                     <p>Odjava onemogočena!</p>
                     {% elif rok in payable %}
                     <button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2" >Prijavi se (plačljivo)</button>
