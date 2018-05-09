@@ -52,7 +52,7 @@
             {% endif %}
 
             <td>
-                {{ rok.datum }}
+                {{ rok.datum|date:'d-m-Y' }}, {{ rok.datum|time:"H:i" }}
             </td>
             <td>{{ rok.prostor_izvajanja }}</td>
             <td>Prijava je mozna</td>

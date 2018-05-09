@@ -66,16 +66,20 @@ def index_izpiti(request):
 #DODAJANJE IZPITA PROFESOR/REFERENTKA
 def dodaj_izpit(request):
     if request.method == 'POST' and 'prikaz_rokov' in request.POST:
-
-        email_ = request.user.email
         showRoki = []
-        for rok in Rok.objects.all():
-            if rok.izvedba_predmeta.ucitelj_1 != None and rok.izvedba_predmeta.ucitelj_1.email == email_:
-                showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_2 != None and rok.izvedba_predmeta.ucitelj_2.email == email_:
-                showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_3 != None and rok.izvedba_predmeta.ucitelj_3.email == email_:
-                showRoki.append(rok)
+        if(request.user.groups.all()[0].name == "professors"):
+            email_ = request.user.email
+            
+            for rok in Rok.objects.all():
+                if rok.izvedba_predmeta.ucitelj_1 != None and rok.izvedba_predmeta.ucitelj_1.email == email_:
+                    showRoki.append(rok)
+                elif rok.izvedba_predmeta.ucitelj_2 != None and rok.izvedba_predmeta.ucitelj_2.email == email_:
+                    showRoki.append(rok)
+                elif rok.izvedba_predmeta.ucitelj_3 != None and rok.izvedba_predmeta.ucitelj_3.email == email_:
+                    showRoki.append(rok)
+
+        elif(request.user.groups.all()[0].name == "referent"):
+            showRoki = Rok.objects.all()
     
         context = {
             'arr': showRoki

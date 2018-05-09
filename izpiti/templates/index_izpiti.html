@@ -99,13 +99,29 @@
             console.log("DA")
             element.setCustomValidity(""); //more bit!
             split = text_datum.split('.');
+            datum_tabela = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+            var stDni_meseca = datum_tabela[split[1] - 1];
+            
+
+            if (split[0] > stDni_meseca) {
+                console.log("-->" + stDni_meseca + " -- " + split[0]);
+                element.setCustomValidity("Nepravilen vnos datuma za ta mesec.");
+                return
+            }
+
+
+
             datum_ = new Date(split[2], split[1]-1, split[0])
             console.log(datum_)
             var today = new Date();
 
+            
             if (datum_ < today) {
                 element.setCustomValidity("Preteklih datumov ni mogoce izbirati.");
+                return
             }
+            
 
             //pazi ker mas mesece za en mesec naaj da dela pravilno. ker se zacne iz 0.
             var holidays = [
@@ -140,15 +156,19 @@
 
             if (flag == true) {
                 element.setCustomValidity("Na praznik ni mogoce razpisati roka za vpis.");
+                return
             }
             else if (day == 5) {
                 element.setCustomValidity("V soboto ni mogoce razpisati roka za izpit.");
+                return
             }
             else if (day == 6) {
                 element.setCustomValidity("V nedeljo ni mogoce razpisati roka za izpit.");
+                return
             }
             else {
                 element.setCustomValidity('');
+                return
             }
 
         }
