@@ -43,7 +43,7 @@
                     {{ rok.izvedba_predmeta.ucitelj_1.priimek }}
                 </td>
                 {% endif %}
-                <td>{{ rok.datum }}</td>
+                <td>{{ rok.datum|date:'d-m-Y' }}, {{ rok.datum|time:'H:i' }}</td>
                 <form action="/izpiti/vnesi_ocene_predmeta/" method="post">
                     {% csrf_token %}
                     <td>
