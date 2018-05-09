@@ -36,12 +36,27 @@ def changesif(request, diff):
 			return HttpResponseRedirect('/sifranti/'+ diff +'/')
 		else:
 			elements = eval(diff).objects.values()
+			paginator = Paginator(elements, 25)
+
+			page = request.GET.get('page')
+			elemen = paginator.get_page(page)
+			keyList = []
+
+			if elements:
+				enEL = elements[0]
+				
+				for key in enEL.keys():
+					
+					verbose = eval(diff)._meta.get_field(key).verbose_name
+					
+					keyList.append(verbose)
 			form_iskanje = SearchForm()
 			context = {
 			'object_name' : diff,
-			'elements' : elements,
+			'elements' : elemen,
 			'form': form,
-			'form2' : form_iskanje
+			'form2' : form_iskanje,
+			'verbose_names' : keyList,
 			}
 			return render(request,'sifranti/changesif.html',context)
 
@@ -152,12 +167,27 @@ def search2(request, diff, key, iskani_el ):
 			return HttpResponseRedirect('/sifranti/'+ diff +'/')
 		else:
 			elements = eval(diff).all_objects.values()
+			paginator = Paginator(elements, 25)
+
+			page = request.GET.get('page')
+			elemen = paginator.get_page(page)
+			keyList = []
+
+			if elements:
+				enEL = elements[0]
+				
+				for key in enEL.keys():
+					
+					verbose = eval(diff)._meta.get_field(key).verbose_name
+					
+					keyList.append(verbose)			
 			form_iskanje = SearchForm()
 			context = {
 			'object_name' : diff,
-			'elements' : elements,
+			'elements' : elemen,
 			'form': form,
-			'form2' : form_iskanje
+			'form2' : form_iskanje,
+			'verbose_names' : keyList,
 			}
 			return render(request,'sifranti/changesif.html',context)
 

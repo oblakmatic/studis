@@ -41,7 +41,7 @@ def students(request):
 	else:
 		if(request.user.groups.all()[0].name == "referent"):
 			all_students_list = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
-			paginator = Paginator(all_students_list, 1)
+			paginator = Paginator(all_students_list, 20)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
 			
@@ -53,7 +53,7 @@ def students(request):
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_3__email = request.user.email))\
 												.distinct().values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
 		
-			paginator = Paginator(all_students_list, 1)
+			paginator = Paginator(all_students_list, 20)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
 
