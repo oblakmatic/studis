@@ -3,53 +3,100 @@
 
 {% block content %}
 
-<div class="container sifrant">
+<div class="container sifrant" data-letnik={{letnik.ime}}>
     
     <h2>Predmeti za {{letnik}} letnik</h2>
-  
-    <div class="row mt-4" id="predmeti">
+    <div class="row row-equal-height">
+        <div class="alert alert-success d-none col-sm-6" id="ok">
+            
+            <form method="post" action="izpis/" style="margin: 0; padding: 0;">
+                {% csrf_token %}
+                Izpolnjeni pogoji.
+                <input type="text" hidden value="" name="vsi-id" id="vsi-id">
+                <button class="btn btn-outline-success" type="submit">Končaj vpis</button>
+            </form>
+        </div>
+        <div class="alert alert-warning d-none col-sm-6 " id="notok">
+            Potrebnih je 60 kreditnih točk.
+        </div>
+
+        <div class="col-sm-6 align-self-center mb-2">
+            <h4>Skupaj kreditnih točk: <span id="skupaj-kt-tock">{{ KT }}</span></h4>
+        </div>
+
+    </div>
+    
+    <div class="row" id="predmeti">
 
 
-        <ul class="list-group mycard">
-            <li class="list-group-item list-group-item-dark">Obvezni predmeti</li>
+        <ul class="list-group mycard col-sm-4">
+            <li class="list-group-item" style="background-color:#C3DBF7">Obvezni predmeti</li>
             {% for t in predmeti_o %}
-                {% for v in t %}
+    
                 <li class="list-group-item" >
-                    {{ v.ime }}
-                    <input type="checkbox" class="form-check-input" checked hidden name="izbran-predmet"  id= {{ v.id }} >
+                    {{ t.ime }} 
+
+                    <span style="float: right"><input type="checkbox" checked disabled class="form-check-input" name="izbran-predmet" id= {{ t.id }} data-kt={{t.kreditne_tocke}}> <label> {{ t.kreditne_tocke }} KT</label></span>
                 </li>
-                {% endfor %}
+                
             {% endfor %}
         </ul>
     
+        {% if letnik.ime != "1."  %}
      
-        <ul class="list-group mycard" id="izbirni-predmeti">
-            <li class="list-group-item list-group-item-primary">Izbirni predmeti</li>
-            {% for t in predmeti_i %}
-                {% for v in t %}
+        <ul class="list-group mycard col-sm-4" id="izbirni-predmeti">
+            <li class="list-group-item" style="background-color:#FFF2C5">Izbirni predmeti</li>
+            {% for t, s in predmeti_i %}
+             
                 <li class="list-group-item">
-                    {{ v.ime }} 
-                    <span style="float: right"><input type="checkbox" class="form-check-input" name="izbran-predmet" id= {{ v.id }} ></span>
+                  
+                    {{ t }} 
+                    {% if s and letnik.ime == "2." %}
+                    <i>- strokovni</i>
+                    {%  else %}
+                    <i>- splošni</i>
+                    {% endif %}
+                    <span style="float: right"><input type="checkbox" class="form-check-input" name="izbran-predmet" id= {{ t.id }} data-kt={{t.kreditne_tocke}} data-st={{s}}> <label> {{ t.kreditne_tocke }} KT</label></span>
+
                 </li>
-            {% endfor %}
+             
+         
             {% endfor %}
         </ul>
-       
+       {% endif %}
 
-        {% if so_moduli  %}
+        {% if letnik.ime == "3."  %}
         
-        <ul class="list-group mycard" id="modul-predmeti">
-            <li class="list-group-item list-group-item-success">Moduli</li>
-        {% for t in predmeti_m %}
-            <li class="list-group-item ">
-        
-                <input type="checkbox" class="form-check-input pl-4" name="modul-box">
-                <ul class="list-group list-group-flush ">
+        <ul class="list-group col-sm-4" id="modul-predmeti">
+            <li class="list-group-item" style="background-color:#CCC7F8">Moduli</li>
+        {% for t, name in predmeti_m %}
+            <li class="list-group-item dropdown-l">
+                
+                
+               
+                <span class="ml-2"><input type="checkbox" class="form-check-input" id="modul-{{forloop.counter}}" name="modul-box">
+                <label>
+                    <h5><strong>{{name}}</strong></h5>
+                </label>
+                 </span>
+
+                <ul class="list-group list-group-flush" style="display: none">
 
                 {% for p in t %}
-                    {% for v in p %}
-                    <li class="list-group-item no-border">{{ v }}<span style="float: right; margin-right: -15%"><input type="checkbox" class="form-check-input" name="izbran-predmet" id= {{ v.id }}></span></li>
-                     {% endfor %}
+                    
+                    <li class="list-group-item no-border" >
+                        
+                        
+                        <span style="float:right ">
+                            <input style="float:right" type="checkbox" class="form-check-input" name="izbran-predmet" id= {{ p.id }} data-kt={{p.kreditne_tocke}}> 
+                            <label> {{p.kreditne_tocke }} KT</label>
+
+                        </span>
+                        <label>{{ p }} </label>
+                    
+
+                    </li>
+                   
                 {% endfor %}
                  </ul>
                 
@@ -60,20 +107,6 @@
        
         {% endif %}
 
-    <div>
-        <h4>Skupaj kreditnih točk: <span id="skupaj-kt-tock">{{ KT }}</span></h4>
-        <div class="alert alert-success d-none" id="ok">
-            Izpolnjeni pogoji.
-            <form method="post" action="izpis/">
-                {% csrf_token %}
-                <input type="text" hidden value="" name="vsi-id" id="vsi-id">
-                <button class="btn btn-outline-success" type="submit">Končaj vpis</button>
-            </form>
-        </div>
-        <div class="alert alert-warning d-none" id="notok">
-            Potrebnih je 60 kreditnih točk.
-        </div>
-    </div>
     </div>
     
 </div>
