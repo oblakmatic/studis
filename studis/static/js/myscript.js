@@ -64,11 +64,14 @@ function addID(){
 
 
     letnik = $("div.container.sifrant").data("letnik");
+    prostaIzbira = $("div.container.sifrant").data("prosta");
+    console.log(prostaIzbira)
+
     $("#vsi-id").val(ids);
 
     if (count== 60){
 
-        if (letnik=="3." && modulCount!=2){
+        if (letnik=="3." && modulCount!=2 && prostaIzbira=="False") {
             $("#notok").text("Izbrati je potrebno 2 modula.")
         }
         else if(letnik== "2." && strokovenCount < 1 )

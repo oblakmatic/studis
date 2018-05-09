@@ -86,6 +86,8 @@ def naredi_bazo(request):
     a_nacinStudija.save()
     a = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )
     a.save()
+
+
     #naredi studenta
     primozt = Student(vpisna_stevilka = 63150000, emso=1511996500207, ime="Primož", drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina,  priimek="Trubar",naslov_stalno_bivalisce="Kranjska ulica 12", drzava= Drzava.objects.filter(pk=4)[0], posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="pt0000@fri.uni-lj.si")
     primozt.save()
@@ -104,6 +106,78 @@ def naredi_bazo(request):
         ref_group.user_set.add(user)
     
     user.save()
+
+    # student 1 letnik
+    ivan = Student(vpisna_stevilka = 63180000, emso=1511996500207, ime="Ivan", drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina,  priimek="Cankar",naslov_stalno_bivalisce="Na klancu 29", drzava= Drzava.objects.filter(pk=4)[0], posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="ic1111@fri.uni-lj.si")
+    ivan.save()
+
+    user, created = User.objects.get_or_create(username="ivan", email="ic1111@fri.uni-lj.si")
+    user.first_name = "Ivan"
+    user.last_name = "Cankar"
+
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        ref_group, status = Group.objects.get_or_create(name='students') 
+        ref_group.user_set.add(user)
+    
+    user.save()
+
+    # student 2 letnik
+    drago = Student(vpisna_stevilka = 63170000, emso=1511996500207, ime="Drago", drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina,  priimek="Furja",naslov_stalno_bivalisce="Ropotoče 28", drzava= Drzava.objects.filter(pk=4)[0], posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="df2222@fri.uni-lj.si")
+    drago.save()
+
+    user, created = User.objects.get_or_create(username="drago", email="df2222@fri.uni-lj.si")
+    user.first_name = "Drago"
+    user.last_name = "Furja"
+
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        ref_group, status = Group.objects.get_or_create(name='students') 
+        ref_group.user_set.add(user)
+    
+    user.save()
+
+
+    # student 3 letnik brez izbire
+    martin = Student(vpisna_stevilka = 63160000, emso=1511996500207, ime="Martin", drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina,  priimek="Luter",naslov_stalno_bivalisce="Dunajska 124", drzava= Drzava.objects.filter(pk=4)[0], posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="ml3333@fri.uni-lj.si")
+    martin.save()
+
+    user, created = User.objects.get_or_create(username="martin", email="ml3333@fri.uni-lj.si")
+    user.first_name = "Martin"
+    user.last_name = "Luter"
+
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        ref_group, status = Group.objects.get_or_create(name='students') 
+        ref_group.user_set.add(user)
+    
+    user.save()
+
+    # student 3 letnik brez izbire
+    tine = Student(vpisna_stevilka = 63160001, emso=1511996500207, ime="Tine", drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina,  priimek="Prejovc",naslov_stalno_bivalisce="Tavčarjeva 4", drzava= Drzava.objects.filter(pk=4)[0], posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="tp4444@fri.uni-lj.si")
+    tine.save()
+
+    user, created = User.objects.get_or_create(username="tine", email="tp4444@fri.uni-lj.si")
+    user.first_name = "Tine"
+    user.last_name = "Prejovc"
+
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        ref_group, status = Group.objects.get_or_create(name='students') 
+        ref_group.user_set.add(user)
+    
+    user.save()
+
+
+
 
     #naredi referenta
     user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")
@@ -236,6 +310,18 @@ def naredi_bazo(request):
     zeton.save()
     zeton2 = Zeton(student=primozt,studijski_program=a_stud2,letnik=a_1Letnik,vrsta_vpisa=a_vv2,nacin_studija=a_ns2,vrsta_studija=a_vs2)
     zeton2.save()
+
+    zeton = Zeton(student=martin,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_3Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs2)
+    zeton.save()
+
+    zeton = Zeton(student=tine,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_3Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs2, pravica_do_izbire = True)
+    zeton.save()
+
+    zeton = Zeton(student=drago,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_2Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs2)
+    zeton.save()
+
+    zeton = Zeton(student=ivan,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_1Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs2)
+    zeton.save()
 
     #izvedba
     a_ns2.save()
@@ -627,5 +713,6 @@ def vsi_predmeti():
     LETNIK = Letnik.objects.get(ime="3.")
     pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False)
     pr.save()
+
 
     

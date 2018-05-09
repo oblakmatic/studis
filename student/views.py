@@ -2,6 +2,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from student.models import Student, Zeton, Vpis, Kandidat
+from izpiti.models import PredmetiStudenta
 from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -504,3 +505,46 @@ def preveri_seznam(request):
 			return render(request, 'preveri_seznam.html',context)
 	else:
 		return HttpResponse("Nimaš dovoljenja.")
+
+
+def students_by_subject(request):
+
+	predmeti_list = Predmet.objects.all().order_by('ime')
+	paginator = Paginator(predmeti_list, 24)
+	page = request.GET.get('page')
+	predmeti = paginator.get_page(page)
+			
+
+	context = {
+		'predmeti': predmeti
+		}
+
+	return render(request, 'all_subjects.html',context)
+
+def subject_data(request, id):
+
+	predmet = Predmet.objects.get(id=id)			
+
+	predmetiStudenta = PredmetiStudenta.objects.all()
+
+	student_list = []
+
+	for pr in predmetiStudenta:
+		if pr.vpis.potrjen:
+			for p in pr.predmeti.all():
+				if p == predmet:
+					student_list.append(pr.vpis.student)
+
+	paginator = Paginator(student_list, 15)
+	page = request.GET.get('page')
+	students = paginator.get_page(page)
+
+	context = {
+		'predmet': predmet,
+		'students': students
+	}
+
+	return render(request, 'subject.html',context)
+
+
+

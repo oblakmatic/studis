@@ -62,26 +62,27 @@ def vpisni_list(request, ind_student, ind_studleto,ind_studleto2):
 
 
 def index2_vpis_post(request,index):
-    #index je index zetona od nekega studenta, ki ga dobimo po querysetu
-    if request.method == 'POST':
-        # create a form instance and populate it with data from the request
-        if is_kandidat(request.user):
-            return HttpResponseRedirect('/vpis/')
-        elif is_student(request.user):
-            student = vrniStudenta(request.user.email)
-            zeton = Zeton.objects.filter(student= student[0])
-            
-            # ce vpis za to studijsko leto ze obstaja, ga skensli
-            if Vpis.objects.filter(studijsko_leto=nas_leto_ob[0]).filter(student=student[0]).exists():
-                return HttpResponseRedirect('/vpis/')
-            else:
-                nov_vpis = Vpis(student=student[0], 
-                    studijsko_leto=StudijskoLeto.objects.filter(ime=nas_leto)[0],
-                    studijski_program=zeton[index].studijski_program,
-                    letnik=zeton[index].letnik,
-                    vrsta_vpisa=zeton[index].vrsta_vpisa,
-                    nacin_studija=zeton[index].nacin_studija,
-                    vrsta_studija=zeton[index].vrsta_studija)
+	#index je index zetona od nekega studenta, ki ga dobimo po querysetu
+	if request.method == 'POST':
+		# create a form instance and populate it with data from the request
+		if is_kandidat(request.user):
+			return HttpResponseRedirect('/vpis/')
+		elif is_student(request.user):
+			student = vrniStudenta(request.user.email)
+			zeton = Zeton.objects.filter(student= student[0])
+			
+			# ce vpis za to studijsko leto ze obstaja, ga skensli
+			if Vpis.objects.filter(studijsko_leto=nas_leto_ob[0]).filter(student=student[0]).exists():
+				return HttpResponseRedirect('/vpis/')
+			else:
+				nov_vpis = Vpis(student=student[0], 
+					studijsko_leto=StudijskoLeto.objects.filter(ime=nas_leto)[0],
+					studijski_program=zeton[index].studijski_program,
+					letnik=zeton[index].letnik,
+					vrsta_vpisa=zeton[index].vrsta_vpisa,
+					nacin_studija=zeton[index].nacin_studija,
+					vrsta_studija=zeton[index].vrsta_studija,
+					prosta_izbira = zeton[index].pravica_do_izbire)
 
                 nov_vpis.save()
                 zeton[index].izkoriscen = True
@@ -368,6 +369,7 @@ def predmetnik(request):
         leto = vpis.studijsko_leto
         letnik = vpis.letnik
 
+		prosta_izbira = vpis.prosta_izbira
 
         predmeti_obvezni = []
         predmeti_izbirni = []
@@ -427,14 +429,15 @@ def predmetnik(request):
                 predmeti_modul.append(temp)
 
 
-        context = {
-            'predmeti_o': predmeti_obvezni,
-            'predmeti_i': zip(predmeti_izbirni, temporary),
-            'predmeti_m': zip(predmeti_modul, temporary),
-            'letnik': letnik,
+		context = {
+			'predmeti_o': predmeti_obvezni,
+			'predmeti_i': zip(predmeti_izbirni, temporary),
+			'predmeti_m': zip(predmeti_modul, temporary),
+			'letnik': letnik,
+			'prosta_izbira': prosta_izbira
+		}
 
-        }
-        return render(request,'vpis/predmetnik.html', context)
+		return render(request,'vpis/predmetnik.html', context)
 
 
 #shrani predmete primernemu studentu
