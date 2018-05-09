@@ -495,7 +495,7 @@ def narediZetonZaKandidata(student1,kandidat):
     if studij_prog.id == 1000470:
         vrsta_studija = VrstaStudija.objects.get(id=16203)
     elif studij_prog.id == 1000468:
-        vrsta_studija = VrstaStudija.objects.get(id=16203)
+        vrsta_studija = VrstaStudija.objects.get(id=16204)
     else:
         raise Exception("ne bi se smel tale else izvediti")
 
@@ -512,11 +512,13 @@ def narediZetonZaKandidata(student1,kandidat):
     return
     
 
-def narediVpisniList():
+def narediVpisniList(student,vpis,predmetnik):
+
+   
 
 
     
-    html_string =  render_to_string('vpis/index3_vpis.html', {})
+    html_string =  render_to_string('vpis/index3_vpis.html',{})
     pdfkit.from_string( html_string, 'out.pdf')
 
 
