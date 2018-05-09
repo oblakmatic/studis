@@ -14,6 +14,7 @@ from django.db.models import Q
 from .forms import *
 
 from django.forms import formset_factory
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 def index_izpiti(request):
@@ -373,7 +374,7 @@ def vnesi_ocene_predmeta(request):
 
             return render(request,'vnesi_ocene_predmeta.html',context)
 #REFERENTKA
-    if(request.user.groups.all()[0].name == "referent"):
+    elif(request.user.groups.all()[0].name == "referent"):
         if request.method == 'POST' and 'vnesi_ocene' in request.POST:
             rok_id = request.POST['id_rok']
 
@@ -435,6 +436,10 @@ def seznam_ocen(request):
     rok_id = request.POST['id_rok']
     print(rok_id)
     prijave = Prijava.objects.filter(rok__id = rok_id)
+
+    paginator = Paginator(prijave,40)
+    page = request.GET.get('page')
+    prijave = paginator.get_page(page)
 
     context = {
         'arr': prijave

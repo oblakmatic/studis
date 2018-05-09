@@ -50,6 +50,48 @@
                 </td>
             </tr>
             {% endfor %}
+
+            <div>
+                <ul class="pagination">
+
+                    {% if arr.has_previous %}
+                    <li class="page-item">
+                        <a href="?page={{ arr.previous_page_number }}" class="page-link">&laquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link">&laquo;</a>
+                    </li>
+                    {% endif %}
+
+                    {% for pg in arr.paginator.page_range %}
+                    {% if arr.number == pg %}
+                    <li class="page-item active">
+                        <!--pag ne dela, ker POST['id_rok'] v view -->
+                        <a class="page-link">{{pg}}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+
+                    {% if arr.has_next %}
+                    <li class="page-item">
+                        <a href="?page={{ arr.next_page_number }}" class="page-link">&raquo;</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link">&raquo;</a>
+                    </li>
+                    {% endif %}
+
+
+                </ul>
+            </div>
+
 </div>
 
 {% endblock %}
