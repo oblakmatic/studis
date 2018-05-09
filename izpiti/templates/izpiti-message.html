@@ -13,6 +13,7 @@
                 <th scope="col">Predmet</th>
                 <th scope="col">Izvajalec</th>
                 <th scope="col">Datum</th>
+                <th scope="col">Prostor</th>
                 <th scope="col">Prijava</th>
             </tr>
         </thead>
@@ -50,7 +51,10 @@
             </td>
             {% endif %}
 
-            <td>{{ rok.datum }}</td>
+            <td>
+                {{ rok.datum }}
+            </td>
+            <td>{{ rok.prostor_izvajanja }}</td>
             <td>Prijava je mozna</td>
         </tr>
         {% endfor %}

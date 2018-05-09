@@ -1,7 +1,7 @@
 from django.db import models
 from sifranti.models import *
 from student.models import *
-
+from django.conf import settings
 
 class Ucitelj(models.Model):
     ime = models.CharField(max_length = 30)

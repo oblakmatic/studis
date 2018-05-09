@@ -410,17 +410,17 @@ def naredi_bazo(request):
 
 
 	new_date = datetime.datetime(2013, 6, 9, 11, 13)
-	a = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
+	a = Rok(izvedba_predmeta = a_izv_teh, datum = new_date,prostor_izvajanja = "A1")
 	a.save()
 
 	#podatki za vpis ocen izpita
 	new_date = datetime.datetime(2018, 3, 3, 14, 15)
-	a_rok = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
+	a_rok = Rok(izvedba_predmeta = a_izv_teh, datum = new_date,prostor_izvajanja = "P22")
 	a_rok.save()
 
 	#se rok za referentko
 	new_date = datetime.datetime(2018, 4, 4, 15, 15)
-	a_rok_obl = Rok(izvedba_predmeta = a_izv_obl, datum = new_date)
+	a_rok_obl = Rok(izvedba_predmeta = a_izv_obl, datum = new_date,prostor_izvajanja = "P14")
 	a_rok_obl.save()
 
 	new_date = datetime.datetime(2018, 2, 15, 14, 30)
