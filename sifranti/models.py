@@ -77,9 +77,9 @@ class VrstaStudija(models.Model):
 #univerzitetni, visokosolski
 
     id = models.IntegerField(primary_key=True,verbose_name="Šifra")
-    opis = models.CharField(max_length=100, verbose_name="Opis")
+    opis = models.CharField(max_length=150, verbose_name="Opis")
     nacin_zakljucka = models.CharField(max_length=100, verbose_name="Način zaključka šolanja")
-    raven_klasius = models.IntegerField(verbose_name="Raven izobrazbe po KLASIUS-SRV")
+    raven_klasius = models.CharField(max_length=10,verbose_name="Raven izobrazbe po KLASIUS-SRV")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
     objects = Veljavni()

@@ -94,6 +94,7 @@ def import_students(request):
 			kandidat.email = email
 			kandidat.ime = name
 			kandidat.priimek = surname
+			kandidat.studijski_program = StudijskiProgram.objects.filter(pk=int(program))[0]
 			kandidat.save()
 			
 			new = new + 1
