@@ -26,6 +26,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 
@@ -39,17 +40,25 @@ def students(request):
 		return redirect('/student/podatki')
 	else:
 		if(request.user.groups.all()[0].name == "referent"):
-			all_students = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
+			all_students_list = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
+			paginator = Paginator(all_students_list, 1)
+			page = request.GET.get('page')
+			all_students = paginator.get_page(page)
+			
+
 		elif(request.user.groups.all()[0].name == "professors"):
 			# student <- vpis ->  predmeti studenta -> predmet -> izvedba predmeta -> ucitelj 1, 2, 3
-			all_students = Student.objects.filter(Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_1__email = request.user.email) \
+			all_students_list = Student.objects.filter(Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_1__email = request.user.email) \
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_2__email = request.user.email) \
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_3__email = request.user.email))\
 												.distinct().values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
-		for student in all_students:
-			print(student)
+		
+			paginator = Paginator(all_students_list, 1)
+			page = request.GET.get('page')
+			all_students = paginator.get_page(page)
+
 		context = {
-			'arr': all_students
+			'students': all_students
 		}
 		return render(request,'students.html', context)
 
