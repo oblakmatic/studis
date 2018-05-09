@@ -41,7 +41,7 @@ def students(request):
 	else:
 		if(request.user.groups.all()[0].name == "referent"):
 			all_students_list = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
-			paginator = Paginator(all_students_list, 1)
+			paginator = Paginator(all_students_list, 20)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
 			
@@ -53,7 +53,7 @@ def students(request):
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_3__email = request.user.email))\
 												.distinct().values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
 		
-			paginator = Paginator(all_students_list, 1)
+			paginator = Paginator(all_students_list, 20)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
 
@@ -299,18 +299,19 @@ def token_edit(request, edit_id):
 		if(zeton == None):
 			return redirect('/student/seznam-zetonov/', 'Ta žeton ne obstaja!')
 		else:
-			context = {
-				'data': {
-					'vpisna': zeton.student.pk,
-					'prog': zeton.studijski_program.ime,
-					'letnik': zeton.letnik.ime,
-					'vrsta_vp': zeton.vrsta_vpisa.ime,
-					'nac_stud': zeton.nacin_studija.ime,
-					'vrst_stud': zeton.vrsta_studija.ime,
-					'izbira': zeton.pravica_do_izbire
-				}
-			}
-			return render(request, 'token_edit.html', context)
+			context = {}
+			tokenForm = TokenForm(initial={
+				'student': zeton.student.vpisna_stevilka,
+				'studijski_program': zeton.studijski_program.id,
+				'letnik': zeton.letnik.id,
+				'vrsta_vpisa': zeton.vrsta_vpisa.id,
+				'nacin_studija': zeton.nacin_studija.id,
+				'vrsta_studija': zeton.vrsta_studija.id,
+				'pravica_do_izbire': zeton.pravica_do_izbire})
+			
+			context['tokenForm'] = tokenForm
+			
+			return render(request, 'token_edit.html', context )
 
 def all_data(request, id):
 	student = Student.objects.get(pk = id)

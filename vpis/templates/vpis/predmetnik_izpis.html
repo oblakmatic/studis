@@ -7,12 +7,12 @@
     
     <h2>Shranjeni predmeti</h2>
 
-        <ul class="list-group mycard">
+        <ul class="list-group col-sm-5">
             {% for t in predmeti %}
                 
                 <li class="list-group-item" >
-                    {{ t }}
-                    <input type="checkbox" class="form-check-input" checked hidden name="izbran-predmet"  id= {{ v.id }} >
+                   {{ t.id }} - {{ t }}
+                
                 </li>
             
             {% endfor %}

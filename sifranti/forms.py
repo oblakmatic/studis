@@ -20,57 +20,117 @@ class SearchForm(forms.Form):
     isci_element = forms.CharField(label='Isci element po atributu:',max_length=100)
     element = forms.CharField(max_length=100)
 
+
 class PostaForm(ModelForm):
     class Meta:
         model = Posta
-        fields = '__all__' #['ime', 'postna_stevilka']
+        exclude = ['id'] #['ime', 'postna_stevilka']
+        
 
 class DrzavaForm(ModelForm):
     class Meta:
         model = Drzava
-        fields = '__all__'
+        exclude = ['id']
 
 class ObcinaForm(ModelForm):
     class Meta:
         model = Obcina
-        fields = '__all__'
+        exclude = ['id']
 
 class StudijskiProgramForm(ModelForm):
     class Meta:
         model = StudijskiProgram
-        fields = '__all__'
+        exclude = ['id']
 
 class VrstaVpisaForm(ModelForm):
     class Meta:
         model = VrstaVpisa
-        fields = '__all__'
+        exclude = ['id']
 
 class VrstaStudijaForm(ModelForm):
     class Meta:
         model = VrstaStudija
-        fields = '__all__'
+        exclude = ['id']
 
 class LetnikForm(ModelForm):
     class Meta:
         model = Letnik
-        fields = '__all__'
+        exclude = ['id']
 
 class StudijskoLetoForm(ModelForm):
     class Meta:
         model = StudijskoLeto
-        fields = '__all__'
+        exclude = ['id']
 
 class NacinStudijaForm(ModelForm):
     class Meta:
         model = NacinStudija
-        fields = '__all__'
+        exclude = ['id']
 
 class PredmetForm(ModelForm):
     class Meta:
         model = Predmet
-        fields = '__all__'
+        exclude = ['id']
 
 class OblikaStudijaForm(ModelForm):
+    class Meta:
+        model = OblikaStudija
+        exclude = ['id']
+
+
+
+class PostaForm2(ModelForm):
+    class Meta:
+        model = Posta
+        exclude = '__all__' #['ime', 'postna_stevilka']
+        
+
+class DrzavaForm2(ModelForm):
+    class Meta:
+        model = Drzava
+        fields = '__all__'
+
+class ObcinaForm2(ModelForm):
+    class Meta:
+        model = Obcina
+        fields = '__all__'
+
+class StudijskiProgramForm2(ModelForm):
+    class Meta:
+        model = StudijskiProgram
+        fields = '__all__'
+
+class VrstaVpisaForm2(ModelForm):
+    class Meta:
+        model = VrstaVpisa
+        fields = '__all__'
+
+class VrstaStudijaForm2(ModelForm):
+    class Meta:
+        model = VrstaStudija
+        fields = '__all__'
+
+class LetnikForm2(ModelForm):
+    class Meta:
+        model = Letnik
+        fields = '__all__'
+
+class StudijskoLetoForm2(ModelForm):
+    class Meta:
+        model = StudijskoLeto
+        fields = '__all__'
+
+class NacinStudijaForm2(ModelForm):
+    class Meta:
+        model = NacinStudija
+        fields = '__all__'
+
+class PredmetForm2(ModelForm):
+    class Meta:
+        model = Predmet
+        fields = '__all__'
+
+class OblikaStudijaForm2(ModelForm):
     class Meta:
         model = OblikaStudija
         fields = '__all__'
