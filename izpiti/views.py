@@ -315,7 +315,7 @@ def prijava(request):
                                 print("odjava add~~~~~~~~~~~~~~~~~~~~~~~", rok.datum)
                                 prijavljeni_roki.append(rok)
                         else:
-                            if (polaganja_trenutno_leto >= 3 or stevilo_dosedanjih_polaganj >= 6 or (vnesi_rok.datum - datum_zadnje_prijave).days <= 10):
+                            if (polaganja_trenutno_leto >= 3 or stevilo_dosedanjih_polaganj >= 6 or (vnesi_rok.datum - datum_zadnje_prijave).days <= 10 or time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 0) ):
                                 print("disabled prijava add~~~~~~~~~~~~~~~~~~~~~~~", rok.datum)
                                 disabled_roki.append(rok)
                                 continue
