@@ -204,7 +204,6 @@ def prijava(request):
             all_prijava = Prijava.objects.all()
             for prijava in all_prijava:
                 if prijava.predmeti_studenta == vnesi_predmeti_studenta and prijava.rok == vnesi_rok:
-
                     print("prijava oznacena kot neaktivna!")
                     prijava.aktivna_prijava = False
                     prijava.save()
@@ -325,7 +324,7 @@ def vnesi_ocene_predmeta(request):
         if request.method == 'POST' and 'vnesi_ocene' in request.POST:
             rok_id = request.POST['id_rok']
 
-            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True).order_by('id')
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
             print(prijave)
             formset = formset_factory(ocenaForm, extra = prijave.count())
             
@@ -341,7 +340,7 @@ def vnesi_ocene_predmeta(request):
             rok_id = request.POST['id_rok']
             formsetOcena = formset_factory(ocenaForm)
             formset = formsetOcena(request.POST)
-            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True).order_by('id')
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
             ime_ = request.user.first_name
             priimek_ = request.user.last_name
             ime_priimek = ime_ + " " + priimek_
@@ -352,7 +351,7 @@ def vnesi_ocene_predmeta(request):
                 ocena_ = form['ocena'].value()
                 odjava = form['odjava'].value()
                 if odjava == True:
-                    curr.aktivna_prijava = False
+                    curr.ocena = -1
                     curr.odjavitelj = ime_priimek
                     curr.cas_odjave = datetime.now()
                     curr.save()
@@ -364,7 +363,7 @@ def vnesi_ocene_predmeta(request):
                 
 
             
-            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True).order_by('id')
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
             formset = formset_factory(ocenaForm, extra = prijave.count())
             context = {
                 'arr': prijave,
@@ -378,7 +377,7 @@ def vnesi_ocene_predmeta(request):
         if request.method == 'POST' and 'vnesi_ocene' in request.POST:
             rok_id = request.POST['id_rok']
 
-            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True).order_by('id')
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
             print(prijave)
             formset = formset_factory(ocenaForm, extra = prijave.count())
             
@@ -405,7 +404,7 @@ def vnesi_ocene_predmeta(request):
                 ocena_ = form['ocena'].value()
                 odjava = form['odjava'].value()
                 if odjava == True:
-                    curr.aktivna_prijava = False
+                    curr.ocena = -1
                     curr.odjavitelj = ime_priimek
                     curr.cas_odjave = datetime.now()
                     curr.save()
@@ -417,7 +416,7 @@ def vnesi_ocene_predmeta(request):
                 
 
             
-            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True).order_by('id')
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
             formset = formset_factory(ocenaForm, extra = prijave.count())
             context = {
                 'arr': prijave,
