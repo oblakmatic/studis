@@ -19,6 +19,7 @@ class IzvedbaPredmeta(models.Model):
 class Rok(models.Model):
     izvedba_predmeta = models.ForeignKey(IzvedbaPredmeta, on_delete = models.SET_NULL, null = True)
     datum = models.DateTimeField()
+    prostor_izvajanja = models.CharField(max_length = 30)
 
 class PredmetiStudenta(models.Model):
     vpis = models.ForeignKey(Vpis, on_delete = models.SET_NULL, null = True)#

@@ -70,11 +70,11 @@ def dodaj_izpit(request):
         email_ = request.user.email
         showRoki = []
         for rok in Rok.objects.all():
-            if rok.izvedba_predmeta.ucitelj_1.email == email_:
+            if rok.izvedba_predmeta.ucitelj_1 != None and rok.izvedba_predmeta.ucitelj_1.email == email_:
                 showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_2.email == email_:
+            elif rok.izvedba_predmeta.ucitelj_2 != None and rok.izvedba_predmeta.ucitelj_2.email == email_:
                 showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_3.email == email_:
+            elif rok.izvedba_predmeta.ucitelj_3 != None and rok.izvedba_predmeta.ucitelj_3.email == email_:
                 showRoki.append(rok)
     
         context = {
@@ -85,7 +85,15 @@ def dodaj_izpit(request):
 
     elif request.method == 'POST' and 'dodaj_izpit' in request.POST:
 
+        prostor = request.POST['prostor']
+
         datum_ = request.POST['datum']
+        cas_ = request.POST['cas']
+        datum_split = datum_.split(".")
+        cas_split = cas_.split(":")
+        
+        datum_ = datetime(int(datum_split[2]), int(datum_split[1]), int(datum_split[0]), int(cas_split[0]), int(cas_split[1]))
+
 
         id_IzvedbaPredmeta = request.POST['id_IzvedbaPredmeta']
         vnos_izvedbaPredmeta = IzvedbaPredmeta.objects.all()
@@ -95,18 +103,18 @@ def dodaj_izpit(request):
 
         
 
-        a = Rok(izvedba_predmeta = vnesi, datum = datum_)
+        a = Rok(izvedba_predmeta = vnesi, datum = datum_, prostor_izvajanja = prostor)
         a.save()
 
         #da mu pokaze se vse roke k jih je razpisov
         email_ = request.user.email
         showRoki = []
         for rok in Rok.objects.all():
-            if rok.izvedba_predmeta.ucitelj_1.email == email_:
+            if rok.izvedba_predmeta.ucitelj_1 != None and rok.izvedba_predmeta.ucitelj_1.email == email_:
                 showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_2.email == email_:
+            elif rok.izvedba_predmeta.ucitelj_2 != None and rok.izvedba_predmeta.ucitelj_2.email == email_:
                 showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_3.email == email_:
+            elif rok.izvedba_predmeta.ucitelj_3 != None and rok.izvedba_predmeta.ucitelj_3.email == email_:
                 showRoki.append(rok)
     
         context = {
