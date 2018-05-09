@@ -2,20 +2,22 @@
 {% block content %}
 
 <div class="container sifrant">
-    <h3>Vnesi ocene</h3>
-
+    <h3>Seznam ocen</h3>
     <table class="table">
         <table class="table">
             <thead>
                 <tr>
+                    <th scope="col" width="20">Zaporedna stevilka</th>
                     <th scope="col">Vpisna stevilka</th>
                     <th scope="col">Priimek in ime</th>
                     <th scope="col">Vrnjena prijava/cas odjave/odjavitelj</th>
                     <th scope="col">Stevilo tock izpita</th>
+                    <th scope="col">Ocena izpita</th>
                 </tr>
             </thead>
             {% for prijava in arr %}
             <tr>
+                <td>{{ forloop.counter }}.</td>
                 <td>
                     {{ prijava.predmeti_studenta.vpis.student.vpisna_stevilka }}
                 </td>
@@ -33,8 +35,17 @@
                 <td>
                     {% if prijava.ocena == None %}
                     Ocena se ni vpisana
+                    {% elif prijava.ocena == -1 %}
+                    VP
                     {% else %}
                     {{ prijava.ocena }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if prijava.ocena_izpita == None %}
+                    Ocena se ni vpisana
+                    {% else %}
+                    {{ prijava.ocena_izpita }}
                     {% endif %}
                 </td>
             </tr>

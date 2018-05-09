@@ -35,6 +35,7 @@ class Prijava(models.Model):
     podatki_o_placilu = models.CharField(max_length = 260, default=None, blank=True, null=True)
     aktivna_prijava = models.BooleanField(default = True)
     ocena = models.IntegerField(default=None,null=True)
+    ocena_izpita = models.IntegerField(default=None,null=True)
     #dodav, ko ucitelj odjavi izpit--> se zabelezijo podatki o odjavilteju in cas odjave
     cas_odjave = models.DateTimeField(default=None,null=True)
     odjavitelj = models.CharField(max_length = 100, default=None, blank=True, null=True)

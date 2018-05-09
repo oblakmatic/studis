@@ -324,8 +324,8 @@ def vnesi_ocene_predmeta(request):
         if request.method == 'POST' and 'vnesi_ocene' in request.POST:
             rok_id = request.POST['id_rok']
 
-            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
-            print(prijave)
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
+            
             formset = formset_factory(ocenaForm, extra = prijave.count())
             
             context = {
@@ -340,7 +340,7 @@ def vnesi_ocene_predmeta(request):
             rok_id = request.POST['id_rok']
             formsetOcena = formset_factory(ocenaForm)
             formset = formsetOcena(request.POST)
-            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
             ime_ = request.user.first_name
             priimek_ = request.user.last_name
             ime_priimek = ime_ + " " + priimek_
@@ -363,7 +363,7 @@ def vnesi_ocene_predmeta(request):
                 
 
             
-            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
             formset = formset_factory(ocenaForm, extra = prijave.count())
             context = {
                 'arr': prijave,
@@ -377,8 +377,8 @@ def vnesi_ocene_predmeta(request):
         if request.method == 'POST' and 'vnesi_ocene' in request.POST:
             rok_id = request.POST['id_rok']
 
-            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
-            print(prijave)
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
+            
             formset = formset_factory(ocenaForm, extra = prijave.count())
             
             context = {
@@ -393,7 +393,7 @@ def vnesi_ocene_predmeta(request):
             rok_id = request.POST['id_rok']
             formsetOcena = formset_factory(ocenaForm)
             formset = formsetOcena(request.POST)
-            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True).order_by('id')
+            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True)
             ime_ = request.user.first_name
             priimek_ = request.user.last_name
             ime_priimek = ime_ + " " + priimek_
@@ -416,7 +416,7 @@ def vnesi_ocene_predmeta(request):
                 
 
             
-            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id).order_by('id')
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
             formset = formset_factory(ocenaForm, extra = prijave.count())
             context = {
                 'arr': prijave,
@@ -440,3 +440,11 @@ def seznam_ocen(request):
         'arr': prijave
         }
     return render(request,'seznam_ocen.html',context)
+
+def seznam_prijavljenih(request):
+
+    prijavljeni =[]
+    context={
+        'arr': prijavljeni
+        }
+    return render(request,'seznam_prijavljenih.html',context)
