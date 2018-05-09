@@ -125,6 +125,14 @@ def prijava(request):
             rok_id = request.POST['rok_']
             
             predmet = IzvedbaPredmeta.objects.filter(rok__id = rok_id)[0]
+            
+            trenutno_studijsko_leto = ptsl()
+            polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
+            if(polaganja_trenutno_leto >= 3):
+
+                print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!')
+            print("polaganja letos", polaganja_trenutno_leto)
+            
             # stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
             stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
             print("polaganja skupaj", stevilo_dosedanjih_polaganj)
@@ -134,22 +142,6 @@ def prijava(request):
             if(stevilo_dosedanjih_polaganj >= 6):
                 print('WARNING! Stevilo najvec moznih polaganj predmeta prekoraceno!')
 
-            '''utc = pytz.UTC
-            trenutni_datum = utc.localize(datetime.now()).date()
-            
-            # print(trenutni_datum.year-1, trenutni_datum.year, trenutni_datum.year+1)
-            if (trenutni_datum.month >= 10 and trenutni_datum.day >= 1):
-                trenutno_leto = str(trenutni_datum.year) + "/" + str(trenutni_datum.year+1)
-            else:
-                trenutno_leto = str(trenutni_datum.year-1) + "/" + str(trenutni_datum.year)
-            
-            # polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
-            trenutno_studijsko_leto = StudijskoLeto.objects.filter(ime = trenutno_leto)[0]'''
-            trenutno_studijsko_leto = ptsl()
-            polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
-            if(polaganja_trenutno_leto >= 3):
-                print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!')
-            print("polaganja letos", polaganja_trenutno_leto)
             # print(trenutno_leto)
             
 
@@ -239,20 +231,67 @@ def prijava(request):
             all_prijava = Prijava.objects.all()
             prijavljeni_roki = []
             neprijavljeni_roki = []
+            disabled_roki = []
+            payable_roki = []
+            disable_odjava_roki = []
             time_tomorrow = time_now + timedelta(days=1)
             #print(time_now.time() < datetime.time(12, 00))
             
             
             if all_prijava:
                 for rok in roki:
+                    ###########################################################################
+                    predmet = rok.izvedba_predmeta
+            
+                    trenutno_studijsko_leto = ptsl()
+                    polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
+                    if(polaganja_trenutno_leto >= 3):
+
+                        print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!')
+                    print("polaganja letos", polaganja_trenutno_leto)
+                    
+                    # stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
+                    stevilo_dosedanjih_polaganj = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, aktivna_prijava = True).count()
+                    print("polaganja skupaj", stevilo_dosedanjih_polaganj)
+                    if(stevilo_dosedanjih_polaganj >= 4):
+                        print('WARNING! Placljivo polaganje!')
+
+                    if(stevilo_dosedanjih_polaganj >= 6):
+                        print('WARNING! Stevilo najvec moznih polaganj predmeta prekoraceno!')
+
+                    # print(trenutno_leto)
+                    
+
+                    # zadnje_prijave = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).order_by("-id")[0].created_at
+                    
+
+                    vnesi_rok = rok
+
+                    zadnje_prijave = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).order_by("-id")
+                    if(zadnje_prijave.count() != 0):
+                        print(vars(zadnje_prijave[0]))
+                        datum_zadnje_prijave = zadnje_prijave[0].created_at
+                        print(datum_zadnje_prijave)
+                        if((datum_zadnje_prijave - vnesi_rok.datum).days <= 10): # TODO: Omejitev po dnevih naj bi bila nastavljiva
+                            print("WARNING! Med prejsnjim polaganjem in tem rokom je preteklo manj kot 10 dni!")   
+                    ################################################################################################################################                 
                     #print(rok.datum)
                     #print(time_now)
                     #print(datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 12))
-                    if time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 12):
-                        #rok['enabled'] = True
-                        for prijava in all_prijava:
-                            if rok == prijava.rok and prijava.aktivna_prijava == True:
+                    
+                    #rok['enabled'] = True
+                    for prijava in all_prijava:
+                        if rok == prijava.rok and (polaganja_trenutno_leto >= 3 or stevilo_dosedanjih_polaganj >= 6 or (datum_zadnje_prijave - vnesi_rok.datum).days <= 10):
+                            disabled_roki.append(rok)
+                            continue
+                        if rok == prijava.rok and prijava.aktivna_prijava == True:
+                            if time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 12):
+                                disable_odjava_roki.append(rok)
+                            else:    
                                 prijavljeni_roki.append(rok)
+                        else:
+                            if stevilo_dosedanjih_polaganj >= 4:
+                                payable_roki.append(rok)
                             else:
                                 neprijavljeni_roki.append(rok)
 
@@ -262,6 +301,9 @@ def prijava(request):
     context={
     'arr': roki,
     'arr1': prijavljeni_roki,
+    'disabled_odjava': disable_odjava_roki,
+    'disabled': disabled_roki,
+    'payable': payable_roki,
     'predmetiStudenta': curr_predmetiStudenta
     }
 
