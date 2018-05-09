@@ -535,10 +535,12 @@ def subject_data(request, id):
 	predmetiStudenta = PredmetiStudenta.objects.all()
 
 	student_list = []
+
 	for pr in predmetiStudenta:
-		for p in pr.predmeti.all():
-			if p == predmet:
-				student_list.append(pr.vpis.student)
+		if pr.vpis.potrjen:
+			for p in pr.predmeti.all():
+				if p == predmet:
+					student_list.append(pr.vpis.student)
 
 	paginator = Paginator(student_list, 15)
 	page = request.GET.get('page')

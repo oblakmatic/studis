@@ -56,7 +56,8 @@ def index2_vpis_post(request,index):
 					letnik=zeton[index].letnik,
 					vrsta_vpisa=zeton[index].vrsta_vpisa,
 					nacin_studija=zeton[index].nacin_studija,
-					vrsta_studija=zeton[index].vrsta_studija)
+					vrsta_studija=zeton[index].vrsta_studija,
+					prosta_izbira = zeton[index].pravica_do_izbire)
 
 				nov_vpis.save()
 				zeton[index].izkoriscen = True
@@ -330,8 +331,6 @@ def emso_verify(emso):
 
 def predmetnik(request):
 
-	#A preko request.POST dobis spodnje vrednosti in jih das v get
-	#p_id = request.POST.get('program-id', '') namesto 1000468 npr
 	if is_student(request.user):
 
 		student = vrniStudenta(request.user.email)
@@ -343,6 +342,7 @@ def predmetnik(request):
 		leto = vpis.studijsko_leto
 		letnik = vpis.letnik
 
+		prosta_izbira = vpis.prosta_izbira
 
 		predmeti_obvezni = []
 		predmeti_izbirni = []
@@ -407,8 +407,9 @@ def predmetnik(request):
 			'predmeti_i': zip(predmeti_izbirni, temporary),
 			'predmeti_m': zip(predmeti_modul, temporary),
 			'letnik': letnik,
-
+			'prosta_izbira': prosta_izbira
 		}
+
 		return render(request,'vpis/predmetnik.html', context)
 
 
