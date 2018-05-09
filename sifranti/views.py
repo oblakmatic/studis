@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.models import User, Group
-from django.core.paginator import Paginator
 
 from izpiti.models import *
 from student.models import *
@@ -27,7 +26,7 @@ def changesif(request, diff):
 		# create a form instance and populate it with data from the request:
 		
 		# example Posta --> PostaForm
-		form = eval(diff+'Form2')(request.POST)
+		form = eval(diff+'Form')(request.POST)
 		# check whether it's valid:
 		# and saves into database
 		if form.is_valid():
@@ -36,41 +35,19 @@ def changesif(request, diff):
 			return HttpResponseRedirect('/sifranti/'+ diff +'/')
 		else:
 			elements = eval(diff).objects.values()
-			paginator = Paginator(elements, 25)
-
-			page = request.GET.get('page')
-			elemen = paginator.get_page(page)
-			keyList = []
-
-			if elements:
-				enEL = elements[0]
-				
-				for key in enEL.keys():
-					
-					verbose = eval(diff)._meta.get_field(key).verbose_name
-					
-					keyList.append(verbose)
 			form_iskanje = SearchForm()
 			context = {
 			'object_name' : diff,
-			'elements' : elemen,
+			'elements' : elements,
 			'form': form,
-			'form2' : form_iskanje,
-			'verbose_names' : keyList,
+			'form2' : form_iskanje
 			}
 			return render(request,'sifranti/changesif.html',context)
 
 	# if a GET (or any other method) we'll create a blank form
 	else:
 		if diff in diff_names:
-			elements =  eval(diff).all_objects.order_by('pk').values()
-			paginator = Paginator(elements, 25)
-
-			page = request.GET.get('page')
-			elemen = paginator.get_page(page)
-
-
-
+			elements =  eval(diff).objects.order_by('pk').values()
 			keyList = []
 
 			if elements:
@@ -83,10 +60,10 @@ def changesif(request, diff):
 					keyList.append(verbose)
 
 			form_iskanje = SearchForm()
-			form = eval(diff+'Form2')()
+			form = eval(diff+'Form')()
 			context = {
 			'object_name' : diff,
-			'elements' : elemen,
+			'elements' : elements,
 			'form': form,
 			'form2' : form_iskanje,
 			'verbose_names' : keyList,
@@ -95,12 +72,12 @@ def changesif(request, diff):
 			return render(request,'sifranti/changesif.html',context)
 
 		else:
-			return HttpResponseRedirect("Ni take tabele")
+			return HttpResponse("Ni take tabele")
 
 def update(request, diff, index):
 	if request.method == 'POST' and diff in diff_names:
 		# create a form instance and populate it with data from the request:
-		existing_object = eval(diff).all_objects.get(pk=index)
+		existing_object = eval(diff).objects.get(pk=index)
 		form = eval(diff+'Form')(request.POST, instance=existing_object)
 
 		if form.is_valid():
@@ -110,12 +87,12 @@ def update(request, diff, index):
 			# and update into database
 			
 			form.save()
-			return HttpResponseRedirect("/sifranti/"+diff+"/") 
+			return HttpResponse("Uspesno posodobljen element") 
 		else:
 			context = {
 				'object_name' : diff,
 				'form': form,
-				'element' : eval(diff).all_objects.filter(pk=index).values(),
+				'element' : eval(diff).objects.filter(pk=index).values(),
 			}
 			return render(request,'sifranti/update.html',context)
 		
@@ -125,7 +102,7 @@ def update(request, diff, index):
 	# if a GET (or any other method) we'll create a blank form
 	else:
 		if diff in diff_names:
-			element = eval(diff).all_objects.filter(pk=index).values()
+			element = eval(diff).objects.filter(pk=index).values()
 
 			form = eval(diff+'Form')(initial = element[0])
 			context = {
@@ -143,7 +120,7 @@ def delete(request, diff, index):
 	
 	if diff in diff_names and request.method == 'POST':
 		
-		element = eval(diff).all_objects.get(id=index)
+		element = eval(diff).objects.get(id=index)
 		if element.veljaven:
 			element.veljaven = False
 		else:
@@ -151,98 +128,6 @@ def delete(request, diff, index):
 		
 		element.save()
 		return HttpResponseRedirect('/sifranti/'+ diff +'/')
-
-def search2(request, diff, key, iskani_el ):
-
-	if request.method == 'POST' and diff in diff_names:
-		# create a form instance and populate it with data from the request:
-		
-		# example Posta --> PostaForm
-		form = eval(diff+'Form2')(request.POST)
-		# check whether it's valid:
-		# and saves into database
-		if form.is_valid():
-			
-			new_object = form.save()
-			return HttpResponseRedirect('/sifranti/'+ diff +'/')
-		else:
-			elements = eval(diff).all_objects.values()
-			paginator = Paginator(elements, 25)
-
-			page = request.GET.get('page')
-			elemen = paginator.get_page(page)
-			keyList = []
-
-			if elements:
-				enEL = elements[0]
-				
-				for key in enEL.keys():
-					
-					verbose = eval(diff)._meta.get_field(key).verbose_name
-					
-					keyList.append(verbose)			
-			form_iskanje = SearchForm()
-			context = {
-			'object_name' : diff,
-			'elements' : elemen,
-			'form': form,
-			'form2' : form_iskanje,
-			'verbose_names' : keyList,
-			}
-			return render(request,'sifranti/changesif.html',context)
-
-	# if a GET (or any other method) we'll create a blank form
-	else:
-		if diff in diff_names:
-			#elements =  eval(diff).objects.order_by('pk').values()
-			elements = vrniFiltriraneElemente(diff, key, iskani_el)
-			paginator = Paginator(elements, 25)
-
-			page = request.GET.get('page')
-			elemen = paginator.get_page(page)
-
-			keyList = []
-
-			if elements:
-				enEL = elements[0]
-				
-				for key in enEL.keys():
-					
-					verbose = eval(diff)._meta.get_field(key).verbose_name
-					
-					keyList.append(verbose)
-
-			form_iskanje = SearchForm()
-			form = eval(diff+'Form2')()
-			context = {
-			'object_name' : diff,
-			'elements' : elemen,
-			'form': form,
-			'form2' : form_iskanje,
-			'verbose_names' : keyList,
-			
-			}
-			return render(request,'sifranti/changesif.html',context)
-
-		else:
-			return HttpResponse("Ni take tabele")
-
-def vrniFiltriraneElemente(diff, isci_element, element):
-
-
-	polje = None
-	enEL =  eval(diff).all_objects.order_by('pk').values()[0]
-	for key in enEL.keys():
-			
-			verbose = eval(diff)._meta.get_field(key).verbose_name
-			
-			if verbose == isci_element:
-				polje = key
-				break     
-		
-	polje = polje + "__istartswith"
-	rezultat = eval(diff).all_objects.filter(**{polje: element}).values()
-	return rezultat
 
 def search(request, diff):
 
@@ -253,9 +138,134 @@ def search(request, diff):
 			isci_element = form.cleaned_data['isci_element']
 			element = form.cleaned_data['element']
 			
-			return HttpResponseRedirect('/sifranti/'+ diff +'/'+isci_element+'/'+element+'/')
-	else:
-		HttpResponseRedirect('/sifranti/')
+			polje = None
+			enEL =  eval(diff).objects.order_by('pk').values()[0]
+			for key in enEL.keys():
+					
+					verbose = eval(diff)._meta.get_field(key).verbose_name
+					
+					if verbose == isci_element:
+						polje = key
+						break
+
+
+			if polje:       
+
+				rezultat = eval(diff).objects.filter(**{polje: element}).values()
+				if rezultat:
+					return HttpResponseRedirect('/sifranti/'+ diff +'/'+str(rezultat[0]["id"])+'/')
+				else:
+					return HttpResponse("Ni bil najden element!")
+
+			else:
+				return HttpResponse("Ni tega elementa!")
+
+
+def naredi_bazo(request):
+	a = Drzava(id=4, dvomestna_koda="AF", tromestna_oznaka="AFG", iso_naziv="Afghanistan", slovenski_naziv="Afganistan",opomba="", veljaven=True)
+	a.save()
+
+	a_slo = Drzava(id=703, dvomestna_koda="SI", tromestna_oznaka="SVN", iso_naziv="Slovenia", slovenski_naziv="Slovenija",opomba="")
+	a_slo.save()
+
+	a = Drzava(id=703, dvomestna_koda="SI", tromestna_oznaka="SVN", iso_naziv="Slovenia", slovenski_naziv="Slovenija",opomba="", veljaven=True)
+	a.save()
+	a = Drzava(id=40, dvomestna_koda="AT", tromestna_oznaka="AUT", iso_naziv="Austria", slovenski_naziv="Avstrija",opomba="", veljaven=True)
+	a.save()
+	a = Drzava(id=56, dvomestna_koda="BE", tromestna_oznaka="BEL", iso_naziv="Belgium", slovenski_naziv="Belgija",opomba="", veljaven=True)
+	a.save()
+	a = Drzava(id=250, dvomestna_koda="FR", tromestna_oznaka="FRA", iso_naziv="France", slovenski_naziv="Francija",opomba="", veljaven=True)
+	a.save()
+	a = Drzava(id=276, dvomestna_koda="DE", tromestna_oznaka="DEU", iso_naziv="Germany", slovenski_naziv="Nemčija",opomba="")
+	a.save()
+	a = Drzava(id=826, dvomestna_koda="GB", tromestna_oznaka="GBR", iso_naziv="United Kingdom", slovenski_naziv="Velika Britanija", opomba="")
+	a.save()
+	a = Drzava(id=807, dvomestna_koda="MK", tromestna_oznaka="MKD", iso_naziv="Macedonia, the former Yugoslav Republic of", slovenski_naziv="Makedonija",opomba="")
+	a.save()
+	
+
+	a = Obcina(id = 213, ime="Ankaran")
+	a.save()
+	a = Obcina(id = 1, ime="Ajdovščina")
+	a.save()
+	a = Obcina(id = 19, ime="Divača")
+	a.save()
+	a = Obcina(id = 20, ime="Dobropolje")
+	a.save()
+
+	a_sklObcina = Obcina(id = 122, ime="Škofja Loka")
+	a_sklObcina.save()
+	a_ljObcina = Obcina(id = 61, ime="Ljubljana")
+	a_ljObcina.save()
+
+	a = Obcina(id=80, ime="Murska Sobota")
+	a.save()
+	a = Obcina(id=102, ime="Radovljica")
+	a.save()
+	a = Obcina(id=186, ime="Trzin")
+	a.save()
+
+	a = Posta(id=1293, kraj="Šmarje-Sap")
+	a.save()
+	a_ljPosta = Posta(id=1000, kraj="Ljubljana")
+	a_ljPosta.save()
+	a = Posta(id=1290, kraj="Grosuplje")
+	a.save()
+
+	a_sklPosta = Posta(id=4220, kraj="Škofja Loka")
+	a_sklPosta.save()
+	a_studijskiProgram = StudijskiProgram(id=1000475,sifra="L2",stopnja="C - (predbolonjski) univerzitetni", semestri=9, naziv= "RAČUNAL. IN INFORMATIKA UN")
+	a_studijskiProgram.save()
+	a_vrstaStudija = VrstaStudija(id=12001,opis="Osnovnošolska izobrazba", nacin_zakljucka="zakljucena osnovna šola", raven_klasius=1)
+	a_vrstaStudija.save()
+	a_vrstaVpisa = VrstaVpisa(id=1, opis="Prvi vpis v letnik/dodatno leto", mozni_letniki="Vsi letniki in dodatno leto")
+	a_vrstaVpisa.save()
+	a_nacinStudija = NacinStudija(id=1, opis="redni",ang_opis="full-time")
+	a_nacinStudija.save()
+	a = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )
+	a.save()
+	#naredi studenta
+	primozt = Student(vpisna_stevilka = 63150000, emso=1511996500207, ime="Primož", drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina,  priimek="Trubar",naslov_stalno_bivalisce="Kranjska ulica 12", drzava= Drzava.objects.filter(pk=4)[0], posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="pt0000@fri.uni-lj.si")
+	primozt.save()
+
+	
+
+	user, created = User.objects.get_or_create(username="student", email="pt0000@fri.uni-lj.si")
+	user.first_name = "Primož"
+	user.last_name = "Trubar"
+
+	if created:
+		user.set_password("adminadmin")
+		user.is_staff=False
+		user.is_superuser=False
+		ref_group, status = Group.objects.get_or_create(name='students') 
+		ref_group.user_set.add(user)
+	
+	user.save()
+
+	#naredi referenta
+	user, created = User.objects.get_or_create(username="referentka", email="referentka@fri.uni-lj.si")
+	user.first_name = "Tatjana"
+	user.last_name = "Novak"
+		
+	if created:
+		user.set_password("adminadmin")
+		user.is_staff=False
+		user.is_superuser=False
+		ref_group, status = Group.objects.get_or_create(name='referent') 
+		ref_group.user_set.add(user)
+
+	a_1Letnik = Letnik(ime="1.")
+	a_1Letnik.save()
+	a_2Letnik = Letnik(ime="2.")
+	a_2Letnik.save()
+	a_3Letnik= Letnik(ime="3.")
+	a_3Letnik.save()
+
+	vsi_predmeti()
+
+	#Aljaz dodal ampak je matic spremenil
+	a_teh = Predmet.objects.get(ime = "Tehnologija programske opreme")
 
 	a_obl = Predmet.objects.get(ime = "Osnove oblikovanja")
 	

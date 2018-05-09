@@ -74,9 +74,7 @@ class Vpis(models.Model):
 
     class Meta:
         unique_together = (('student', 'studijsko_leto'),)
-
-class Modul(models.Model):
-    ime = models.CharField(max_length=100, unique=True,verbose_name="Ime Modula")
+    
 
 class Predmetnik(models.Model):
     studijski_program = models.ForeignKey(StudijskiProgram, on_delete= models.CASCADE)
@@ -84,12 +82,12 @@ class Predmetnik(models.Model):
     letnik = models.ForeignKey(Letnik, null=True, on_delete= models.SET_NULL)
     predmet = models.ForeignKey(Predmet, null=True, on_delete= models.SET_NULL)
     obvezen = models.BooleanField(default = True)
-    strokoven = models.BooleanField(default = False)
-    modul = models.ForeignKey(Modul, null=True, blank=True, on_delete= models.SET_NULL)
-
-
-
+    ima_modul = models.BooleanField(default = False)
     class Meta:
         unique_together = (('studijski_program', 'studijsko_leto', 'letnik', 'predmet'),)
+
+class Modul(models.Model):
+    ime = models.CharField(max_length=100, unique=True,verbose_name="Ime Modula")
+    predmetniki = models.ManyToManyField(Predmetnik, null=True)
 
 

@@ -13,28 +13,8 @@
         <input type="submit" value="Isci element" />
     </form>
 
-
-    <div class="pagination">
-        <span class="step-links">
-            {% if elements.has_previous %}
-                <a href="?page=1">&laquo; Prva</a>
-                <a href="?page={{ elements.previous_page_number }}">Prejšna</a>
-            {% endif %}
-    
-            <span class="current">
-                Stran {{ elements.number }} od {{ elements.paginator.num_pages }}.
-            </span>
-    
-            {% if elements.has_next %}
-                <a href="?page={{ elements.next_page_number }}">Naslednja</a>
-                <a href="?page={{ elements.paginator.num_pages }}">Zadnja &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
-
     <table class="table">
         <tr>
-            <td>#</td>
             {% for diff in verbose_names  %}
                 {% if not diff == "Veljavnost šifranta" %}
                 <td>{{ diff }}</td>
@@ -45,10 +25,8 @@
         </tr>
         {% for diff in elements  %}
         <tr>
-            <td>{{ forloop.counter |add:elements.start_index |add:"-1" }}</td>
             {% for k, v in diff.items  %}
                 {% if not k == "veljaven" %}
-
                 <td>{{ v }}</td>
                 {% endif %}
             {% endfor %}
