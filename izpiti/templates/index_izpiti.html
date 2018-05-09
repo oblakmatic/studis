@@ -15,7 +15,7 @@
                 <tr>
                     <th scope="col">Predmet</th>
                     <th scope="col">Studijsko leto</th>
-                    <th scope="col">Ucitelj</th>
+                    <th scope="col">Ucitelji</th>
                     <th scope="col">Datum (dd.mm.yyyy)</th>
                     <th scope="col">Cas (hh:mm)</th>
                     <th scope="col">Prostor</th>
@@ -29,24 +29,18 @@
 
                 {% if IzvedbaPredmeta.ucitelj_3 != null %}
                 <td>
-                    {{ IzvedbaPredmeta.ucitelj_1.ime }}
-                    {{ IzvedbaPredmeta.ucitelj_1.priimek }},
-                    {{ IzvedbaPredmeta.ucitelj_2.ime }}
-                    {{ IzvedbaPredmeta.ucitelj_2.priimek }},
-                    {{ IzvedbaPredmeta.ucitelj_3.ime }}
-                    {{ IzvedbaPredmeta.ucitelj_3.priimek }}
+                    {{ IzvedbaPredmeta.ucitelj_1}},
+                    {{ IzvedbaPredmeta.ucitelj_2}},
+                    {{ IzvedbaPredmeta.ucitelj_3}}
                 </td>
                 {% elif IzvedbaPredmeta.ucitelj_2 != null %}
                 <td>
-                    {{ IzvedbaPredmeta.ucitelj_1.ime }}
-                    {{ IzvedbaPredmeta.ucitelj_1.priimek }},
-                    {{ IzvedbaPredmeta.ucitelj_2.ime }}
-                    {{ IzvedbaPredmeta.ucitelj_2.priimek }}
+                    {{ IzvedbaPredmeta.ucitelj_1}},
+                    {{ IzvedbaPredmeta.ucitelj_2}}
                 </td>
                 {% elif IzvedbaPredmeta.ucitelj_1 != null %}
                 <td>
-                    {{ IzvedbaPredmeta.ucitelj_1.ime }}
-                    {{ IzvedbaPredmeta.ucitelj_1.priimek }}
+                    {{ IzvedbaPredmeta.ucitelj_1}}
                 </td>
                 {% endif %}
                 <form action="/izpiti/izpiti-message/" method="post">

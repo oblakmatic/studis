@@ -40,17 +40,23 @@ def index_izpiti(request):
                 flag = True
 
         if flag == False:
-            return HttpResponse("Prijavi se z uciteljom, ki je v bazi")
+            return HttpResponse("Prijavi se z učiteljem, ki je v bazi")
         
         all_izvedbaPredmeta = IzvedbaPredmeta.objects.select_related()
         list = []
         for izvedba_predmeta in all_izvedbaPredmeta:
+            print(izvedba_predmeta.studijsko_leto)
+            print(izvedba_predmeta.predmet)
             if izvedba_predmeta.ucitelj_1 == ucitelj_:
+                print(izvedba_predmeta)
                 list.append(izvedba_predmeta)
             elif izvedba_predmeta.ucitelj_2 == ucitelj_:
+                print(izvedba_predmeta)
                 list.append(izvedba_predmeta)
             elif izvedba_predmeta.ucitelj_3 == ucitelj_:
+                print(izvedba_predmeta)
                 list.append(izvedba_predmeta)
+                
          
         
         context = {
@@ -102,6 +108,7 @@ def dodaj_izpit(request):
         id_IzvedbaPredmeta = request.POST['id_IzvedbaPredmeta']
         vnos_izvedbaPredmeta = IzvedbaPredmeta.objects.all()
         for curr_izvedbaPredmeta in vnos_izvedbaPredmeta:
+            print(curr_izvedbaPredmeta.id)
             if str(curr_izvedbaPredmeta.id) == id_IzvedbaPredmeta:
                 vnesi = curr_izvedbaPredmeta
 
@@ -163,6 +170,7 @@ def prijava(request):
             
 
             for curr_predmetiStudenta in PredmetiStudenta.objects.all():
+                print(curr_predmetiStudenta.id)
                 if str(curr_predmetiStudenta.id) == predmeti_studenta_id:
                     vnesi_predmeti_studenta = curr_predmetiStudenta
 
@@ -186,10 +194,12 @@ def prijava(request):
             rok_id = request.POST['rok_']
 
             for curr_predmetiStudenta in PredmetiStudenta.objects.all():
+                print(curr_predmetiStudenta.id)
                 if str(curr_predmetiStudenta.id) == predmeti_studenta_id:
                     vnesi_predmeti_studenta = curr_predmetiStudenta
         
             for rok in Rok.objects.all():
+                print(rok.id)
                 if str(rok.id) == rok_id:
                     vnesi_rok = rok
         

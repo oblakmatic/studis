@@ -174,7 +174,8 @@ def naredi_bazo(request):
     a = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
     a.save()
     a = IzvedbaPredmeta(predmet = a_ep, studijsko_leto = a_17_18, ucitelj_1 = a_darja, ucitelj_2 = a_jaka, ucitelj_3 = a_mateja)
-
+    a.save()
+    
     a = Posta(id=1231, kraj="Ljubljana-Črnuče")
     a.save()
     a = Posta(id=1215, kraj="Medvode")

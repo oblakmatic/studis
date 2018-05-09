@@ -150,7 +150,7 @@ class StudijskoLeto(models.Model):
     all_objects = models.Manager()
 
     def __str__(self):
-        self.ime
+        return self.ime
 
 class Letnik(models.Model):
     ime = models.CharField(max_length=100, unique=True,verbose_name="Ime")
