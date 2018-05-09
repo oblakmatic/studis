@@ -244,7 +244,7 @@ def prijava(request):
             
             for rok in all_rok:
                 #time_now = strftime("%Y-%m-%d %H:%M:00+00:00", gmtime())
-                if rok.datum > utc.localize(time_now):
+                if rok.izvedba_predmeta.studijsko_leto == ptsl():
                     for izvedba in all_izvedba_studenta:
                         if rok.izvedba_predmeta == izvedba:
                             roki.append(rok)
@@ -291,14 +291,17 @@ def prijava(request):
                     vnesi_rok = rok
 
                     zadnje_prijave = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).order_by("-id")
+                    prijava_condition = False
                     if(zadnje_prijave.count() != 0):
                         #print(vars(zadnje_prijave[0]))
                         datum_zadnje_prijave = zadnje_prijave[0].created_at
                         print("datum zadnje prijave", datum_zadnje_prijave)
                         print("vnesi rok datum", vnesi_rok.datum)
                         #print("razlika", (datum_zadnje_prijave - vnesi_rok.datum).days)
-                        if((vnesi_rok.datum - datum_zadnje_prijave).days <= 10): # TODO: Omejitev po dnevih naj bi bila nastavljiva
+                        if((vnesi_rok.datum - datum_zadnje_prijave).days <= 10): # TODO: Omejitev po dnevih naj bi bila 
+                            prijava_condition = True
                             print("WARNING! Med prejsnjim polaganjem in tem rokom je preteklo manj kot 10 dni!")   
+                    
                     ################################################################################################################################                 
                     #print(rok.datum)
                     #print(time_now)
@@ -315,7 +318,7 @@ def prijava(request):
                                 print("odjava add~~~~~~~~~~~~~~~~~~~~~~~", rok.datum)
                                 prijavljeni_roki.append(rok)
                         else:
-                            if (polaganja_trenutno_leto >= 3 or stevilo_dosedanjih_polaganj >= 6 or (vnesi_rok.datum - datum_zadnje_prijave).days <= 10 or time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 0) ):
+                            if (polaganja_trenutno_leto >= 3 or stevilo_dosedanjih_polaganj >= 6 or prijava_condition or time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 0) ):
                                 print("disabled prijava add~~~~~~~~~~~~~~~~~~~~~~~", rok.datum)
                                 disabled_roki.append(rok)
                                 continue
