@@ -72,7 +72,7 @@ class StudijskiProgram(models.Model):
     all_objects = models.Manager()
 
     def __str__(self):
-        return str("(%d)" % (self.id)) + self.naziv
+        return str("(%d) " % (self.id)) + self.naziv
 class VrstaStudija(models.Model):
 #univerzitetni, visokosolski
 
