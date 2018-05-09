@@ -1,7 +1,7 @@
 from django.db import models
 from sifranti.models import *
 from student.models import *
-
+from django.conf import settings
 
 class Ucitelj(models.Model):
     ime = models.CharField(max_length = 30)
@@ -19,6 +19,7 @@ class IzvedbaPredmeta(models.Model):
 class Rok(models.Model):
     izvedba_predmeta = models.ForeignKey(IzvedbaPredmeta, on_delete = models.SET_NULL, null = True)
     datum = models.DateTimeField()
+    prostor_izvajanja = models.CharField(max_length = 30)
 
 class PredmetiStudenta(models.Model):
     vpis = models.ForeignKey(Vpis, on_delete = models.SET_NULL, null = True)#
@@ -34,3 +35,7 @@ class Prijava(models.Model):
     podatki_o_placilu = models.CharField(max_length = 260, default=None, blank=True, null=True)
     aktivna_prijava = models.BooleanField(default = True)
     ocena = models.IntegerField(default=None,null=True)
+    ocena_izpita = models.IntegerField(default=None,null=True)
+    #dodav, ko ucitelj odjavi izpit--> se zabelezijo podatki o odjavilteju in cas odjave
+    cas_odjave = models.DateTimeField(default=None,null=True)
+    odjavitelj = models.CharField(max_length = 100, default=None, blank=True, null=True)

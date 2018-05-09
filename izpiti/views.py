@@ -13,6 +13,9 @@ from datetime import timedelta
 from django.db.models import Q
 from .forms import *
 
+from django.forms import formset_factory
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 # Create your views here.
 def index_izpiti(request):
 
@@ -64,16 +67,20 @@ def index_izpiti(request):
 #DODAJANJE IZPITA PROFESOR/REFERENTKA
 def dodaj_izpit(request):
     if request.method == 'POST' and 'prikaz_rokov' in request.POST:
-
-        email_ = request.user.email
         showRoki = []
-        for rok in Rok.objects.all():
-            if rok.izvedba_predmeta.ucitelj_1.email == email_:
-                showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_2.email == email_:
-                showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_3.email == email_:
-                showRoki.append(rok)
+        if(request.user.groups.all()[0].name == "professors"):
+            email_ = request.user.email
+            
+            for rok in Rok.objects.all():
+                if rok.izvedba_predmeta.ucitelj_1 != None and rok.izvedba_predmeta.ucitelj_1.email == email_:
+                    showRoki.append(rok)
+                elif rok.izvedba_predmeta.ucitelj_2 != None and rok.izvedba_predmeta.ucitelj_2.email == email_:
+                    showRoki.append(rok)
+                elif rok.izvedba_predmeta.ucitelj_3 != None and rok.izvedba_predmeta.ucitelj_3.email == email_:
+                    showRoki.append(rok)
+
+        elif(request.user.groups.all()[0].name == "referent"):
+            showRoki = Rok.objects.all()
     
         context = {
             'arr': showRoki
@@ -83,7 +90,15 @@ def dodaj_izpit(request):
 
     elif request.method == 'POST' and 'dodaj_izpit' in request.POST:
 
+        prostor = request.POST['prostor']
+
         datum_ = request.POST['datum']
+        cas_ = request.POST['cas']
+        datum_split = datum_.split(".")
+        cas_split = cas_.split(":")
+        
+        datum_ = datetime(int(datum_split[2]), int(datum_split[1]), int(datum_split[0]), int(cas_split[0]), int(cas_split[1]))
+
 
         id_IzvedbaPredmeta = request.POST['id_IzvedbaPredmeta']
         vnos_izvedbaPredmeta = IzvedbaPredmeta.objects.all()
@@ -93,18 +108,18 @@ def dodaj_izpit(request):
 
         
 
-        a = Rok(izvedba_predmeta = vnesi, datum = datum_)
+        a = Rok(izvedba_predmeta = vnesi, datum = datum_, prostor_izvajanja = prostor)
         a.save()
 
         #da mu pokaze se vse roke k jih je razpisov
         email_ = request.user.email
         showRoki = []
         for rok in Rok.objects.all():
-            if rok.izvedba_predmeta.ucitelj_1.email == email_:
+            if rok.izvedba_predmeta.ucitelj_1 != None and rok.izvedba_predmeta.ucitelj_1.email == email_:
                 showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_2.email == email_:
+            elif rok.izvedba_predmeta.ucitelj_2 != None and rok.izvedba_predmeta.ucitelj_2.email == email_:
                 showRoki.append(rok)
-            elif rok.izvedba_predmeta.ucitelj_3.email == email_:
+            elif rok.izvedba_predmeta.ucitelj_3 != None and rok.izvedba_predmeta.ucitelj_3.email == email_:
                 showRoki.append(rok)
     
         context = {
@@ -190,7 +205,6 @@ def prijava(request):
             all_prijava = Prijava.objects.all()
             for prijava in all_prijava:
                 if prijava.predmeti_studenta == vnesi_predmeti_studenta and prijava.rok == vnesi_rok:
-
                     print("prijava oznacena kot neaktivna!")
                     prijava.aktivna_prijava = False
                     prijava.save()
@@ -282,7 +296,7 @@ def pridobi_trenutno_studijsko_leto():
     return trenutno_studijsko_leto
 
    
-def vnesi_ocene(request):
+def izberi_rok(request):
     if(request.user.groups.all()[0].name == "professors"):
         curr_roki = []
         email_ = request.user.email
@@ -293,45 +307,149 @@ def vnesi_ocene(request):
             }
 
         return render(request,'vnesi_ocene.html', context)
+    elif(request.user.groups.all()[0].name == "referent"):
+        curr_roki = []
+        roki = Rok.objects.filter(datum__lte=datetime.now().date())
 
+        context = {
+            'arr': roki
+            }
+
+        return render(request,'vnesi_ocene.html', context)
     else:
         return HttpResponse("Nimaš dovoljenja.")
 
 def vnesi_ocene_predmeta(request):
+#UCITELJ
     if(request.user.groups.all()[0].name == "professors"):
         if request.method == 'POST' and 'vnesi_ocene' in request.POST:
             rok_id = request.POST['id_rok']
 
-            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True)
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
             
-            form = ocenaForm()
-
+            formset = formset_factory(ocenaForm, extra = prijave.count())
+            
             context = {
                 'arr': prijave,
-                'form': form
+                'formset': formset,
+                'rok_id': rok_id
                 }
 
             return render(request,'vnesi_ocene_predmeta.html',context)
 
-        if request.method == 'POST' and 'vnos_ocene' in request.POST:
-            ocena_ = request.POST['ocena']
-            id_prijava = request.POST['id_prijava']
-            print(request.POST.get('my_field'))
-            prijava = Prijava.objects.filter(id = id_prijava)[0]
-            prijava.ocena = int(ocena_)
-            prijava.save()
-
+        if request.method == 'POST' and 'vnesi_vec_ocen' in request.POST:
             rok_id = request.POST['id_rok']
-            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True)
+            formsetOcena = formset_factory(ocenaForm)
+            formset = formsetOcena(request.POST)
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
+            ime_ = request.user.first_name
+            priimek_ = request.user.last_name
+            ime_priimek = ime_ + " " + priimek_
+
+            i = 0
+            for form in formset:
+                curr = prijave[i]
+                ocena_ = form['ocena'].value()
+                odjava = form['odjava'].value()
+                if odjava == True:
+                    curr.ocena = -1
+                    curr.odjavitelj = ime_priimek
+                    curr.cas_odjave = datetime.now()
+                    curr.save()
+                elif ocena_:
+                    curr.ocena = ocena_
+                    curr.save()
+                if odjava == False:
+                    i +=1
+                
+
+            
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
+            formset = formset_factory(ocenaForm, extra = prijave.count())
+            context = {
+                'arr': prijave,
+                'formset': formset,
+                'rok_id': rok_id
+                }
+
+            return render(request,'vnesi_ocene_predmeta.html',context)
+#REFERENTKA
+    elif(request.user.groups.all()[0].name == "referent"):
+        if request.method == 'POST' and 'vnesi_ocene' in request.POST:
+            rok_id = request.POST['id_rok']
+
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
+            
+            formset = formset_factory(ocenaForm, extra = prijave.count())
             
             context = {
-                'arr': prijave
+                'arr': prijave,
+                'formset': formset,
+                'rok_id': rok_id
                 }
 
             return render(request,'vnesi_ocene_predmeta.html',context)
 
+        if request.method == 'POST' and 'vnesi_vec_ocen' in request.POST:
+            rok_id = request.POST['id_rok']
+            formsetOcena = formset_factory(ocenaForm)
+            formset = formsetOcena(request.POST)
+            prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True)
+            ime_ = request.user.first_name
+            priimek_ = request.user.last_name
+            ime_priimek = ime_ + " " + priimek_
+
+            i = 0
+            for form in formset:
+                curr = prijave[i]
+                ocena_ = form['ocena'].value()
+                odjava = form['odjava'].value()
+                if odjava == True:
+                    curr.ocena = -1
+                    curr.odjavitelj = ime_priimek
+                    curr.cas_odjave = datetime.now()
+                    curr.save()
+                elif ocena_:
+                    curr.ocena = ocena_
+                    curr.save()
+                if odjava == False:
+                    i +=1
+                
+
+            
+            prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
+            formset = formset_factory(ocenaForm, extra = prijave.count())
+            context = {
+                'arr': prijave,
+                'formset': formset,
+                'rok_id': rok_id
+                }
+
+            return render(request,'vnesi_ocene_predmeta.html',context)
     else:
         return HttpResponse("Nimaš dovoljenja.")
         
 def ptsl():
     return pridobi_trenutno_studijsko_leto()
+
+def seznam_ocen(request):
+    rok_id = request.POST['id_rok']
+    print(rok_id)
+    prijave = Prijava.objects.filter(rok__id = rok_id)
+
+    paginator = Paginator(prijave,40)
+    page = request.GET.get('page')
+    prijave = paginator.get_page(page)
+
+    context = {
+        'arr': prijave
+        }
+    return render(request,'seznam_ocen.html',context)
+
+def seznam_prijavljenih(request):
+
+    prijavljeni =[]
+    context={
+        'arr': prijavljeni
+        }
+    return render(request,'seznam_prijavljenih.html',context)
