@@ -210,14 +210,11 @@ def vrniFiltriraneElemente(diff, isci_element, element):
 				polje = key
 				break     
 		
-<<<<<<< HEAD
 	polje = polje + "__istartswith"
 	rezultat = eval(diff).all_objects.filter(**{polje: element}).values()
 	return rezultat
 
 def search(request, diff):
-=======
->>>>>>> b9683c4da196e9fc06749eebe9314ce15533487d
 	if created:
 		user.set_password("adminadmin")
 		user.is_staff=False
