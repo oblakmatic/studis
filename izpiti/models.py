@@ -9,6 +9,9 @@ class Ucitelj(models.Model):
     email = models.CharField(max_length = 60, unique = True)
     predmeti = models.ManyToManyField(Predmet, null = True)#dodv da ves kere mu pokazat za vpis roka
 
+    def __str__(self):
+        return str("(%07d) %s %s" % (self.id, self.ime, self.priimek))
+
 class IzvedbaPredmeta(models.Model):
     predmet = models.ForeignKey(Predmet, on_delete = models.SET_NULL, null = True)
     studijsko_leto = models.ForeignKey(StudijskoLeto, on_delete = models.SET_NULL, null = True)

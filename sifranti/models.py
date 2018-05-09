@@ -50,7 +50,7 @@ class StudijskiProgram(models.Model):
     naziv = models.CharField(max_length=100,verbose_name="Naziv")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     def __str__(self):
-        return self.naziv
+        return str("(%d) " % (self.id)) + self.naziv
 class VrstaStudija(models.Model):
 #univerzitetni, visokosolski
 
@@ -71,7 +71,7 @@ class VrstaVpisa(models.Model):
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
     def __str__(self):
-        return self.opis
+        return str("(%d) " % (self.id)) + self.opis
 
 class NacinStudija(models.Model):
 #redni, izredni
@@ -81,7 +81,7 @@ class NacinStudija(models.Model):
     ang_opis = models.CharField(max_length=100, verbose_name="Angleški opis")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     def __str__(self):
-        return self.opis   
+        return str("(%d) " % (self.id)) + self.opis   
 
 
 class OblikaStudija(models.Model):
@@ -98,7 +98,7 @@ class Predmet(models.Model):
     ime = models.CharField(max_length=100,unique=True)
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     def __str__(self):
-        return self.ime
+        return str("(%07d) " % (self.id)) + self.ime
 
 class StudijskoLeto(models.Model):
 # 2017/2018, 2018/2019

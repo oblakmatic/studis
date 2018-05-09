@@ -12,6 +12,7 @@
 <table class="table">
 	<thead>
 	    <tr>
+		  <th>#</th>
 	      <th scope="col">Vpisna številka</th>
 	      <th scope="col">Študijski program</th>
 	      <th scope="col">Letnik</th>
@@ -23,6 +24,7 @@
   	</thead>
 {% for t in arr %}
 	<tr>
+		<td>{{ forloop.counter|add:arr.start_index|add:"-1"}}</td>
 	{% for k,v in t.items %}
 		{% if not k == 'id' %}
 		<td>{{ v }}</td>
@@ -33,5 +35,45 @@
 	<td><a href="/student/izbrisi-zeton/{{ t.vpisna_stevilka }}">Izbriši</a></td>
 	</tr>
 {% endfor %}
+</table>
+<div>
+	<ul class="pagination">
+	 
+	{% if arr.has_previous %}
+		<li class="page-item">
+			<a href="?page={{ students.previous_page_number }}" class="page-link">&laquo;</a>
+		</li>
+	{% else %}
+		<li class="page-item disbled">
+			<a class="page-link">&laquo;</a>
+		</li>
+	{% endif %}
+
+	  {% for pg in arr.paginator.page_range %}
+		{% if arr.number == pg %}
+		  <li class="page-item active">
+			  <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+		  </li>
+		{% else %}
+		  <li class="page-item">
+			  <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+		  </li>
+		{% endif %}
+	{% endfor %}
+   
+
+	{% if students.has_next %}
+		<li class="page-item">
+			<a href="?page={{ arr.next_page_number }}" class="page-link">&raquo;</a>
+		</li>
+	{% else %}
+		<li class="page-item disbled">
+			<a class="page-link">&raquo;</a>
+		</li>
+	{% endif %}
+
+	   
+	</ul>
+</div>
 </div>
 {% endblock %}

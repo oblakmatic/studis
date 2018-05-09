@@ -7,11 +7,12 @@
     <table class="table">
             <thead>
                 <tr>
-                    <th scope="col" width="20">Zaporedna stevilka</th>
-                    <th scope="col">Vpisna stevilka</th>
+                    <th scope="col" width="20">Zaporedna številka</th>
+                    <th scope="col">Vpisna številka</th>
                     <th scope="col">Priimek in ime</th>
                     <th scope="col">Vrnjena prijava</th>
-                    <th scope="col">Vnesi tocke izpita</th>
+                    <th scope="col">Vnesi točke izpita</th>
+                    <th scope="col">Vnesi oceno izpita</th>
                     <th scope="col">Stevilo tock izpita</th>
                     <th scope="col">Ocena izpita</th>
                 </tr>
@@ -38,6 +39,9 @@
                         {{ form.ocena }}
                     </td>
                     <td>
+                        {{ form.ocena_izpita }}
+                    </td>
+                    <td>
                         {% if prijava.ocena == None %}
                         Ocena se ni vpisana
                         {% elif prijava.ocena == -1 %}
@@ -49,6 +53,8 @@
                     <td>
                         {% if prijava.ocena_izpita == None %}
                         Ocena se ni vpisana
+                        {% elif prijava.ocena_izpita == -1 %}
+                        VP
                         {% else %}
                         {{ prijava.ocena_izpita }}
                         {% endif %}
