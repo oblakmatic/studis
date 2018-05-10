@@ -372,6 +372,37 @@ def naredi_bazo(request):
     a_rok = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
     a_rok.save()
 
+    #roki za demonstracijo
+    rok_date = datetime.datetime(2018, 5, 11, 12, 10)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 14, 15, 55)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 15, 6, 5)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 25, 13, 2)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 6, 18, 7)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 6, 5, 16, 35)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 6, 6, 12, 15)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+
+
     new_date = datetime.datetime(2018, 2, 15, 14, 30)
     a_prijava1 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaAljaz, rok = a_rok, zaporedna_stevilka_polaganja = 1)
     a_prijava1.save()

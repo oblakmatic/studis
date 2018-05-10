@@ -2,6 +2,7 @@ from django.db import models
 from sifranti.models import *
 from student.models import *
 from django.conf import settings
+from datetime import datetime
 
 class Ucitelj(models.Model):
     ime = models.CharField(max_length = 30)
@@ -30,7 +31,7 @@ class PredmetiStudenta(models.Model):
     
 
 class Prijava(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=datetime.now)
     predmeti_studenta = models.ForeignKey(PredmetiStudenta, on_delete = models.SET_NULL, null = True)
     rok = models.ForeignKey(Rok, on_delete = models.SET_NULL, null = True)
 
