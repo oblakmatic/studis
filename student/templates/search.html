@@ -26,7 +26,8 @@
 		<td>{{ s }}</td>
 	
 	{% endfor %}
-	<td><a href="ustvari-zeton/{{ t.id }}">Ustvari vpisni žeton</a></td>
+	<td><a href="/student/ustvari-zeton/{{ temp.vpisna_stevilka }}">Ustvari vpisni žeton</a></td>
+	<td><a href="/student/podatki/{{ temp.vpisna_stevilka }}">Izpiši vse podatke</a></td>
 	</tr>
 {% endfor %}
 </table>

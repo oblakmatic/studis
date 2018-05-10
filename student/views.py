@@ -142,10 +142,10 @@ def students_search(request):
 	search_query = request.POST.get('search_text', '')
 	# print("Iskalni niz:" + search_query)
 	# if (search_query != ''):
-	id_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email').filter(id__startswith=search_query)
+	id_filtered_students = Student.objects.values('vpisna_stevilka', 'ime', 'priimek', 'email').filter(vpisna_stevilka__startswith=search_query)
 	# print(id_filtered_students)
-	name_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email').filter(ime__startswith=search_query)
-	surname_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email').filter(priimek__startswith=search_query)
+	name_filtered_students = Student.objects.values('vpisna_stevilka', 'ime', 'priimek', 'email').filter(ime__startswith=search_query)
+	surname_filtered_students = Student.objects.values('vpisna_stevilka', 'ime', 'priimek', 'email').filter(priimek__startswith=search_query)
 	context = {
 		'students_id': id_filtered_students,
 		'students_name': name_filtered_students,
@@ -180,7 +180,7 @@ def token_add(request, id):
 			
 
 				
-			if Zeton.objects.filter(student=student[0]).count() >= 2:
+			if Zeton.objects.filter(student=student).count() >= 2:
 				context = {
 					'message': 'Student že ima 2 žetona!'
 				}
@@ -192,6 +192,7 @@ def token_add(request, id):
 				return render(request, 'token_add.html', context)
 			zeton = Zeton(student=student, studijski_program=program, letnik=letnik, vrsta_vpisa=vrsta_vpisa, nacin_studija=nacin_studija, vrsta_studija=vrsta_studija, pravica_do_izbire=prosta_izbira)
 			zeton.save()
+			return token_list(request, 'Žeton uspešno dodan!')
 		else:
 			context = {
 				'message': 'Prosimo, vnesite vse zahtevane podatke!'
@@ -211,14 +212,6 @@ def token_add(request, id):
 		else:
 			tokenForm = TokenForm()
 		context['tokenForm'] = tokenForm
-		'''if(vpisi.count() > 0):
-			data = {}
-			data['prog'] = vpisi[0].studijski_program.ime
-			data['letnik'] = '2.' if vpisi[0].letnik.ime == '1.' else '3.'  
-			data['vrsta_vp'] = vpisi[0].vrsta_vpisa.ime
-			data['nac_stud'] = vpisi[0].nacin_studija
-			data['vrst_stud'] = vpisi[0].vrsta_studija
-			context['data'] = data'''
 		
 		return render(request, 'token_add.html', context )
 
