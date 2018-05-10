@@ -26,6 +26,7 @@ pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
 import pdfkit
 from django.template.loader import render_to_string
+from django.core.files.storage import FileSystemStorage
 
 
 
@@ -33,56 +34,50 @@ from django.template.loader import render_to_string
 from .forms import *
 from student.models import Vpis, Predmetnik, Modul
 from sifranti.models import StudijskiProgram, StudijskoLeto, Letnik, Predmet
-from izpiti.models import PredmetiStudenta
+from izpiti.models import *
 
 nas_leto = "2018/2019"
 nas_leto_ob = StudijskoLeto.objects.filter(ime=nas_leto)
 
 
 
-def vpisni_list(request, ind_student, ind_studleto,ind_studleto2):
+def vpisni_list(request, vpisna):
+    student = Student.objects.filter(vpisna_stevilka=vpisna)
+    vpis = Vpis.objects.filter(student= student[0])
+    narediVpisniList(student,vpis)
 
-    student = Student.objects.filter(vpisna_stevilka= ind_student)
-    ime_stud = ind_studleto+"/"+ind_studleto2
-    stud_leto = StudijskoLeto.objects.filter(ime=ime_stud)
-    vpis1 = Vpis.objects.filter(student= student[0]).filter(studijsko_leto=stud_leto[0])[0]
+    name = str(vpisna) +"2018"+'.pdf'
+    fs = FileSystemStorage('/tmp')
+    with fs.open(name) as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="vpisni_list.pdf"'
+        return response
 
-    predmentiStudenta = PredmetiStudenta.objects.filter(vpis=vpis1)[0]
-    
-    
-
-    context ={
-        'student' : student,
-        'vpis': vpis1,
-        'predmeti_studenta' : predmentiStudenta,
-
-    }
-
-    return render(request,'vpis/vpisni_list.html',context) 
+    return response
 
 
 def index2_vpis_post(request,index):
-	#index je index zetona od nekega studenta, ki ga dobimo po querysetu
-	if request.method == 'POST':
-		# create a form instance and populate it with data from the request
-		if is_kandidat(request.user):
-			return HttpResponseRedirect('/vpis/')
-		elif is_student(request.user):
-			student = vrniStudenta(request.user.email)
-			zeton = Zeton.objects.filter(student= student[0])
-			
-			# ce vpis za to studijsko leto ze obstaja, ga skensli
-			if Vpis.objects.filter(studijsko_leto=nas_leto_ob[0]).filter(student=student[0]).exists():
-				return HttpResponseRedirect('/vpis/')
-			else:
-				nov_vpis = Vpis(student=student[0], 
-					studijsko_leto=StudijskoLeto.objects.filter(ime=nas_leto)[0],
-					studijski_program=zeton[index].studijski_program,
-					letnik=zeton[index].letnik,
-					vrsta_vpisa=zeton[index].vrsta_vpisa,
-					nacin_studija=zeton[index].nacin_studija,
-					vrsta_studija=zeton[index].vrsta_studija,
-					prosta_izbira = zeton[index].pravica_do_izbire)
+    #index je index zetona od nekega studenta, ki ga dobimo po querysetu
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request
+        if is_kandidat(request.user):
+            return HttpResponseRedirect('/vpis/')
+        elif is_student(request.user):
+            student = vrniStudenta(request.user.email)
+            zeton = Zeton.objects.filter(student= student[0])
+            
+            # ce vpis za to studijsko leto ze obstaja, ga skensli
+            if Vpis.objects.filter(studijsko_leto=nas_leto_ob[0]).filter(student=student[0]).exists():
+                return HttpResponseRedirect('/vpis/')
+            else:
+                nov_vpis = Vpis(student=student[0], 
+                    studijsko_leto=StudijskoLeto.objects.filter(ime=nas_leto)[0],
+                    studijski_program=zeton[index].studijski_program,
+                    letnik=zeton[index].letnik,
+                    vrsta_vpisa=zeton[index].vrsta_vpisa,
+                    nacin_studija=zeton[index].nacin_studija,
+                    vrsta_studija=zeton[index].vrsta_studija,
+                    prosta_izbira = zeton[index].pravica_do_izbire)
 
                 nov_vpis.save()
                 zeton[index].izkoriscen = True
@@ -369,7 +364,7 @@ def predmetnik(request):
         leto = vpis.studijsko_leto
         letnik = vpis.letnik
 
-		prosta_izbira = vpis.prosta_izbira
+        prosta_izbira = vpis.prosta_izbira
 
         predmeti_obvezni = []
         predmeti_izbirni = []
@@ -429,15 +424,15 @@ def predmetnik(request):
                 predmeti_modul.append(temp)
 
 
-		context = {
-			'predmeti_o': predmeti_obvezni,
-			'predmeti_i': zip(predmeti_izbirni, temporary),
-			'predmeti_m': zip(predmeti_modul, temporary),
-			'letnik': letnik,
-			'prosta_izbira': prosta_izbira
-		}
+        context = {
+            'predmeti_o': predmeti_obvezni,
+            'predmeti_i': zip(predmeti_izbirni, temporary),
+            'predmeti_m': zip(predmeti_modul, temporary),
+            'letnik': letnik,
+            'prosta_izbira': prosta_izbira
+        }
 
-		return render(request,'vpis/predmetnik.html', context)
+        return render(request,'vpis/predmetnik.html', context)
 
 
 #shrani predmete primernemu studentu
@@ -450,8 +445,9 @@ def koncaj_predmetnik(request):
     predmeti = Predmet.objects.filter(id__in=izbrani_predmeti)
 
     student = vrniStudenta(request.user.email)
-    vpis1 = Vpis.objects.filter(potrjen=False).filter(student=student[0])[0]
-
+    vpis2 = Vpis.objects.filter(potrjen=False).filter(student=student[0])
+    vpis1 = vpis2[0]
+    
     #TODO manjka vpis key, treba ga je preko predmetnik.html dati sem ali pa kako drugace
     predmetiStudenta = PredmetiStudenta()
     predmetiStudenta.vpis = vpis1
@@ -465,6 +461,7 @@ def koncaj_predmetnik(request):
     context = {
         'predmeti': predmeti,
     }
+    
     vpis1.dokoncan_vpis = True
     vpis1.save()
     return render(request,'vpis/predmetnik_izpis.html', context)
@@ -514,10 +511,8 @@ def narediZetonZaKandidata(student1,kandidat):
     print("nekisad")
     return
     
-
-def narediVpisniList():
-    student = Student.objects.all()
-    vpis = Vpis.objects.all()
+#pripeli student in vpis kot queryset
+def narediVpisniList(student,vpis):
     #prvoleto = Vpis.objects.filter(student=student).order_by('studijsko_leto')[0]
     #prvoleto = prvoleto.studijsko_leto
 
@@ -531,6 +526,37 @@ def narediVpisniList():
     drzava_rojstva = na(str(student[0].drzava_rojstva))
     obcina_rojstva = na(str(student[0].obcina_rojstva))
 
+    #vpis
+
+    studijsko_leto = na(str(vpis[0].studijsko_leto))
+    studijski_program = na(str(vpis[0].studijski_program))
+    letnik = na(str(vpis[0].letnik))
+    vrsta_vpisa = na(str(vpis[0].vrsta_vpisa))
+    nacin_studija = na(str(vpis[0].nacin_studija))
+    vrsta_studija = na(str(vpis[0].vrsta_studija))
+
+    #predmeti
+
+    predmeti = PredmetiStudenta.objects.filter(vpis= vpis[0])[0].predmeti.all()
+
+    vsipod = []
+
+    for predmet in predmeti:
+        #izvedba = IzvedbaPredmeta.objects.filter(predmet=predmet, studijsko_leto=vpis[0].studijsko_leto)[0]
+        #ucitelj = na(str(izvedba.ucitelj_1))
+        ucitelj = "test"
+        tocke = na(str(predmet.kreditne_tocke))
+        predmet_ime = na(str(predmet))
+
+        merge = {'predmet': predmet_ime, 'ucitelj': ucitelj, 'tocke': tocke}
+        vsipod.append(merge)
+
+
+    leto = vpis[0].studijsko_leto.ime[0:4]
+    vp = str(vpis[0].student.vpisna_stevilka)
+
+
+
     merge = {** student.values()[0], 
     'drzava' : drzava,
      'obcina': obcina,
@@ -541,17 +567,6 @@ def narediVpisniList():
      'obcina_zacasno':obcina_zacasno,
       'drzava_rojstva':drzava_rojstva,
       'obcina_rojstva':obcina_rojstva,}
-
-    #print(merge)
-
-    studijsko_leto = na(str(vpis[0].studijsko_leto))
-    studijski_program = na(str(vpis[0].studijski_program))
-    letnik = na(str(vpis[0].letnik))
-    vrsta_vpisa = na(str(vpis[0].vrsta_vpisa))
-    nacin_studija = na(str(vpis[0].nacin_studija))
-    vrsta_studija = na(str(vpis[0].vrsta_studija))
-
-
 
     merge2 = {** vpis.values()[0],
 
@@ -565,12 +580,14 @@ def narediVpisniList():
     context = {
        'student' : merge ,
        'vpis' : merge2,
+       'predmetnik': vsipod,
 
    }
 
+
     html_string =  render_to_string('vpis/index3_vpis.html',context)
-    print(html_string)
-    pdfkit.from_string( html_string, 'out.pdf')
+    pdfkit.from_string( html_string,'/tmp/'+ vp+leto+'.pdf')
+    return
 
 
 def na(objekt):

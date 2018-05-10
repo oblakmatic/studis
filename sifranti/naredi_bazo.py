@@ -257,7 +257,6 @@ def naredi_bazo(request):
     a = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
     a.save()
     a = IzvedbaPredmeta(predmet = a_ep, studijsko_leto = a_17_18, ucitelj_1 = a_darja, ucitelj_2 = a_jaka, ucitelj_3 = a_mateja)
-<<<<<<< HEAD
     a.save()
     
     a = Posta(id=1231, kraj="Ljubljana-Črnuče")
@@ -273,8 +272,6 @@ def naredi_bazo(request):
     a.save()
     a = StudijskiProgram(id=1000470 ,sifra="VU",stopnja="J - prva stopnja: visokošolski strokovni", semestri=6, naziv= "RAČUNALN. IN INFORM. VS-I.ST")
     a.save()
-=======
->>>>>>> 2182ce81394c99373651b593a1e00c8f0465070e
 
     a_vs1 = VrstaStudija(id=16203,opis="Visokošolska strokovna izobrazba (prva bolonjska stopnja)", nacin_zakljucka="diplomirani...(VS)/diplomirana", raven_klasius="6/2")
     a_vs1.save()

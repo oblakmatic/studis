@@ -13,5 +13,5 @@ urlpatterns = [
     #path('<str:diff>/<int:index>/delete/',views.delete,name='delete')
     path('predmetnik/',views.predmetnik,name='predmetnik'),
     path('predmetnik/izpis/',views.koncaj_predmetnik,name='koncaj_predmetnik'),
-    path('pdf/', views.narediVpisniList, name='narediVpisniList'),
+    path('vpisni_list/<int:vpisna>/', views.vpisni_list, name='vpisni_list'),
 ]
