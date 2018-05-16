@@ -339,7 +339,7 @@ def export_csv(request):
 	writer = csv.writer(response)
 	all_students = Student.objects.values()
 	writer.writerow(all_students[0].keys())
-   
+
 	for student in all_students:
 		 writer.writerow(student.values())
 
@@ -355,12 +355,14 @@ def export_pdf(request):
 	elements = []
 	all_students = Student.objects.values().order_by('priimek')
 	k = list(all_students[0].keys())
-
+	
 	for l in range(len(k)):
 		if len(k[l]) > 10:
-			k[l] = k[l][:10] + ".."		
+			k[l] = k[l][:10] + ".."	
+			
 
 	data = [k]
+	
 	for student in all_students:
 		 data.append(list(student.values()))
 	LIST_STYLE = TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.2, colors.black)])
