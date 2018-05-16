@@ -34,7 +34,7 @@ class Prijava(models.Model):
     predmeti_studenta = models.ForeignKey(PredmetiStudenta, on_delete = models.SET_NULL, null = True)
     rok = models.ForeignKey(Rok, on_delete = models.SET_NULL, null = True)
 
-    zaporedna_stevilka_polaganja = models.IntegerField() #ubistvu se ne rab ce gremo po novem.
+    zaporedna_stevilka_polaganja = models.IntegerField() 
     podatki_o_placilu = models.CharField(max_length = 260, default=None, blank=True, null=True)
     aktivna_prijava = models.BooleanField(default = True)
     ocena = models.IntegerField(default=None,null=True)
