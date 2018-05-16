@@ -104,6 +104,14 @@ def dodaj_izpit(request):
         cas_split = cas_.split(":")
         
         datum_ = datetime(int(datum_split[2]), int(datum_split[1]), int(datum_split[0]), int(cas_split[0]), int(cas_split[1]))
+        print(datum_.date())
+        if (Rok.objects.filter(datum__date=datum_.date()).count() != 0):
+            context = {
+                'arr': [],
+                'message': 'Rok na izbrani datum že obstaja!'
+            }
+
+            return render(request,'izpiti-message.html',context)
 
 
         id_IzvedbaPredmeta = request.POST['id_IzvedbaPredmeta']
@@ -112,6 +120,7 @@ def dodaj_izpit(request):
             print(curr_izvedbaPredmeta.id)
             if str(curr_izvedbaPredmeta.id) == id_IzvedbaPredmeta:
                 vnesi = curr_izvedbaPredmeta
+                print('izvedba predmet najdena?')
 
         
 
@@ -121,7 +130,7 @@ def dodaj_izpit(request):
         #da mu pokaze se vse roke k jih je razpisov
         email_ = request.user.email
         showRoki = []
-        for rok in Rok.objects.all():
+        for rok in Rok.objects.all().order_by('datum'):
             if rok.izvedba_predmeta.ucitelj_1 != None and rok.izvedba_predmeta.ucitelj_1.email == email_:
                 showRoki.append(rok)
             elif rok.izvedba_predmeta.ucitelj_2 != None and rok.izvedba_predmeta.ucitelj_2.email == email_:
@@ -130,7 +139,8 @@ def dodaj_izpit(request):
                 showRoki.append(rok)
     
         context = {
-            'arr': showRoki
+            'arr': showRoki,
+            'message': 'Rok uspešno dodan!'
             }
 
         return render(request,'izpiti-message.html',context)
@@ -182,7 +192,7 @@ def prijava(request):
                 print(vars(zadnje_prijave[0]))
                 datum_zadnje_prijave = zadnje_prijave[0].created_at
                 print(datum_zadnje_prijave)
-                if((datum_zadnje_prijave - vnesi_rok.datum).days <= 10): # TODO: Omejitev po dnevih naj bi bila nastavljiva
+                if(abs((vnesi_rok.datum - datum_zadnje_prijave).days) <= 10): # TODO: Omejitev po dnevih naj bi bila nastavljiva
                     print("WARNING (GOING IN)! Med prejsnjim polaganjem in tem rokom je preteklo manj kot 10 dni!")
             
             a = Prijava(predmeti_studenta = vnesi_predmeti_studenta, rok = vnesi_rok, zaporedna_stevilka_polaganja = stevilo_dosedanjih_polaganj)
@@ -299,7 +309,7 @@ def prijava(request):
                         print("datum zadnje prijave", datum_zadnje_prijave)
                         print("vnesi rok datum", vnesi_rok.datum)
                         #print("razlika", (datum_zadnje_prijave - vnesi_rok.datum).days)
-                        if((vnesi_rok.datum - datum_zadnje_prijave).days <= 10): # TODO: Omejitev po dnevih naj bi bila 
+                        if(abs((vnesi_rok.datum - datum_zadnje_prijave).days) <= 10): # TODO: Omejitev po dnevih naj bi bila 
                             prijava_condition = True
                             print("WARNING! Med prejsnjim polaganjem in tem rokom je preteklo manj kot 10 dni!")   
                     
@@ -363,7 +373,7 @@ def izberi_rok(request):
     if(request.user.groups.all()[0].name == "professors"):
         curr_roki = []
         email_ = request.user.email
-        roki = Rok.objects.filter( Q(izvedba_predmeta__ucitelj_1__email = email_) | Q(izvedba_predmeta__ucitelj_2__email = email_) | Q(izvedba_predmeta__ucitelj_3__email = email_) , Q(datum__lte=datetime.now().date()))
+        roki = Rok.objects.filter( Q(izvedba_predmeta__ucitelj_1__email = email_) | Q(izvedba_predmeta__ucitelj_2__email = email_) | Q(izvedba_predmeta__ucitelj_3__email = email_) , Q(datum__lte=datetime.now().date())).order_by("datum")
 
         context = {
             'arr': roki
@@ -372,7 +382,7 @@ def izberi_rok(request):
         return render(request,'vnesi_ocene.html', context)
     elif(request.user.groups.all()[0].name == "referent"):
         curr_roki = []
-        roki = Rok.objects.filter(datum__lte=datetime.now().date())
+        roki = Rok.objects.filter(datum__lte=datetime.now().date()).order_by("datum")
 
         context = {
             'arr': roki
