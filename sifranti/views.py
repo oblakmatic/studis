@@ -160,39 +160,6 @@ def search(request, diff):
 			else:
 				return HttpResponse("Ni tega elementa!")
 
-
-def naredi_bazo(request):
-	a = Drzava(id=4, dvomestna_koda="AF", tromestna_oznaka="AFG", iso_naziv="Afghanistan", slovenski_naziv="Afganistan",opomba="", veljaven=True)
-	a.save()
-
-	a_slo = Drzava(id=703, dvomestna_koda="SI", tromestna_oznaka="SVN", iso_naziv="Slovenia", slovenski_naziv="Slovenija",opomba="")
-	a_slo.save()
-
-	a = Drzava(id=703, dvomestna_koda="SI", tromestna_oznaka="SVN", iso_naziv="Slovenia", slovenski_naziv="Slovenija",opomba="", veljaven=True)
-	a.save()
-	a = Drzava(id=40, dvomestna_koda="AT", tromestna_oznaka="AUT", iso_naziv="Austria", slovenski_naziv="Avstrija",opomba="", veljaven=True)
-	a.save()
-	a = Drzava(id=56, dvomestna_koda="BE", tromestna_oznaka="BEL", iso_naziv="Belgium", slovenski_naziv="Belgija",opomba="", veljaven=True)
-	a.save()
-	a = Drzava(id=250, dvomestna_koda="FR", tromestna_oznaka="FRA", iso_naziv="France", slovenski_naziv="Francija",opomba="", veljaven=True)
-	a.save()
-	a = Drzava(id=276, dvomestna_koda="DE", tromestna_oznaka="DEU", iso_naziv="Germany", slovenski_naziv="Nemčija",opomba="")
-	a.save()
-	a = Drzava(id=826, dvomestna_koda="GB", tromestna_oznaka="GBR", iso_naziv="United Kingdom", slovenski_naziv="Velika Britanija", opomba="")
-	a.save()
-	a = Drzava(id=807, dvomestna_koda="MK", tromestna_oznaka="MKD", iso_naziv="Macedonia, the former Yugoslav Republic of", slovenski_naziv="Makedonija",opomba="")
-	a.save()
-	
-
-	a = Obcina(id = 213, ime="Ankaran")
-	a.save()
-	a = Obcina(id = 1, ime="Ajdovščina")
-	a.save()
-	a = Obcina(id = 19, ime="Divača")
-	a.save()
-	a = Obcina(id = 20, ime="Dobropolje")
-	a.save()
-
 def search(request, diff):
 	polje = polje + "__istartswith"
 	rezultat = eval(diff).all_objects.filter(**{polje: element}).values()
