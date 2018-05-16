@@ -68,10 +68,10 @@
                 <input type="hidden" name="id_rok" value={{ rok_id }}>
                 <button type="submit" name="vnesi_vec_ocen" class="btn btn-outline-primary mt-2">Vnos vseh vpisanih ocen</button>
             </form>
-            <form action="/izpiti/seznam_ocen/" method="post">
+            <form action="/izpiti/seznam_prijavljenih/" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="id_rok" value={{ rok_id }}>
-                <button type="submit" name="seznam_ocen" class="btn btn-outline-primary mt-2">Seznam ocen</button>
+                <button type="submit" name="seznam" class="btn btn-outline-primary mt-2">Seznam prijavljenih</button>
             </form>
 
 
