@@ -187,20 +187,23 @@ def token_add(request, id):
 				
 			if Zeton.objects.filter(student=student).count() >= 2:
 				context = {
-					'message': 'Student že ima 2 žetona!'
+					'message': 'Student že ima 2 žetona!',
+					'msg_type': 'alert-warning'
 				}
 				return render(request, 'token_add.html', context)
 			if (program.id == 1000471 and letnik.ime == "3."):
 				context = {
-					'message': 'Neveljavna kombinacija program / letnik!'
+					'message': 'Neveljavna kombinacija program / letnik!',
+					'msg_type': 'alert-warning'
 				}
 				return render(request, 'token_add.html', context)
 			zeton = Zeton(student=student, studijski_program=program, letnik=letnik, vrsta_vpisa=vrsta_vpisa, nacin_studija=nacin_studija, vrsta_studija=vrsta_studija, pravica_do_izbire=prosta_izbira)
 			zeton.save()
-			return token_list(request, 'Žeton uspešno dodan!')
+			return token_list(request, 'Žeton uspešno dodan!', 'alert-warning')
 		else:
 			context = {
-				'message': 'Prosimo, vnesite vse zahtevane podatke!'
+				'message': 'Prosimo, vnesite vse zahtevane podatke!',
+				'msg_type': 'alert-warning'
 			}
 			return render(request, 'token_add.html', context)
 		
@@ -220,7 +223,7 @@ def token_add(request, id):
 		
 		return render(request, 'token_add.html', context )
 
-def token_list(request, msg=None):
+def token_list(request, msg=None, msgType = None):
 	all_tokens = Zeton.objects.select_related()
 	
 	zetoni = []
@@ -248,6 +251,7 @@ def token_list(request, msg=None):
 	}
 	if (not msg is None):
 		context['message'] = msg
+		context['msg_type'] = msgType
 	return render(request,'token_list.html', context)
 
 def token_delete(request, del_id):
@@ -257,10 +261,10 @@ def token_delete(request, del_id):
 	except Zeton.DoesNotExist:
 		zeton = None
 	if(zeton == None):
-		return token_list(request, 'Ta žeton ne obstaja!')
+		return token_list(request, 'Ta žeton ne obstaja!', 'alert-warning')
 	else:
 		zeton.delete()
-		return token_list(request, 'Žeton uspešno izbrisan!')
+		return token_list(request, 'Žeton uspešno izbrisan!', 'alert-success')
 
 def token_edit(request, edit_id):
 	print(request.method)

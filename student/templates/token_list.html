@@ -6,9 +6,7 @@
 <div class="container sifrant">
 
 <h3>Vsi vpisni žetoni</h3>
-{% if message %}
-<h4>{{ message }}</h4>
-{% endif %}
+{% if message %}<h4 class="alert {{ msg_type }}"> {{ message }} </h4>{% endif %}
 <table class="table">
 	<thead>
 	    <tr>

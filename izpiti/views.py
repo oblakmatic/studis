@@ -129,7 +129,8 @@ def dodaj_izpit(request):
 		if (Rok.objects.filter(datum__date=datum_.date()).count() != 0):
 			context = {
 				'arr': [],
-				'message': 'Rok na izbrani datum že obstaja!'
+				'message': 'Rok na izbrani datum že obstaja!',
+				'msg_type': 'alert-warning'
 			}
 
 			return render(request,'izpiti-message.html',context)
@@ -161,8 +162,9 @@ def dodaj_izpit(request):
 	
 		context = {
 			'arr': showRoki,
-			'message': 'Rok uspešno dodan!'
-			}
+			'message': 'Rok uspešno dodan!',
+			'msg_type': 'alert-success'
+		}
 
 		return render(request,'izpiti-message.html',context)
 
