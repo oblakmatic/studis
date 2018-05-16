@@ -27,8 +27,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from operator import itemgetter, attrgetter
 
-
+alphabet = 'abcčdefghijklmnopqrsštuvwxyzž0123456789'
 
 # Create your views here.
 def upload_file(request):
@@ -41,7 +42,12 @@ def students(request):
 	else:
 		if(request.user.groups.all()[0].name == "referent"):
 			all_students_list = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
-			paginator = Paginator(all_students_list, 1)
+			print('unsorted', all_students_list)
+			all_students_list = sorted(all_students_list, key=lambda student: ([alphabet.index(c) for c in student['priimek'].lower()], \
+																			   [alphabet.index(c) for c in student['ime'].lower()], \
+																			   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
+			print('sorted', all_students_list)
+			paginator = Paginator(all_students_list, 10)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
 			
@@ -52,8 +58,9 @@ def students(request):
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_2__email = request.user.email) \
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_3__email = request.user.email))\
 												.distinct().values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
-		
-			paginator = Paginator(all_students_list, 1)
+			all_students_list = sorted(all_students_list, key=lambda student: ([alphabet.index(c) for c in student['priimek'].lower()], [alphabet.index(c) for c in student['ime'].lower()], [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
+
+			paginator = Paginator(all_students_list, 10)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
 
@@ -69,7 +76,7 @@ def import_students(request):
 	updated = 0
 	new = 0
 	for i in range(0, len(content)):
-		data = content[i].decode('utf-8');
+		data = content[i].decode('utf-8')
 		
 		name = data[0:30].rstrip()
 		surname = data[30:60].rstrip()
@@ -143,25 +150,23 @@ def students_search(request):
 	# print("Iskalni niz:" + search_query)
 	# if (search_query != ''):
 	id_filtered_students = Student.objects.values('vpisna_stevilka', 'ime', 'priimek', 'email').filter(vpisna_stevilka__startswith=search_query)
+	id_filtered_students = sorted(id_filtered_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+																			   [alphabet.index(c) for c in student['ime'].lower()], \
+																			   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	# print(id_filtered_students)
 	name_filtered_students = Student.objects.values('vpisna_stevilka', 'ime', 'priimek', 'email').filter(ime__startswith=search_query)
+	name_filtered_students = sorted(name_filtered_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+																			   [alphabet.index(c) for c in student['ime'].lower()], \
+																			   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	surname_filtered_students = Student.objects.values('vpisna_stevilka', 'ime', 'priimek', 'email').filter(priimek__startswith=search_query)
+	surname_filtered_students = sorted(surname_filtered_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+																			   [alphabet.index(c) for c in student['ime'].lower()], \
+																			   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	context = {
 		'students_id': id_filtered_students,
 		'students_name': name_filtered_students,
 		'students_surname': surname_filtered_students
 	}
-	'''
-	else:
-		id_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email')
-		name_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email')
-		surname_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email')
-		context = {
-			'students_id': id_filtered_students,
-			'students_name': name_filtered_students,
-			'students_surname': surname_filtered_students
-		}
-	'''
 	return render(request,'search.html', context)
 
 def token_add(request, id):
@@ -338,6 +343,9 @@ def export_csv(request):
 
 	writer = csv.writer(response)
 	all_students = Student.objects.values()
+	all_students = sorted(all_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+															   [alphabet.index(c) for c in student['ime'].lower()], \
+															   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	writer.writerow(all_students[0].keys())
 
 	for student in all_students:
@@ -354,6 +362,9 @@ def export_pdf(request):
 	header = Paragraph('Tabela študentov na dan: ' + str(datetime.date.today()), styles['title'])
 	elements = []
 	all_students = Student.objects.values().order_by('priimek')
+	all_students = sorted(all_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+															   [alphabet.index(c) for c in student['ime'].lower()], \
+															   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	k = list(all_students[0].keys())
 	
 	for l in range(len(k)):
