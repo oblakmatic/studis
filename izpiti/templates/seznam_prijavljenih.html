@@ -2,7 +2,38 @@
 {% block content %}
 
 <div class="container sifrant">
-    <h3>Seznam ocen</h3>
+    <h3>Seznam prijavljenih</h3>
+    <p>Predmet: {{ curr_rok.izvedba_predmeta.predmet }}</p>
+    <p>Studijsko leto poslusanja: {{ curr_rok.izvedba_predmeta.studijsko_leto }}</p>
+    {% if curr_rok.izvedba_predmeta.ucitelj_3 != null %}
+    <p>
+        Izprasevalci:
+        {{ curr_rok.izvedba_predmeta.ucitelj_1 }},
+        {{ curr_rok.izvedba_predmeta.ucitelj_2 }},
+        {{ curr_rok.izvedba_predmeta.ucitelj_3 }}
+    </p>
+    {% elif curr_rok.izvedba_predmeta.ucitelj_2 != null %}
+    <p>
+        Izprasevalci:
+        {{ curr_rok.izvedba_predmeta.ucitelj_1 }},
+        {{ curr_rok.izvedba_predmeta.ucitelj_2 }}
+    </p>
+    {% elif curr_rok.izvedba_predmeta.ucitelj_1 != null %}
+    <p>
+        Izprasevalci:
+        {{ curr_rok.izvedba_predmeta.ucitelj_1 }}
+    </p>
+    {% endif %}
+    <p>Datum in ura izpita: {{ curr_rok.datum|date:'d-m-Y' }}, {{ curr_rok.datum|time:'H:i' }} </p>
+    <p>Prostor izvajanja: {{ curr_rok.prostor_izvajanja }}</p>
+
+    <form action="/izpiti/seznam_prijavljenih/" method="post">
+        {% csrf_token %}
+            <input type="hidden" name="id_rok" value={{ curr_rok.id }}>
+            <button type="submit" name="natisni_pdf" class="btn btn-outline-primary mt-2">Natisni PDF</button>
+            <button type="submit" name="natisni_csv" class="btn btn-outline-primary mt-2">Izvozi CSV</button>
+    </form>
+
     <table class="table">
         <table class="table">
             <thead>
@@ -13,6 +44,7 @@
                     <th scope="col">Vrnjena prijava/cas odjave/odjavitelj</th>
                     <th scope="col">Stevilo tock izpita</th>
                     <th scope="col">Ocena izpita</th>
+                    <th scope="col">Zaporedna stevilka polaganja</th>
                 </tr>
             </thead>
             {% for prijava in arr %}
@@ -41,12 +73,17 @@
                     {{ prijava.ocena }}
                     {% endif %}
                 </td>
+				<td>
+					{% if prijava.ocena_izpita == None %}
+					Ocena se ni vpisana
+					{% elif prijava.ocena_izpita == -1 %}
+					VP
+					{% else %}
+					{{ prijava.ocena_izpita }}
+					{% endif %}
+				</td>
                 <td>
-                    {% if prijava.ocena_izpita == None %}
-                    Ocena se ni vpisana
-                    {% else %}
-                    {{ prijava.ocena_izpita }}
-                    {% endif %}
+                    {{ prijava.zaporedna_stevilka_polaganja }}
                 </td>
             </tr>
             {% endfor %}
