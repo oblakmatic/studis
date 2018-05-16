@@ -413,14 +413,20 @@ def vnesi_ocene_predmeta(request):
             for form in formset:
                 curr = prijave[i]
                 ocena_ = form['ocena'].value()
+                ocena_izpita_ = form['ocena_izpita'].value()
                 odjava = form['odjava'].value()
+                
                 if odjava == True:
+                    curr.ocena_izpita = -1
                     curr.ocena = -1
                     curr.odjavitelj = ime_priimek
                     curr.cas_odjave = datetime.now()
                     curr.save()
-                elif ocena_:
-                    curr.ocena = ocena_
+                elif ocena_ or ocena_izpita_:
+                    if (ocena_):
+                        curr.ocena = ocena_
+                    if (ocena_izpita_ ):
+                        curr.ocena_izpita = ocena_izpita_
                     curr.save()
                 if odjava == False:
                     i +=1
@@ -466,14 +472,20 @@ def vnesi_ocene_predmeta(request):
             for form in formset:
                 curr = prijave[i]
                 ocena_ = form['ocena'].value()
+                ocena_izpita_ = form['ocena_izpita'].value()
                 odjava = form['odjava'].value()
+                
                 if odjava == True:
+                    curr.ocena_izpita = -1
                     curr.ocena = -1
                     curr.odjavitelj = ime_priimek
                     curr.cas_odjave = datetime.now()
                     curr.save()
-                elif ocena_:
-                    curr.ocena = ocena_
+                elif ocena_ or ocena_izpita_:
+                    if (ocena_):
+                        curr.ocena = ocena_
+                    if (ocena_izpita_ ):
+                        curr.ocena_izpita = ocena_izpita_
                     curr.save()
                 if odjava == False:
                     i +=1
@@ -522,15 +534,21 @@ def vnesi_koncne_ocene(request):
             i = 0
             for form in formset:
                 curr = prijave[i]
-                ocena_ = form['ocena_izpita'].value()
+                ocena_ = form['ocena'].value()
+                ocena_izpita_ = form['ocena_izpita'].value()
                 odjava = form['odjava'].value()
+
                 if odjava == True:
                     curr.ocena_izpita = -1
+                    curr.ocena = -1
                     curr.odjavitelj = ime_priimek
                     curr.cas_odjave = datetime.now()
                     curr.save()
-                elif ocena_:
-                    curr.ocena_izpita = ocena_
+                elif ocena_ or ocena_izpita_:
+                    if (ocena_):
+                        curr.ocena = ocena_
+                    if (ocena_izpita_ ):
+                        curr.ocena_izpita = ocena_izpita_
                     curr.save()
                 if odjava == False:
                     i +=1

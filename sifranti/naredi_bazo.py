@@ -183,7 +183,6 @@ def naredi_bazo(request):
     a = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
     a.save()
     a = IzvedbaPredmeta(predmet = a_ep, studijsko_leto = a_17_18, ucitelj_1 = a_darja, ucitelj_2 = a_jaka, ucitelj_3 = a_mateja)
-<<<<<<< HEAD
     a.save()
     
     a = Posta(id=1231, kraj="Ljubljana-Črnuče")
@@ -199,8 +198,6 @@ def naredi_bazo(request):
     a.save()
     a = StudijskiProgram(id=1000470 ,sifra="VU",stopnja="J - prva stopnja: visokošolski strokovni", semestri=6, naziv= "RAČUNALN. IN INFORM. VS-I.ST")
     a.save()
-=======
->>>>>>> 2182ce81394c99373651b593a1e00c8f0465070e
 
     a_vs1 = VrstaStudija(id=12001,opis="Osnovnošolska izobrazba", nacin_zakljucka="zaključena osnovna šola", raven_klasius=1)
     a_vs1.save()
@@ -290,6 +287,37 @@ def naredi_bazo(request):
     new_date = datetime.datetime(2018, 3, 3, 14, 15)
     a_rok = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
     a_rok.save()
+
+    #roki za demonstracijo
+    rok_date = datetime.datetime(2018, 5, 11, 12, 10)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 14, 15, 55)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 15, 6, 5)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 25, 13, 2)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 6, 18, 7)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 6, 5, 16, 35)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 6, 6, 12, 15)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+
 
     new_date = datetime.datetime(2018, 2, 15, 14, 30)
     a_prijava1 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaAljaz, rok = a_rok, zaporedna_stevilka_polaganja = 1)
