@@ -179,31 +179,48 @@ def token_add(request, id):
 			letnik = form.cleaned_data['letnik']
 			vrsta_vpisa = form.cleaned_data['vrsta_vpisa']
 			nacin_studija = form.cleaned_data['nacin_studija']
-			vrsta_studija = form.cleaned_data['vrsta_studija']
+			# vrsta_studija = form.cleaned_data['vrsta_studija']
 			prosta_izbira = form.cleaned_data['pravica_do_izbire']
 
+			context = {}
+			tokenForm = TokenForm(initial={
+				'student': student.vpisna_stevilka,
+				'studijski_program': program.id,
+				'letnik': letnik.id,
+				'vrsta_vpisa': vrsta_vpisa.id,
+				'nacin_studija': nacin_studija.id,
+				# 'vrsta_studija': token.vrsta_studija.id,
+				'pravica_do_izbire': prosta_izbira})
+			
 			
 
 				
 			if Zeton.objects.filter(student=student).count() >= 2:
 				context = {
 					'message': 'Student že ima 2 žetona!',
-					'msg_type': 'alert-warning'
+					'msg_type': 'alert-warning',
+					'tokenForm': tokenForm
 				}
 				return render(request, 'token_add.html', context)
 			if (program.id == 1000471 and letnik.ime == "3."):
 				context = {
 					'message': 'Neveljavna kombinacija program / letnik!',
-					'msg_type': 'alert-warning'
+					'msg_type': 'alert-warning',
+					'tokenForm': tokenForm
 				}
 				return render(request, 'token_add.html', context)
-			zeton = Zeton(student=student, studijski_program=program, letnik=letnik, vrsta_vpisa=vrsta_vpisa, nacin_studija=nacin_studija, vrsta_studija=vrsta_studija, pravica_do_izbire=prosta_izbira)
+			zeton = Zeton(student=student, studijski_program=program, letnik=letnik, vrsta_vpisa=vrsta_vpisa, nacin_studija=nacin_studija, pravica_do_izbire = prosta_izbira)# vrsta_studija=vrsta_studija, pravica_do_izbire=prosta_izbira)
 			zeton.save()
-			return token_list(request, 'Žeton uspešno dodan!', 'alert-warning')
+			return token_list(request, 'Žeton uspešno dodan!', 'alert-success')
 		else:
+			context = {}
+			tokenForm = TokenForm(initial={
+				'student': id})
+			
 			context = {
 				'message': 'Prosimo, vnesite vse zahtevane podatke!',
-				'msg_type': 'alert-warning'
+				'msg_type': 'alert-warning',
+				'tokenForm': tokenForm
 			}
 			return render(request, 'token_add.html', context)
 		
@@ -233,12 +250,12 @@ def token_list(request, msg=None, msgType = None):
 		# print(dir(token))
 		zeton = {
 			'id': token.pk,
-			'student': token.student.vpisna_stevilka,
-			'studijski_program': token.studijski_program.naziv,
-			'letnik': token.letnik.ime,
-			'vrsta_vpisa': token.vrsta_vpisa.opis,
-			'nacin_studija': token.nacin_studija.opis,
-			'vrsta_studija': token.vrsta_studija.opis,
+			'student': token.student,
+			'studijski_program': token.studijski_program,
+			'letnik': token.letnik,
+			'vrsta_vpisa': token.vrsta_vpisa,
+			'nacin_studija': token.nacin_studija,
+			'vrsta_studija': token.vrsta_studija,
 			'pravica_do_izbire': 'DA' if token.pravica_do_izbire else 'NE' if token.letnik.ime == '3.' else '/'
 		}
 		zetoni.append(zeton)
@@ -271,28 +288,48 @@ def token_edit(request, edit_id):
 	if request.method == 'POST':
 		# print(request.POST)
 		token = Zeton.objects.get(pk=edit_id)
-		# print('neurejeni token')
-		# print(token.studijski_program)
-		token.studijski_program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))[0]
-		token.letnik = Letnik.objects.filter(ime=request.POST.get('letnik'))[0]
-		token.vrsta_vpisa = VrstaVpisa.objects.filter(ime=request.POST.get('vrsta_vpisa'))[0]
-		token.nacin_studija = NacinStudija.objects.filter(ime=request.POST.get('nac_stud'))[0]
-		token.vrsta_studija = VrstaStudija.objects.filter(ime=request.POST.get('vrst_stud'))[0]
-		token.prosta_izbira = True if request.POST.get('predmet_choice') == 'on' else False
-		token.save()
-		# print('urejeni token')
-		# print(token.program)
+		form = TokenForm(request.POST)
+		
 
+		if (form.is_valid()):
+			# print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pridemo do posta ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+			
+			token.studijski_program = form.cleaned_data['studijski_program']
+			token.letnik = form.cleaned_data['letnik']
+			token.vrsta_vpisa = form.cleaned_data['vrsta_vpisa']
+			token.nacin_studija = form.cleaned_data['nacin_studija']
+			# token.vrsta_studija = form.cleaned_data['vrsta_studija']
+			token.prosta_izbira = form.cleaned_data['pravica_do_izbire']
 
-		return redirect('/student/seznam-zetonov/', 'Žeton uspešno urejen!')
-
+			context = {}
+			tokenForm = TokenForm(initial={
+				'student': token.student.vpisna_stevilka,
+				'studijski_program': token.studijski_program.id,
+				'letnik': token.letnik.id,
+				'vrsta_vpisa': token.vrsta_vpisa.id,
+				'nacin_studija': token.nacin_studija.id,
+				# 'vrsta_studija': token.vrsta_studija.id,
+				'pravica_do_izbire': token.pravica_do_izbire})
+			
+			context['tokenForm'] = tokenForm
+			if (token.studijski_program.id == 1000471 and letnik.ime == "3."):
+				context = {
+					'message': 'Neveljavna kombinacija program / letnik!',
+					'msg_type': 'alert-warning',
+					'form': tokenForm
+				}
+				return render(request, 'token_edit.html', context)
+			token.save()
+			return token_list(request, 'Žeton uspešno urejen!', 'alert-success')
+		else:
+			return token_list(request, 'Neveljavna forma!', 'alert-warning')
 	else:
 		try:
 			zeton = Zeton.objects.select_related().get(pk=edit_id)
 		except Zeton.DoesNotExist:
 			zeton = None
 		if(zeton == None):
-			return redirect('/student/seznam-zetonov/', 'Ta žeton ne obstaja!')
+			return token_list(request, 'Ta žeton ne obstaja!', 'alert-warning')
 		else:
 			'''context = {
 				'data': {
