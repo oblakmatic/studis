@@ -50,7 +50,7 @@ def vpisni_list(request, vpisna):
     fs = FileSystemStorage('/tmp')
     with fs.open(name) as pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="vpisni_list.pdf"'
+        response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
         return response
 
     return response
@@ -77,6 +77,7 @@ def index2_vpis_post(request,index):
                     vrsta_vpisa=zeton[index].vrsta_vpisa,
                     nacin_studija=zeton[index].nacin_studija,
                     vrsta_studija=zeton[index].vrsta_studija,
+                    oblika_studija=zeton[index].oblika_studija,
                     prosta_izbira = zeton[index].pravica_do_izbire)
 
                 nov_vpis.save()
@@ -508,6 +509,7 @@ def narediZetonZaKandidata(student1,kandidat):
                     vrsta_studija = vrsta_studija,
                     nacin_studija = nacin_studija,
                     vrsta_vpisa = vrsta_vpisa,
+                    oblika_studija = oblika_studija
                     )
     nov_zeton.save()
     print("nekisad")
@@ -536,6 +538,7 @@ def narediVpisniList(student,vpis):
     vrsta_vpisa = na(str(vpis[0].vrsta_vpisa))
     nacin_studija = na(str(vpis[0].nacin_studija))
     vrsta_studija = na(str(vpis[0].vrsta_studija))
+    oblika_studija = na(str(vpis[0].oblika_studija))
 
     #predmeti
 
@@ -544,9 +547,9 @@ def narediVpisniList(student,vpis):
     vsipod = []
 
     for predmet in predmeti:
-        #izvedba = IzvedbaPredmeta.objects.filter(predmet=predmet, studijsko_leto=vpis[0].studijsko_leto)[0]
-        #ucitelj = na(str(izvedba.ucitelj_1))
-        ucitelj = "test"
+        izvedba = IzvedbaPredmeta.objects.filter(predmet=predmet, studijsko_leto=vpis[0].studijsko_leto)[0]
+        ucitelj = na(str(izvedba.ucitelj_1))
+        #ucitelj = "test"
         tocke = na(str(predmet.kreditne_tocke))
         predmet_ime = na(str(predmet))
 
@@ -578,6 +581,7 @@ def narediVpisniList(student,vpis):
      'vrsta_vpisa':vrsta_vpisa,
      'nacin_studija':nacin_studija,
      'vrsta_studija':vrsta_studija,
+     'oblika_studija':oblika_studija
     }
     context = {
        'student' : merge ,
