@@ -328,6 +328,9 @@ def naredi_bazo(request):
     a_aljaz = Student(vpisna_stevilka = "63150255", emso = "5869362456789", priimek="Rupar", ime="Aljaž", naslov_stalno_bivalisce="Godešič 163, 4220 Škofja Loka", drzava=a_slo, drzava_rojstva = a_slo, posta= a_sklPosta, obcina=a_sklObcina,obcina_rojstva= a_ljObcina, telefon="031866686", email="ar1961@student.uni-lj.si")
     a_aljaz.save()
 
+    a_stilar = Student(vpisna_stevilka = "63150253", emso = "5869362459726", priimek="Šime", ime="Štilar", naslov_stalno_bivalisce="Reteče 17, 4220 Škofja Loka", drzava=a_slo, drzava_rojstva = a_slo, posta= a_sklPosta, obcina=a_sklObcina,obcina_rojstva= a_ljObcina, telefon="031347867", email="ss1956@student.uni-lj.si")
+    a_stilar.save()
+
 
     a_verlic = Student(vpisna_stevilka = "63150256", emso = "5869362456755", priimek="Verlič", ime="Aljaž", naslov_stalno_bivalisce="Voje 55, 1290 Grosuplje", drzava=a_slo,drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina, posta= a_ljPosta, obcina=a_ljObcina, telefon="041786345", email="av1974@student.uni-lj.si")
     a_verlic.save()
@@ -346,6 +349,8 @@ def naredi_bazo(request):
     a_vpisVerlic = Vpis(student=a_verlic, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vrstaVpisa,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
     a_vpisVerlic.save()
     
+    a_vpisStilar = Vpis(student=a_stilar, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vrstaVpisa,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
+    a_vpisStilar.save()
     
 
     #a_aljaz.vpisi.add(a_vpisAljaz)
@@ -362,8 +367,14 @@ def naredi_bazo(request):
     a_predmetiStudentaVerlic.predmeti.add(a_teh,a_oim,a_ep,a_obl,a_aps1)
     a_predmetiStudentaVerlic.save()
 
+    a_predmetiStudentaStilar = PredmetiStudenta()
+    a_predmetiStudentaStilar.save()
+    a_predmetiStudentaStilar.vpis = a_vpisStilar
+    a_predmetiStudentaStilar.predmeti.add(a_teh,a_oim,a_ep,a_obl,a_aps1)
+    a_predmetiStudentaStilar.save()
 
-    new_date = datetime.datetime(2013, 6, 9, 11, 13)
+
+    new_date = datetime.datetime(2018, 2, 9, 11, 13)
     a = Rok(izvedba_predmeta = a_izv_teh, datum = new_date)
     a.save()
 
@@ -410,6 +421,10 @@ def naredi_bazo(request):
     new_date = datetime.datetime(2018, 2, 16, 14, 20)
     a_prijava2 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaVerlic, rok = a_rok, zaporedna_stevilka_polaganja = 1)
     a_prijava2.save()
+
+    new_date = datetime.datetime(2018, 2, 17, 14, 20)
+    a_prijava3 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaStilar, rok = a_rok, zaporedna_stevilka_polaganja = 1)
+    a_prijava3.save()
 
 
     #naredi referenta

@@ -491,6 +491,7 @@ def narediZetonZaKandidata(student1,kandidat):
     vrsta_studija = None
     nacin_studija = NacinStudija.objects.get(id=1)
     vrsta_vpisa = VrstaVpisa.objects.get(id=1)
+    oblika_studija = OblikaStudija.objects.get(id=1)
     print("neki")
     if studij_prog.id == 1000470:
         vrsta_studija = VrstaStudija.objects.get(id=16203)
@@ -506,7 +507,8 @@ def narediZetonZaKandidata(student1,kandidat):
                     letnik = letnik,
                     vrsta_studija = vrsta_studija,
                     nacin_studija = nacin_studija,
-                    vrsta_vpisa = vrsta_vpisa)
+                    vrsta_vpisa = vrsta_vpisa,
+                    )
     nov_zeton.save()
     print("nekisad")
     return

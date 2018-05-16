@@ -25,15 +25,15 @@
 {% for t in arr %}
 	<tr>
 		<td>{{ forloop.counter|add:arr.start_index|add:"-1"}}</td>
-		<td>t.student</td>
-		<td>t.studijski_program</td>
-		<td>t.letnik</td>
-		<td>t.vrsta_vpisa</td>
-		<td>t.nacin_studija</td>
-		<td>t.vrsta_studija</td>
-		<td>t.pravica_do_izbire</td>
+		<td>{{t.student}}</td>
+		<td>{{t.studijski_program}}</td>
+		<td>{{t.letnik}}</td>
+		<td>{{t.vrsta_vpisa}}</td>
+		<td>{{t.nacin_studija}}</td>
+		<td>{{t.vrsta_studija}}</td>
+		<td>{{t.pravica_do_izbire}}</td>
 	
-	{% endfor %}
+	
 	<td><a href="/student/uredi-zeton/{{ t.id }}">Uredi</a></td>
 	<td><a href="/student/izbrisi-zeton/{{ t.id }}">Izbriši</a></td>
 	</tr>
