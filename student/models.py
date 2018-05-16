@@ -83,6 +83,8 @@ class Predmetnik(models.Model):
     predmet = models.ForeignKey(Predmet, null=True, on_delete= models.SET_NULL)
     obvezen = models.BooleanField(default = True)
     ima_modul = models.BooleanField(default = False)
+    strokoven = models.BooleanField(default = False)
+
     class Meta:
         unique_together = (('studijski_program', 'studijsko_leto', 'letnik', 'predmet'),)
 
