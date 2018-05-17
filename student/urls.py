@@ -18,5 +18,7 @@ urlpatterns = [
     path('podatki/', views.student_data, name="student_data"),
     path('podatki/<int:id>', views.all_data, name="all_data"),
     path('potrdi_studente/', views.potrdi_studente, name="potrdi_studente"),
-    path('preveri_seznam/', views.preveri_seznam, name="preveri_seznam")
+    path('preveri_seznam/', views.preveri_seznam, name="preveri_seznam"),
+    path('predmeti/', views.students_by_subject, name="students_by_subject"),
+    path('predmeti/<int:id>/', views.subject_data, name="subject_data")
 ]

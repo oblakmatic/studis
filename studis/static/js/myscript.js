@@ -38,12 +38,28 @@ function addID(){
 
     if (skupaj== 60){
 
-    	if ($("#ok").hasClass("d-none"))
-    		$("#ok").removeClass("d-none");
+    letnik = $("div.container.sifrant").data("letnik");
+    prostaIzbira = $("div.container.sifrant").data("prosta");
+    console.log(prostaIzbira)
 
-    	if (! $("#notok").hasClass("d-none")){
-    		$("#notok").addClass("d-none");
-    	}
+    $("#vsi-id").val(ids);
+
+    if (count== 60){
+
+        if (letnik=="3." && modulCount!=2 && prostaIzbira=="False") {
+            $("#notok").text("Izbrati je potrebno 2 modula.")
+        }
+        else if(letnik== "2." && strokovenCount < 1 )
+            $("#notok").text("Izbrati je potrebno vsaj en strokoven predmet.")
+        else {
+        
+        	if ($("#ok").hasClass("d-none"))
+        		$("#ok").removeClass("d-none");
+
+        	if (! $("#notok").hasClass("d-none")){
+        		$("#notok").addClass("d-none");
+        	}
+        }
     }
     else{
     	if (! $("#ok").hasClass("d-none")){

@@ -25,12 +25,13 @@ SECRET_KEY = 'yskmmj4^o0$%49rccj=*%2d_6%sssg@6+j_g2+p(gho!$z1nrq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'wkhtmltopdf',
     'sifranti.apps.SifrantiConfig',
     'vpis.apps.VpisConfig',
     'student.apps.StudentConfig',
