@@ -9,16 +9,16 @@
 
 <h5>{{ sporocilo }}</h5>
 
-<div class="dropdown">
-  <button class="btn btn-outline-light costum-select dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown button
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group col-sm-2 row">
+    <select class="form-control" name="izbrano-leto" onchange="this.form.submit()">
+      {% for l in leta %}
+        <option {% if l == leto %} selected {% endif %}>{{ l.ime }}</option>
+      {% endfor %}
+    </select>
   </div>
-</div>
+</form>
 
 
 {% if predmeti %}
@@ -26,7 +26,7 @@
 {% for temp in predmeti %}
 	
 		<li class="list-group-item mb-2 col-xs-6 myhover" style="width: 44%; margin-right: 2%">
-			<a href="{{temp.id}}" style="color:#373a3c">{{ temp.id }} - {{ temp.ime }}</a>
+			<a href="{{leto.id}}/{{temp.id}}" style="color:#373a3c">{{ temp }}</a>
 		</li>
 
 {% endfor %}

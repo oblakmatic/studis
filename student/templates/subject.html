@@ -5,9 +5,8 @@
 {% block content %}
 <div class="container sifrant">
 
-<h3>{{predmet.ime}}</h3>
-<h6>{{predmet.id}}</h6>
-
+<h3>{{predmet}}</h3>
+<h5>{{leto}}</h5>
 <h5>{{ sporocilo }}</h5>
 
 {% if students.start_index > 0 %}
@@ -19,18 +18,18 @@
           <th scope="col">Ime</th>
           <th scope="col">Vpisna številka</th>
           <th scope="col">Email</th>
-          <th scope="col"></th>
-          <th scope="col"></th>
+          <th scope="col">Vrsta vpisa</th>
         </tr>
       </thead>
 <tbody>
   {% for t in students %}
     
       <td>{{ forloop.counter|add:students.start_index|add:"-1"}}</td>
-      <td>{{ t.priimek }}</td>
-      <td>{{ t.ime }}</td>
-      <td>{{ t.vpisna_stevilka }}</td>
-      <td>{{ t.email }}</td>
+      <td>{{ t.student.priimek }}</td>
+      <td>{{ t.student.ime }}</td>
+      <td>{{ t.student.vpisna_stevilka }}</td>
+      <td>{{ t.student.email }}</td>
+      <td>{{ t.vrsta_vpisa }}</td>
     </tr>
 
   {% endfor %}

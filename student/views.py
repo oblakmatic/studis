@@ -568,31 +568,41 @@ def preveri_seznam(request):
 
 def students_by_subject(request):
 
+
+	leto = StudijskoLeto.objects.latest('id')
+
+	if request.POST.get('izbrano-leto') != None:
+		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))
+
 	predmeti_list = Predmet.objects.all().order_by('ime')
 	paginator = Paginator(predmeti_list, 24)
 	page = request.GET.get('page')
 	predmeti = paginator.get_page(page)
 			
-
+	leta = StudijskoLeto.objects.all()
 	context = {
-		'predmeti': predmeti
-		}
+		'predmeti': predmeti,
+		'leta': leta,
+		'leto': leto
+	}
 
 	return render(request, 'all_subjects.html',context)
 
-def subject_data(request, id):
+def subject_data(request, leto, id):
 
-	predmet = Predmet.objects.get(id=id)			
+	predmet = Predmet.objects.get(id=id)
+
+	leto = StudijskoLeto.objects.get(id=leto)		
 
 	predmetiStudenta = PredmetiStudenta.objects.all()
 
 	student_list = []
 
 	for pr in predmetiStudenta:
-		if pr.vpis.potrjen:
+		if pr.vpis.studijsko_leto==leto and pr.vpis.potrjen :
 			for p in pr.predmeti.all():
 				if p == predmet:
-					student_list.append(pr.vpis.student)
+					student_list.append(pr.vpis)
 
 	paginator = Paginator(student_list, 15)
 	page = request.GET.get('page')
@@ -600,7 +610,8 @@ def subject_data(request, id):
 
 	context = {
 		'predmet': predmet,
-		'students': students
+		'students': students,
+		'leto': leto
 	}
 
 	return render(request, 'subject.html',context)
