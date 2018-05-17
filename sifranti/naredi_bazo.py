@@ -141,7 +141,15 @@ def naredi_bazo(request):
 
 
     #naredi studenta
-    primozt = Student(vpisna_stevilka = 63150000, emso=1511996500207, ime="Primož", drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina,  priimek="Trubar",naslov_stalno_bivalisce="Kranjska ulica 12", drzava= Drzava.objects.filter(pk=4)[0], posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="pt0000@fri.uni-lj.si")
+    primozt = Student(vpisna_stevilka = 63150000,
+     emso=1511996500207, 
+     ime="Primož", 
+     drzava_rojstva=a_slo,
+     obcina_rojstva= a_ljObcina,  
+     priimek="Trubar",
+     naslov_stalno_bivalisce="Kranjska ulica 12",
+      drzava= Drzava.objects.filter(pk=4)[0], 
+      posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="040123456",email="pt0000@fri.uni-lj.si")
     primozt.save()
 
     
