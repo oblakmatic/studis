@@ -389,15 +389,6 @@ def predmetnik(request):
             
                 else:
                     predmeti_izbirni.append(predmet)
-        #3 letnik
-        else:
-            so_moduli = True
-            predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, ima_modul=False).values('predmet', 'obvezen')
-            for i in predmeti_id:
-
-                predmet = Predmet.objects.filter(id=i['predmet'])
-                if i['obvezen']:
-                    predmeti_obvezni.append(predmet)
 
         #2 letnik
         elif letnik == Letnik.objects.get(ime="2."):
