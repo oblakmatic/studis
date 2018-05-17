@@ -383,7 +383,21 @@ def predmetnik(request):
                 if  p.obvezen:
                     predmeti_obvezni.append(p.predmet)
 
+                predmet = Predmet.objects.filter(id=i['predmet'])
+                if i['obvezen']:
+                    predmeti_obvezni.append(predmet)
+            
+                else:
+                    predmeti_izbirni.append(predmet)
+        #3 letnik
+        else:
+            so_moduli = True
+            predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, ima_modul=False).values('predmet', 'obvezen')
+            for i in predmeti_id:
 
+                predmet = Predmet.objects.filter(id=i['predmet'])
+                if i['obvezen']:
+                    predmeti_obvezni.append(predmet)
 
         #2 letnik
         elif letnik == Letnik.objects.get(ime="2."):
@@ -424,6 +438,14 @@ def predmetnik(request):
             
                 predmeti_modul.append(temp)
 
+        context = {
+            'predmeti_o': predmeti_obvezni,
+            'predmeti_i': predmeti_izbirni,
+            'predmeti_m': predmeti_modul,
+            'letnik': letnik,
+            'so_moduli': so_moduli
+        }
+        return render(request,'vpis/predmetnik.html', context)
 
         context = {
             'predmeti_o': predmeti_obvezni,
@@ -439,6 +461,9 @@ def predmetnik(request):
 #shrani predmete primernemu studentu
 def koncaj_predmetnik(request):
 
+    izbrani_predmeti = request.POST.get('vsi-id', '').split(",")
+    izbrani_predmeti = list(map(int, izbrani_predmeti))
+    predmeti = Predmet.objects.filter(id__in=izbrani_predmeti)
 
     izbrani_predmeti = request.POST.get('vsi-id', '').split(",")
 

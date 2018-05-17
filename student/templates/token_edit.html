@@ -5,14 +5,11 @@
 {% block content %}
 <div class="container sifrant">
 {% if user.is_authenticated %}
-
+ 
     <h1>Prosimo, vnesite zahtevane podatke:</h1>
-    {% if message %}
-    <h2>{{ message }}</h2>
-    {% endif %}
+    {% if message %}<h2 class="alert {{ msg_type }}"> {{ message }} </h2>{% endif %}
     <form action="" method="POST">
         {% csrf_token %}
-        
         <table>
             {{ tokenForm.as_table }}
         </table>

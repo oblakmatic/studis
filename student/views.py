@@ -28,8 +28,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from operator import itemgetter, attrgetter
 
-
+alphabet = 'abcčdefghijklmnopqrsštuvwxyzž0123456789'
 
 # Create your views here.
 def upload_file(request):
@@ -42,7 +43,12 @@ def students(request):
 	else:
 		if(request.user.groups.all()[0].name == "referent"):
 			all_students_list = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
-			paginator = Paginator(all_students_list, 20)
+			print('unsorted', all_students_list)
+			all_students_list = sorted(all_students_list, key=lambda student: ([alphabet.index(c) for c in student['priimek'].lower()], \
+																			   [alphabet.index(c) for c in student['ime'].lower()], \
+																			   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
+			print('sorted', all_students_list)
+			paginator = Paginator(all_students_list, 10)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
 			
@@ -53,8 +59,9 @@ def students(request):
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_2__email = request.user.email) \
 												| Q(vpis__predmetistudenta__predmeti__izvedbapredmeta__ucitelj_3__email = request.user.email))\
 												.distinct().values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
-		
-			paginator = Paginator(all_students_list, 20)
+			all_students_list = sorted(all_students_list, key=lambda student: ([alphabet.index(c) for c in student['priimek'].lower()], [alphabet.index(c) for c in student['ime'].lower()], [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
+
+			paginator = Paginator(all_students_list, 10)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
 
@@ -70,7 +77,7 @@ def import_students(request):
 	updated = 0
 	new = 0
 	for i in range(0, len(content)):
-		data = content[i].decode('utf-8');
+		data = content[i].decode('utf-8')
 		
 		name = data[0:30].rstrip()
 		surname = data[30:60].rstrip()
@@ -145,25 +152,23 @@ def students_search(request):
 	# print("Iskalni niz:" + search_query)
 	# if (search_query != ''):
 	id_filtered_students = Student.objects.values('vpisna_stevilka', 'ime', 'priimek', 'email').filter(vpisna_stevilka__startswith=search_query)
+	id_filtered_students = sorted(id_filtered_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+																			   [alphabet.index(c) for c in student['ime'].lower()], \
+																			   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	# print(id_filtered_students)
 	name_filtered_students = Student.objects.values('vpisna_stevilka', 'ime', 'priimek', 'email').filter(ime__startswith=search_query)
+	name_filtered_students = sorted(name_filtered_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+																			   [alphabet.index(c) for c in student['ime'].lower()], \
+																			   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	surname_filtered_students = Student.objects.values('vpisna_stevilka', 'ime', 'priimek', 'email').filter(priimek__startswith=search_query)
+	surname_filtered_students = sorted(surname_filtered_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+																			   [alphabet.index(c) for c in student['ime'].lower()], \
+																			   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	context = {
 		'students_id': id_filtered_students,
 		'students_name': name_filtered_students,
 		'students_surname': surname_filtered_students
 	}
-	'''
-	else:
-		id_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email')
-		name_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email')
-		surname_filtered_students = Student.objects.values('id', 'ime', 'priimek', 'email')
-		context = {
-			'students_id': id_filtered_students,
-			'students_name': name_filtered_students,
-			'students_surname': surname_filtered_students
-		}
-	'''
 	return render(request,'search.html', context)
 
 def token_add(request, id):
@@ -176,28 +181,48 @@ def token_add(request, id):
 			letnik = form.cleaned_data['letnik']
 			vrsta_vpisa = form.cleaned_data['vrsta_vpisa']
 			nacin_studija = form.cleaned_data['nacin_studija']
-			vrsta_studija = form.cleaned_data['vrsta_studija']
+			# vrsta_studija = form.cleaned_data['vrsta_studija']
 			prosta_izbira = form.cleaned_data['pravica_do_izbire']
 
+			context = {}
+			tokenForm = TokenForm(initial={
+				'student': student.vpisna_stevilka,
+				'studijski_program': program.id,
+				'letnik': letnik.id,
+				'vrsta_vpisa': vrsta_vpisa.id,
+				'nacin_studija': nacin_studija.id,
+				# 'vrsta_studija': token.vrsta_studija.id,
+				'pravica_do_izbire': prosta_izbira})
+			
 			
 
 				
 			if Zeton.objects.filter(student=student).count() >= 2:
 				context = {
-					'message': 'Student že ima 2 žetona!'
+					'message': 'Student že ima 2 žetona!',
+					'msg_type': 'alert-warning',
+					'tokenForm': tokenForm
 				}
 				return render(request, 'token_add.html', context)
 			if (program.id == 1000471 and letnik.ime == "3."):
 				context = {
-					'message': 'Neveljavna kombinacija program / letnik!'
+					'message': 'Neveljavna kombinacija program / letnik!',
+					'msg_type': 'alert-warning',
+					'tokenForm': tokenForm
 				}
 				return render(request, 'token_add.html', context)
-			zeton = Zeton(student=student, studijski_program=program, letnik=letnik, vrsta_vpisa=vrsta_vpisa, nacin_studija=nacin_studija, vrsta_studija=vrsta_studija, pravica_do_izbire=prosta_izbira)
+			zeton = Zeton(student=student, studijski_program=program, letnik=letnik, vrsta_vpisa=vrsta_vpisa, nacin_studija=nacin_studija, pravica_do_izbire = prosta_izbira)# vrsta_studija=vrsta_studija, pravica_do_izbire=prosta_izbira)
 			zeton.save()
-			return token_list(request, 'Žeton uspešno dodan!')
+			return token_list(request, 'Žeton uspešno dodan!', 'alert-success')
 		else:
+			context = {}
+			tokenForm = TokenForm(initial={
+				'student': id})
+			
 			context = {
-				'message': 'Prosimo, vnesite vse zahtevane podatke!'
+				'message': 'Prosimo, vnesite vse zahtevane podatke!',
+				'msg_type': 'alert-warning',
+				'tokenForm': tokenForm
 			}
 			return render(request, 'token_add.html', context)
 		
@@ -217,7 +242,7 @@ def token_add(request, id):
 		
 		return render(request, 'token_add.html', context )
 
-def token_list(request, msg=None):
+def token_list(request, msg=None, msgType = None):
 	all_tokens = Zeton.objects.select_related()
 	
 	zetoni = []
@@ -227,12 +252,12 @@ def token_list(request, msg=None):
 		# print(dir(token))
 		zeton = {
 			'id': token.pk,
-			'student': token.student.vpisna_stevilka,
-			'studijski_program': token.studijski_program.naziv,
-			'letnik': token.letnik.ime,
-			'vrsta_vpisa': token.vrsta_vpisa.opis,
-			'nacin_studija': token.nacin_studija.opis,
-			'vrsta_studija': token.vrsta_studija.opis,
+			'student': token.student,
+			'studijski_program': token.studijski_program,
+			'letnik': token.letnik,
+			'vrsta_vpisa': token.vrsta_vpisa,
+			'nacin_studija': token.nacin_studija,
+			'vrsta_studija': token.vrsta_studija,
 			'pravica_do_izbire': 'DA' if token.pravica_do_izbire else 'NE' if token.letnik.ime == '3.' else '/'
 		}
 		zetoni.append(zeton)
@@ -245,6 +270,7 @@ def token_list(request, msg=None):
 	}
 	if (not msg is None):
 		context['message'] = msg
+		context['msg_type'] = msgType
 	return render(request,'token_list.html', context)
 
 def token_delete(request, del_id):
@@ -254,39 +280,71 @@ def token_delete(request, del_id):
 	except Zeton.DoesNotExist:
 		zeton = None
 	if(zeton == None):
-		return token_list(request, 'Ta žeton ne obstaja!')
+		return token_list(request, 'Ta žeton ne obstaja!', 'alert-warning')
 	else:
 		zeton.delete()
-		return token_list(request, 'Žeton uspešno izbrisan!')
+		return token_list(request, 'Žeton uspešno izbrisan!', 'alert-success')
 
 def token_edit(request, edit_id):
 	print(request.method)
 	if request.method == 'POST':
 		# print(request.POST)
 		token = Zeton.objects.get(pk=edit_id)
-		# print('neurejeni token')
-		# print(token.studijski_program)
-		token.studijski_program = StudijskiProgram.objects.filter(ime=request.POST.get('stud_prog'))[0]
-		token.letnik = Letnik.objects.filter(ime=request.POST.get('letnik'))[0]
-		token.vrsta_vpisa = VrstaVpisa.objects.filter(ime=request.POST.get('vrsta_vpisa'))[0]
-		token.nacin_studija = NacinStudija.objects.filter(ime=request.POST.get('nac_stud'))[0]
-		token.vrsta_studija = VrstaStudija.objects.filter(ime=request.POST.get('vrst_stud'))[0]
-		token.prosta_izbira = True if request.POST.get('predmet_choice') == 'on' else False
-		token.save()
-		# print('urejeni token')
-		# print(token.program)
+		form = TokenForm(request.POST)
+		
 
+		if (form.is_valid()):
+			# print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pridemo do posta ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+			
+			token.studijski_program = form.cleaned_data['studijski_program']
+			token.letnik = form.cleaned_data['letnik']
+			token.vrsta_vpisa = form.cleaned_data['vrsta_vpisa']
+			token.nacin_studija = form.cleaned_data['nacin_studija']
+			# token.vrsta_studija = form.cleaned_data['vrsta_studija']
+			token.prosta_izbira = form.cleaned_data['pravica_do_izbire']
 
-		return redirect('/student/seznam-zetonov/', 'Žeton uspešno urejen!')
-
+			context = {}
+			tokenForm = TokenForm(initial={
+				'student': token.student.vpisna_stevilka,
+				'studijski_program': token.studijski_program.id,
+				'letnik': token.letnik.id,
+				'vrsta_vpisa': token.vrsta_vpisa.id,
+				'nacin_studija': token.nacin_studija.id,
+				# 'vrsta_studija': token.vrsta_studija.id,
+				'pravica_do_izbire': token.pravica_do_izbire})
+			
+			context['tokenForm'] = tokenForm
+			if (token.studijski_program.id == 1000471 and letnik.ime == "3."):
+				context = {
+					'message': 'Neveljavna kombinacija program / letnik!',
+					'msg_type': 'alert-warning',
+					'form': tokenForm
+				}
+				return render(request, 'token_edit.html', context)
+			token.save()
+			return token_list(request, 'Žeton uspešno urejen!', 'alert-success')
+		else:
+			return token_list(request, 'Neveljavna forma!', 'alert-warning')
 	else:
 		try:
 			zeton = Zeton.objects.select_related().get(pk=edit_id)
 		except Zeton.DoesNotExist:
 			zeton = None
 		if(zeton == None):
-			return redirect('/student/seznam-zetonov/', 'Ta žeton ne obstaja!')
+			return token_list(request, 'Ta žeton ne obstaja!', 'alert-warning')
 		else:
+			'''context = {
+				'data': {
+					'vpisna': zeton.student,
+					'prog': zeton.studijski_program,
+					'letnik': zeton.letnik,
+					'vrsta_vp': zeton.vrsta_vpisa,
+					'nac_stud': zeton.nacin_studija,
+					'vrst_stud': zeton.vrsta_studija,
+					'izbira': zeton.pravica_do_izbire
+				}
+			}
+			return render(request, 'token_edit.html', context)'''
 			context = {}
 			tokenForm = TokenForm(initial={
 				'student': zeton.student.vpisna_stevilka,
@@ -341,8 +399,11 @@ def export_csv(request):
 
 	writer = csv.writer(response)
 	all_students = Student.objects.values()
+	all_students = sorted(all_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+															   [alphabet.index(c) for c in student['ime'].lower()], \
+															   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	writer.writerow(all_students[0].keys())
-   
+
 	for student in all_students:
 		 writer.writerow(student.values())
 
@@ -357,13 +418,18 @@ def export_pdf(request):
 	header = Paragraph('Tabela študentov na dan: ' + str(datetime.date.today()), styles['title'])
 	elements = []
 	all_students = Student.objects.values().order_by('priimek')
+	all_students = sorted(all_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
+															   [alphabet.index(c) for c in student['ime'].lower()], \
+															   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
 	k = list(all_students[0].keys())
-
+	
 	for l in range(len(k)):
 		if len(k[l]) > 10:
-			k[l] = k[l][:10] + ".."		
+			k[l] = k[l][:10] + ".."	
+			
 
 	data = [k]
+	
 	for student in all_students:
 		 data.append(list(student.values()))
 	LIST_STYLE = TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.2, colors.black)])
