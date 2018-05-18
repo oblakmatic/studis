@@ -1022,4 +1022,50 @@ def vsi_predmeti():
     pr.save()
     narediIzvedbo(pr, narediProfesorja("Igor","Škraba"))
 
+def narediStudenta(vpisna_stevilka_, ime_, priimek_, emso_, drzava_rojstva_, obcina_rojstva_, stalni_naslov_, drzava_, posta_, mail_number, telefon_):
+    student = Student(
+     vpisna_stevilka = vpisna_stevilka_, #number
+     emso=emso_, #str
+     ime=ime_, #str
+     drzava_rojstva=drzava_rojstva_,
+     obcina_rojstva= obcina_rojstva_,  
+     priimek=priimek_, #str
+     naslov_stalno_bivalisce=stalni_naslov_,
+     drzava= Drzava.objects.filter(pk=4)[0], 
+     posta= Posta.objects.filter(pk=1293)[0],
+     obcina= Obcina.objects.filter(pk=1)[0],
+     telefon=telefon_,
+     email=str("%c%c%04d@student.uni-lj.si" % (ime_[0].lower(), priimek_[0].lower(), mail_number)))
+    student.save()
+
+    
+
+    user, created = User.objects.get_or_create(username=str("%s%s" % (ime_.lower(), priimek_.lower())), email=str("%c%c%04d@student.uni-lj.si" % (ime_[0].lower(), priimek_[0].lower(), mail_number)))
+    user.first_name = ime_
+    user.last_name = priimek_
+
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        ref_group, status = Group.objects.get_or_create(name='students') 
+        ref_group.user_set.add(user)
+    
+    user.save()
+    return student
+
+def narediReferenta(ime, priimek):
+    #naredi referenta
+    user, created = User.objects.get_or_create(username=str("%s%s" % (ime.lower(), priimek.lower())), email="referentka@fri.uni-lj.si"str("%s%s@fri.uni-lj.si" % (ime, priimek)))
+    user.first_name = ime
+    user.last_name = priimek
+    user.set_password("adminadmin")
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        ref_group, status = Group.objects.get_or_create(name='referent') 
+        ref_group.user_set.add(user)
+
+    user.save()
 
