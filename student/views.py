@@ -2,6 +2,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from student.models import Student, Zeton, Vpis, Kandidat
+from izpiti.models import PredmetiStudenta
 from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -100,6 +101,7 @@ def import_students(request):
 			kandidat.email = email
 			kandidat.ime = name
 			kandidat.priimek = surname
+			kandidat.studijski_program = StudijskiProgram.objects.filter(pk=int(program))[0]
 			kandidat.save()
 			
 			new = new + 1
@@ -562,3 +564,57 @@ def preveri_seznam(request):
 			return render(request, 'preveri_seznam.html',context)
 	else:
 		return HttpResponse("Nimaš dovoljenja.")
+
+
+def students_by_subject(request):
+
+
+	leto = StudijskoLeto.objects.latest('id')
+
+	if request.POST.get('izbrano-leto') != None:
+		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))
+
+	predmeti_list = Predmet.objects.all().order_by('ime')
+	paginator = Paginator(predmeti_list, 24)
+	page = request.GET.get('page')
+	predmeti = paginator.get_page(page)
+			
+	leta = StudijskoLeto.objects.all()
+	context = {
+		'predmeti': predmeti,
+		'leta': leta,
+		'leto': leto
+	}
+
+	return render(request, 'all_subjects.html',context)
+
+def subject_data(request, leto, id):
+
+	predmet = Predmet.objects.get(id=id)
+
+	leto = StudijskoLeto.objects.get(id=leto)		
+
+	predmetiStudenta = PredmetiStudenta.objects.all()
+
+	student_list = []
+
+	for pr in predmetiStudenta:
+		if pr.vpis.studijsko_leto==leto and pr.vpis.potrjen :
+			for p in pr.predmeti.all():
+				if p == predmet:
+					student_list.append(pr.vpis)
+
+	paginator = Paginator(student_list, 15)
+	page = request.GET.get('page')
+	students = paginator.get_page(page)
+
+	context = {
+		'predmet': predmet,
+		'students': students,
+		'leto': leto
+	}
+
+	return render(request, 'subject.html',context)
+
+
+

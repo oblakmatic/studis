@@ -248,3 +248,5 @@ def search(request, diff):
 	polje = polje + "__istartswith"
 	rezultat = eval(diff).all_objects.filter(**{polje: element}).values()
 	return rezultat
+def naredi_bazo(neki):
+	raise Exception("zakaj tako delas bazo")
