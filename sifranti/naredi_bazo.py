@@ -1056,7 +1056,7 @@ def narediStudenta(vpisna_stevilka_, ime_, priimek_, emso_, drzava_rojstva_, obc
 
 def narediReferenta(ime, priimek):
     #naredi referenta
-    user, created = User.objects.get_or_create(username=str("%s%s" % (ime.lower(), priimek.lower())), email="referentka@fri.uni-lj.si"str("%s%s@fri.uni-lj.si" % (ime, priimek)))
+    user, created = User.objects.get_or_create(username=str("%s%s" % (ime.lower(), priimek.lower())), email=str("%s%s@fri.uni-lj.si" % (ime, priimek)))
     user.first_name = ime
     user.last_name = priimek
     user.set_password("adminadmin")
