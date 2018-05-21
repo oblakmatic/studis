@@ -48,6 +48,7 @@ class Zeton(models.Model):
     nacin_studija = models.ForeignKey(NacinStudija, null=True, on_delete= models.SET_NULL)
     # vrsta studija je kao oblika studija
     vrsta_studija  = models.ForeignKey(VrstaStudija, null=True, on_delete= models.SET_NULL)
+    oblika_studija = models.ForeignKey(OblikaStudija, null=True, on_delete= models.SET_NULL)
     # ce ima pravico do proste izbire predmetov v 3.letniku
     pravica_do_izbire = models.BooleanField(default = False)
     #ali je bil zeton izkoriscen, torej ce ga je student ze uporabil za vpis

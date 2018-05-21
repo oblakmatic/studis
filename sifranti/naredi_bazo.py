@@ -348,12 +348,32 @@ def naredi_bazo(request):
     a_ns1.save()
     a_ns2 = NacinStudija(id=2, opis="izredni",ang_opis="part-time")
     a_ns2.save()
+
+    a_oblika = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )        
+    a_oblika.save()
     #naredi 2 zetona za studenta
 
     zeton = Zeton(student=primozt,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_2Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs1)
     zeton.save()
     zeton2 = Zeton(student=primozt,studijski_program=a_stud2,letnik=a_1Letnik,vrsta_vpisa=a_vv2,nacin_studija=a_ns2,vrsta_studija=a_vs2)
     zeton2.save()
+
+    zeton = Zeton(student=primozt,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_2Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs1, oblika_studija=a_oblika)
+    zeton.save()
+    zeton2 = Zeton(student=primozt,studijski_program=a_stud2,letnik=a_1Letnik,vrsta_vpisa=a_vv2,nacin_studija=a_ns2,vrsta_studija=a_vs2, oblika_studija=a_oblika)
+    zeton2.save()
+
+    zeton = Zeton(student=martin,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_3Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs2, oblika_studija=a_oblika)
+    zeton.save()
+
+    zeton = Zeton(student=tine,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_3Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs2, pravica_do_izbire = True, oblika_studija=a_oblika)
+    zeton.save()
+
+    zeton = Zeton(student=drago,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_2Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs2, oblika_studija=a_oblika)
+    zeton.save()
+
+    zeton = Zeton(student=ivan,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_1Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs2, oblika_studija=a_oblika)
+    zeton.save()
 
     #izvedba
     a_p1_izv = IzvedbaPredmeta(predmet = a_P1, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
