@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% block title %}Urejanje roka{% endblock %}
+
+
+{% block content %}
+<div class="container sifrant">
+    <h3>Rok</h3>
+    </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Predmet</th>
+                    <th scope="col">Studijsko leto</th>
+                    <th scope="col">Ucitelji</th>
+                    <th scope="col">Datum (dd.mm.yyyy)</th>
+                    <th scope="col">Cas (hh:mm)</th>
+                    <th scope="col">Prostor</th>
+                    <th scope="col">Dodaj rok izpita</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>{{ IzvedbaPredmeta.predmet }}</td>
+                <td>{{ IzvedbaPredmeta.studijsko_leto }}</td>
+
+                {% if IzvedbaPredmeta.ucitelj_3 != null %}
+                <td>
+                    {{ IzvedbaPredmeta.ucitelj_1}},
+                    {{ IzvedbaPredmeta.ucitelj_2}},
+                    {{ IzvedbaPredmeta.ucitelj_3}}
+                </td>
+                {% elif IzvedbaPredmeta.ucitelj_2 != null %}
+                <td>
+                    {{ IzvedbaPredmeta.ucitelj_1}},
+                    {{ IzvedbaPredmeta.ucitelj_2}}
+                </td>
+                {% elif IzvedbaPredmeta.ucitelj_1 != null %}
+                <td>
+                    {{ IzvedbaPredmeta.ucitelj_1}}
+                </td>
+                {% endif %}
+                <form action="/izpiti/izpiti-message/" method="post">
+                    {% csrf_token %}
+                    <td>
+                        <input type="text" id="datum" oninput="myFunction(this)" name="datum" style="width: 120px;" placeholder="dd.mm.yyyy" value="{{datumRoka}}" required />
+                    </td>
+                    <td>
+                        <input type="text" id="cas" oninput="vnesiCas(this)" name="cas" style="width: 90px;" placeholder="hh:mm" value="{{uraRoka}}" required />
+                    </td>
+                    <td>
+                        <input type="text" id="prostor" name="prostor" value="{{prostorRoka}}" style="width: 90px;" required />
+                    </td>
+                    <td>
+                        <input type="hidden" name="id_rok" value={{ rok.id }}>
+                        {% if atendees > 0 %}
+                            <input type="checkbox" name="seznanjenost" value="seznanjenost">Na izpitni rok so prijavljeni študenti. Potrdite seznanjenost.</input>
+                        {% endif%}
+                        <button type="submit" name="uredi_izpit" class="btn btn-outline-primary mt-2">Uredi izpitni rok</button>
+                    </td>
+                </form>
+
+            </tr>
+
+</div>
+
+
+<script type="text/javascript">
+
+    function vnesiCas(element) {
+        var text_cas = element.value;
+        var m = text_cas.match(/^(([[0|1]\d)|(2[0-3]))[:]([0-5]\d)$/g);
+        console.log(m)
+        if (m == null) {
+            console.log("NE")
+            element.setCustomValidity("Nepravilen vnos casa");
+        }
+        else {
+            element.setCustomValidity("");
+        }
+    }
+    
+    function myFunction(element) {
+        var text_datum = element.value;
+        var m = text_datum.match(/^\s*(3[01]|[12][0-9]|0?[1-9])\.(1[012]|0?[1-9])\.((?:19|20)\d{2})\s*$/g);
+        
+        if (m == null) {
+            console.log("NE")
+            element.setCustomValidity("Nepravilen vnos datuma");
+        }
+        else {
+            console.log("DA")
+            element.setCustomValidity(""); //more bit!
+            split = text_datum.split('.');
+            datum_tabela = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+            var stDni_meseca = datum_tabela[split[1] - 1];
+            
+
+            if (split[0] > stDni_meseca) {
+                console.log("-->" + stDni_meseca + " -- " + split[0]);
+                element.setCustomValidity("Nepravilen vnos datuma za ta mesec.");
+                return
+            }
+
+
+
+            datum_ = new Date(split[2], split[1]-1, split[0])
+            console.log(datum_)
+            var today = new Date();
+
+            
+            if (datum_ < today) {
+                element.setCustomValidity("Preteklih datumov ni mogoce izbirati.");
+                return
+            }
+            
+
+            //pazi ker mas mesece za en mesec naaj da dela pravilno. ker se zacne iz 0.
+            var holidays = [
+                new Date(2019, 0, 1), new Date(2019, 0, 2), new Date(2019, 1, 8), new Date(2019, 3, 27),
+                new Date(2019, 4, 1), new Date(2019, 4, 2), new Date(2019, 5, 25), new Date(2019, 7, 15),
+                new Date(2019, 9, 31), new Date(2019, 10, 1), new Date(2019, 11, 25), new Date(2019, 11, 26)
+            ];
+
+
+            var flag = false;
+
+            for (var i = 0; i < holidays.length; i++) {
+                console.log(holidays[i].getDate() + " " + holidays[i].getMonth() + " ----> " + datum_.getDate() + " " + datum_.getMonth());
+                if (holidays[i].getMonth() == datum_.getMonth() && holidays[i].getDate() == datum_.getDate()) {
+                    console.log("ojoooooj");
+                    flag = true;
+                }
+
+            }
+
+            var easterDate = Easter(datum_.getFullYear());
+            var table = easterDate.split(".");
+            for (var i = 0; i < table.length; i++) {
+                table[i] = table[i].replace(/^0+/, '');
+            }
+            if (datum_.getMonth() == table[0] && datum_.getDate() == table[1]) {
+                flag = true;
+            }
+
+            var day = new Date(datum_).getUTCDay();
+            console.log(day)
+
+            if (flag == true) {
+                element.setCustomValidity("Na praznik ni mogoce razpisati roka za vpis.");
+                return
+            }
+            else if (day == 5) {
+                element.setCustomValidity("V soboto ni mogoce razpisati roka za izpit.");
+                return
+            }
+            else if (day == 6) {
+                element.setCustomValidity("V nedeljo ni mogoce razpisati roka za izpit.");
+                return
+            }
+            else {
+                element.setCustomValidity('');
+                return
+            }
+
+        }
+    }
+
+    function Easter(Y) {
+        var C = Math.floor(Y / 100);
+        var N = Y - 19 * Math.floor(Y / 19);
+        var K = Math.floor((C - 17) / 25);
+        var I = C - Math.floor(C / 4) - Math.floor((C - K) / 3) + 19 * N + 15;
+        I = I - 30 * Math.floor((I / 30));
+        I = I - Math.floor(I / 28) * (1 - Math.floor(I / 28) * Math.floor(29 / (I + 1)) * Math.floor((21 - N) / 11));
+        var J = Y + Math.floor(Y / 4) + I + 2 - C + Math.floor(C / 4);
+        J = J - 7 * Math.floor(J / 7);
+        var L = I - J;
+        var M = 3 + Math.floor((L + 40) / 44);
+        var D = L + 28 - 31 * Math.floor(M / 4);
+
+        return padout(M) + "." + padout(D);
+    }
+
+    function padout(number) { return (number < 10) ? '0' + number : number; }
+
+    
+</script>
+  
+
+
+
+        {% endblock %}
