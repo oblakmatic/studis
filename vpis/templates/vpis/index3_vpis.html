@@ -1,157 +1,22 @@
-<head>
-    <meta charset="UTF-8">
-  
-  </head>
-  <p style="text-align: center;">&nbsp;</p>
-  <p style="text-align: center;">&nbsp;</p>
-  <table style="width: 1073.6px; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr>
-  <td style="width: 393px;">
-  <h2>&nbsp;VPISNI LIST {{vpis.studijsko_leto}}</h2>
-  <h4>za &scaron;tudente</h4>
-  <p>Fakulteta za računalni&scaron;tvo in informatiko</p>
-  </td>
-  <td style="width: 709.6px;">&nbsp;<img style="float: left;" src="https://www.uni-lj.si/mma_bin.php?id=2013071011092329" alt="" width="127" height="129" /></td>
-  </tr>
-  </tbody>
-  </table>
-  <table style="height: 136px; width: 1076.6px; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr style="height: 19.6px;">
-  <td style="width: 172px; height: 19.6px;">
-  <p>Vpisna &scaron;tevilka:</p>
-  <h4><strong>{{student.vpisna_stevilka}}</strong></h4>
-  </td>
-  <td style="width: 193px; height: 19.6px;">
-  <p>Priimek in ime:</p>
-  <p><strong>{{student.priimek}},{{student.ime}}</strong></p>
-  </td>
-  <td style="width: 235px; height: 19.6px;">
-  <p>&nbsp;Datum rojstva:</p>
-  <p>{{student.datum_rojstva}}</p>
-  </td>
-  <td style="width: 532.6px; height: 19.6px;">
-  <p>&nbsp;Država, občina rojstva</p>
-  <p>{{student.drzava}}, {{student.obcina_rojstva}}</p>
-  </td>
-  </tr>
-  <tr style="height: 25px;">
-  <td style="width: 172px; height: 25px;">
-  <p>&nbsp;EM&Scaron;O:</p>
-  <p>{{student.emso}}</p>
-  </td>
-  <td style="width: 193px; height: 25px;">&nbsp;</td>
-  <td style="width: 235px; height: 25px;">
-  <p>&nbsp;e-po&scaron;ta:</p>
-  <p>{{student.email}}</p>
-  </td>
-  <td style="width: 532.6px; height: 25px;">
-  <p>&nbsp;telefon:</p>
-  <p>{{student.telefon}}</p>
-  </td>
-  </tr>
-  </tbody>
-  </table>
-  <table style="height: 45px; width: 1066px; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr>
-  <td style="width: 194px;">Stalno bivali&scaron;če</td>
-  <td style="width: 341.2px;">{{student.naslov_stalno_bivalisce}}</td>
-  <td style="width: 535.8px; text-align: left;">{{student.drzava}}, {{student.obcina}}, {{student.posta}}</td>
-  </tr>
-  <tr>
-  <td style="width: 194px;">Začasno bivali&scaron;če</td>
-  <td style="width: 341.2px;">{{student.naslov_zacasno_bivalisce}}</td>
-  <td style="width: 535.8px; text-align: left;">{{student.drzava_zacasno}}, {{student.obcina_zacasno}}, {{student.posta_zacasno}}</td>
-  </tr>
-  </tbody>
-  </table>
-  <table style="width: 1076.4px; background-color: silver; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr>
-  <td style="width: 1091.4px;">PODATKI O VPISU:</td>
-  </tr>
-  </tbody>
-  </table>
-  <table style="width: 1072.4px; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr>
-  <td style="width: 1081.4px;">&Scaron;tudijski program:</td>
-  </tr>
-  <tr>
-  <td style="width: 1081.4px;">{{vpis.studijski_program}}</td>
-  </tr>
-  </tbody>
-  </table>
-  <table style="width: 1068.4px; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr>
-  <td style="width: 1079.4px;">Vrsta &scaron;tudija:</td>
-  </tr>
-  <tr>
-  <td style="width: 1079.4px;">{{vpis.vrsta_studija}}</td>
-  </tr>
-  </tbody>
-  </table>
-  <table style="width: 1067.8px; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr>
-  <td style="width: 310px;">Vrsta vpisa</td>
-  <td style="width: 196px;">Letnik</td>
-  <td style="width: 580.8px;">Način in oblika &scaron;tudija</td>
-  </tr>
-  <tr>
-  <td style="width: 310px;">{{vpis.vrsta_vpisa}}</td>
-  <td style="width: 196px;">{{ vpis.letnik }}letnik</td>
-  <td style="width: 580.8px;">{{vpis.nacin_studija}}, {{vpis.oblika_studija}}</td>
-  </tr>
-  </tbody>
-  </table>
-  <table style="width: 1064.4px; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr>
-  <td style="width: 1077.4px;">{{prvoleto}}</td>
-  </tr>
-  </tbody>
-  </table>
-  <table style="width: 1061.4px; background-color: silver; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr>
-  <td style="width: 1062.4px;">PREDMETNIK</td>
-  </tr>
-  </tbody>
-  </table>
-  
-  <table style="width: 1059.2px; margin-left: auto; margin-right: auto;">
-  <tbody>
-  <tr style="height: 17px;">
-  <td style="width: 436px; height: 17px;">Učitelj</td>
-  <td style="width: 436px; height: 17px;">Učna enota</td>
-  <td style="width: 508.2px; height: 17px;">&Scaron;tevilo KT</td>
-  </tr>
-  {%for predmet1 in predmetnik %}
-  <tr style="height: 17px;">
-  <td style="width: 436px; height: 17px;">{{predmet1.ucitelj}}</td>
-  <td style="width: 436px; height: 17px;">{{predmet1.predmet}}</td>
-  <td style="width: 508.2px; height: 17px;">{{ predmet1.tocke}}</td>
-  </tr>
-  {% endfor %}
-  <tr style="height: 60.6px;">
-  <td style="width: 436px; height: 60.6px;">&nbsp;</td>
-  <td style="width: 436px; height: 60.6px;">&nbsp;</td>
-  <td style="width: 508.2px; height: 60.6px;">&nbsp;</td>
-  </tr>
-  <tr style="height: 17px;">
-  <td style="width: 436px; height: 17px;">&nbsp;</td>
-  <td style="width: 436px; height: 17px;">&nbsp;</td>
-  <td style="width: 508.2px; height: 17px;">Podpis &scaron;tudenta:</td>
-  </tr>
-  <tr style="height: 17px;">
-  <td style="width: 436px; height: 17px;">&nbsp;</td>
-  <td style="width: 436px; height: 17px;">&nbsp;</td>
-  <td style="width: 508.2px; height: 17px;">__________________</td>
-  </tr>
-  </tbody>
-  </table>
-  <p style="text-align: center;">&nbsp;</p>
+{% include "base.html" %}
+
+
+{% block content %}
+
+<div class="container sifrant">
+    {% if student %}
+    <p>Študent z vpisno številko {{student.vpisna_stevilka }} se lahko vpišeš :</p>
+    {% endif %}
+    <p>{{opozorilo}}</p>
+
+    <form action="/vpis/" method="post">
+        {% csrf_token %}
+        <h2>Podatki o študentu</h2>
+        {{ studentform }}
+        <h2>Podatki o vpisu</h2>
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-outline-primary">Dodaj</button>
+    </form>
+</div>
+{% endblock %}

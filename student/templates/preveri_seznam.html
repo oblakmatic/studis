@@ -31,14 +31,15 @@
             {% endif %}
             <form action="/student/preveri_seznam/" method="post">
                 {% csrf_token %}
-                <td>
-                    {% if vpis.potrjen == True %}
-                    <button type="submit" name="natisni" class="btn btn-outline-primary mt-2">Natisni</button>
-                    {% else %}
-                    <button type="submit" name="natisni" class="btn btn-outline-primary mt-2" disabled>Natisni</button>
-                    {% endif %}
-                    <input type="hidden" name="vpis_email" value={{ vpis.student.email }}>
-                </td>
+				<td>
+					{% if vpis.potrjen == True %}
+					<button type="submit" name="natisni" class="btn btn-outline-primary mt-2">Natisni</button>
+					{% else %}
+					<button type="submit" name="natisni" class="btn btn-outline-primary mt-2" disabled>Natisni</button>
+					{% endif %}
+					<input type="hidden" name="vpis_email" value={{ vpis.student.email }}>
+					<input type="hidden" name="vpis_leto" value={{ vpis.studijsko_leto.ime }}>
+				</td>
             </form>
         </tr>
         {% endfor %}

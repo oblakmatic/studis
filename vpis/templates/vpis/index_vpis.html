@@ -21,9 +21,6 @@
             <tr>
                 <td>{{ vpis.studijsko_leto.ime }}</td>
                 <td>{{ vpis.potrjen }}</td>
-                <td><form action="/vpis/vpisni_list/{{ vpis.student.vpisna_stevilka }}/" method="get">
-                    <button type="submit" class="btn btn-outline-primary">Prenesi Vpisni list</button>
-                </form></td>
             </tr>
             {% endfor %}
         </table>
@@ -32,80 +29,13 @@
         {% endif %}
     <h3>Prvi korak:</h3>
     <h2>Podatki o študentu</h2>
-    
+    {% endif %}
     
     
     <form action="/vpis/" method="post">
         {% csrf_token %}
-        
         {{ studentform }}
         <button type="submit" class="btn btn-outline-primary">Naslednji korak</button>
     </form>
-    <script>
-        $(document).ready(function(){
-          $( "#id_ima_zacasno" ).change(function() {
-            var $input = $( this );
-             if ($input.is( ":checked" )){   	
-                 $("#id_naslov_zacasno_bivalisce").show();
-                 $("#id_drzava_zacasno").show();
-                 $("label[for='id_naslov_zacasno_bivalisce").show();
-                 $("label[for='id_drzava_zacasno']").show();
-             }else{
-                $("#id_naslov_zacasno_bivalisce").hide();
-                 $("#id_drzava_zacasno").hide();
-                 $("#id_obcina_zacasno").hide();
-                 $("#id_posta_zacasno").hide();
-                 $("label[for='id_naslov_zacasno_bivalisce']").hide();
-                 $("label[for='id_drzava_zacasno']").hide();
-                 $("label[for='id_obcina_zacasno']").hide();
-                 $("label[for='id_posta_zacasno']").hide();
-             }
-          }).change();
-          $( "#id_drzava_zacasno" ).change(function() {
-                if ($('#id_drzava_zacasno').val() == 705){
-                    $("#id_obcina_zacasno").show();
-                    $("#id_posta_zacasno").show();
-                    $("label[for='id_obcina_zacasno']").show();
-                    $("label[for='id_posta_zacasno']").show();
-                }
-                else{
-    	            $("#id_obcina_zacasno").hide();
-                    $("#id_posta_zacasno").hide();
-                    $("label[for='id_obcina_zacasno']").hide();
-                    $("label[for='id_posta_zacasno']").hide();
-                }
-                }).change();
-            
-            $( "#id_drzava" ).change(function() {
-                if ($('#id_drzava').val() == 705){
-                    $("#id_obcina").show();
-                    $("#id_posta").show();
-                    $("label[for='id_obcina']").show();
-                    $("label[for='id_posta']").show();
-                }
-                else{
-    	            $("#id_obcina").hide();
-                    $("#id_posta").hide();
-                    $("label[for='id_obcina']").hide();
-                    $("label[for='id_posta']").hide();
-                }
-                }).change();
-                
-            $( "#id_drzava_rojstva" ).change(function() {
-                if ($('#id_drzava_rojstva').val() == 705){
-                    $("#id_obcina_rojstva").show();
-                    $("label[for='id_obcina_rojstva']").show();
-                }
-                else{
-                    $("#id_obcina_rojstva").hide();
-                    $("label[for='id_obcina_rojstva']").hide();
-                }
-                }).change();
-          
-        });
-        
-        </script>
-
-    {% endif %}
 </div>
 {% endblock %}

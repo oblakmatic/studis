@@ -6,14 +6,9 @@
 
 
 .mycard{
-	width: 99%; 
+	width: 17rem; 
+	margin-right: 1%; 
 	height: 100%;
-	margin-bottom: 20px;
-	
-}
-
-.myhover:hover{
-	background-color: #c3dbf7 
 }
 
 .no-border{

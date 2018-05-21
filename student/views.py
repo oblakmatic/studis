@@ -2,7 +2,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from student.models import Student, Zeton, Vpis, Kandidat
-from izpiti.models import PredmetiStudenta
 from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -101,7 +100,6 @@ def import_students(request):
 			kandidat.email = email
 			kandidat.ime = name
 			kandidat.priimek = surname
-			kandidat.studijski_program = StudijskiProgram.objects.filter(pk=int(program))[0]
 			kandidat.save()
 			
 			new = new + 1
@@ -378,18 +376,21 @@ def all_data(request, id):
 	return render(request, 'student_data.html', context)
 	
 def student_data(request):
+	
+
 	if(request.user.groups.all()[0].name == "students"):
 		student = Student.objects.get(email = request.user.email)
 		vpisi = Vpis.objects.filter(student = student.vpisna_stevilka)
+		print(vpisi)
 		if(student.naslov_zacasno_bivalisce is None):
 			student.naslov_zacasno_bivalisce = '/'
-		print(student)
 		context = {
 			'student': student,
 			'vpisi': vpisi
 		}
 
 		return render(request, 'student_data.html', context)
+
 	else:
 		return redirect('/student/')
 
@@ -473,82 +474,14 @@ def potrdi_studente(request):
 def preveri_seznam(request):
 
 	if(request.user.groups.all()[0].name == "referent"):
-
+		
 		if request.method == 'POST' and 'natisni' in request.POST:
-
+			
 			vpis_student_email = request.POST.get('vpis_email')
-			vpis_ = None
-			for vpis in Vpis.objects.all():
-				if str(vpis.student.email) == vpis_student_email:
-					vpis_ = vpis
+			studijsko_leto_ime = request.POST.get('vpis_leto')
 
-
-			response = HttpResponse(content_type='application/pdf')
-			response['Content-Disposition'] = 'inline; filename="studenti.pdf"'
+			return natisni_potrdilo(vpis_student_email,studijsko_leto_ime, 6)
 			
-			doc = SimpleDocTemplate(response,pagesize=letter,
-						rightMargin=72,leftMargin=72,
-						topMargin=72,bottomMargin=18)
-			Story=[]
-			logo = "student/Logo_UL_FRI.png"
-			magName = "Pythonista"
-			issueNum = 12
-			subPrice = "99.00"
-
-
-			formatted_time = datetime.date.today()
-			formatted_time = str(formatted_time)
-			tabela = formatted_time.split("-")
-			formatted_time = tabela[2] + "." + tabela[1] + "." + tabela[0]
-			full_name = vpis_.student.ime + " " +  vpis_.student.priimek 
-			address_parts = vpis_.student.naslov_stalno_bivalisce.split(",")
- 
-			im = Image(logo, 2*inch, 2*inch)
-			Story.append(im)
-			
-			styles=getSampleStyleSheet()
-			styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
-			p = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera')
-			p1 = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera',alignment=TA_RIGHT)
-			p2 = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera',alignment=TA_CENTER)
-			ptext = '<font size=12>%s</font>' % formatted_time
-			par = Paragraph(ptext, p1)
-			Story.append(par)
-			Story.append(Spacer(1, 12))
- 
-			# Create return address
-			ptext = '<font size=12>%s</font>' % full_name
-			par = Paragraph(ptext, p)
-			Story.append(par)
-			for part in address_parts:
-				ptext = '<font size=12>%s</font>' % part.strip()
-				par = Paragraph(ptext, p)
-				Story.append(par)
-			
-			Story.append(Spacer(1, 50))
-
-			text = "POTRDILO O VPISU"
-			ptext = '<font size=13>%s</font>' % text
-			par = Paragraph(ptext, p2)
-			Story.append(par)
-			Story.append(Spacer(1, 20))
- 
-			ptext = '<font size=12>Vpisna številka : %d <br/>Priimek, ime: %s, %s<br/>Država rojstva: %s<br/>Študijsko leto: %s<br/>Vrsta vpisa: %s<br/>Način in oblika študija: %s<br/>Letnik,dodatno leto: %s<br/>Študijski program: %s<br/>Vrsta in stopnja študija: %d %s</font>' % (vpis_.student.vpisna_stevilka,vpis_.student.priimek,vpis_.student.ime,vpis_.student.drzava_rojstva.slovenski_naziv,vpis_.studijsko_leto.ime,vpis_.vrsta_vpisa.opis,vpis_.nacin_studija.opis,vpis_.letnik.ime,vpis_.studijski_program.naziv,vpis_.studijski_program.id,vpis_.studijski_program.stopnja)
-			par = Paragraph(ptext, p)
-			Story.append(par)
-			Story.append(Spacer(1, 48))
-			
-			
-			ptext = '<font size=12>prof. dr. Bojan Orel, dekan</font>'
-			par = Paragraph(ptext, p1)
-			Story.append(par)
-			Story.append(Spacer(1, 12))
-			Story.append(PageBreak())
-
-			Story = Story + Story + Story + Story + Story + Story
-			doc.build(Story)
-
-			return response
 
 		if request.method == 'POST' and 'prikaz_seznama' in request.POST:
 
@@ -565,56 +498,116 @@ def preveri_seznam(request):
 	else:
 		return HttpResponse("Nimaš dovoljenja.")
 
+def naroci_potrdila(request):
+	if request.method == 'POST' and 'naroci' in request.POST:
+		studijsko_leto_ime = request.POST.get('studijsko_leto')
+		st_potrdil = request.POST.get('st_potrdil')
+		student = Student.objects.get(email = request.user.email)
+		#print(student)
+		#print(studijsko_leto_)
+		vpis_ = Vpis.objects.filter(studijsko_leto__ime = studijsko_leto_ime, student = student.vpisna_stevilka)[0]
+		print(vpis_)
+		if st_potrdil:
+			vpis_.st_narocenih_potrdil = st_potrdil
+			vpis_.save()
 
-def students_by_subject(request):
+	student = Student.objects.get(email = request.user.email)
+	vpisi = Vpis.objects.filter(student = student.vpisna_stevilka)
 
+	context = {
+		'student': student,
+		'vpisi': vpisi
+		}
 
-	leto = StudijskoLeto.objects.latest('id')
+	return render(request, 'naroci_potrdila.html',context)
 
-	if request.POST.get('izbrano-leto') != None:
-		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))
+def natisni_potrdila(request): # dodaj se da izbrise stevilo narocenih potrdil.
+	if request.method == 'POST' and 'natisni' in request.POST:
+		st_potrdil = request.POST.get('st_potrdil_')
+		email_ = request.POST.get('email_')
+		stud_leto = request.POST.get('stud_leto')
+		print(email_)
+		print(stud_leto)
+		print(st_potrdil)
 
-	predmeti_list = Predmet.objects.all().order_by('ime')
-	paginator = Paginator(predmeti_list, 24)
-	page = request.GET.get('page')
-	predmeti = paginator.get_page(page)
+		return natisni_potrdilo(email_,stud_leto,st_potrdil)
+
+	vpisi = Vpis.objects.filter(~Q(st_narocenih_potrdil = 0))
+	context= {
+		'vpisi': vpisi
+		}
+
+	return render(request, 'natisni_potrdila.html',context)
+
+def natisni_potrdilo(vpis_student_email, studijsko_leto_ime, st_potrdil):
+	print(studijsko_leto_ime)
+	vpis_ = Vpis.objects.filter(student__email = vpis_student_email, studijsko_leto__ime = studijsko_leto_ime)[0]
+	print(vpis_)
+
+	response = HttpResponse(content_type='application/pdf')
+	response['Content-Disposition'] = 'inline; filename="studenti.pdf"'
 			
-	leta = StudijskoLeto.objects.all()
-	context = {
-		'predmeti': predmeti,
-		'leta': leta,
-		'leto': leto
-	}
-
-	return render(request, 'all_subjects.html',context)
-
-def subject_data(request, leto, id):
-
-	predmet = Predmet.objects.get(id=id)
-
-	leto = StudijskoLeto.objects.get(id=leto)		
-
-	predmetiStudenta = PredmetiStudenta.objects.all()
-
-	student_list = []
-
-	for pr in predmetiStudenta:
-		if pr.vpis.studijsko_leto==leto and pr.vpis.potrjen :
-			for p in pr.predmeti.all():
-				if p == predmet:
-					student_list.append(pr.vpis)
-
-	paginator = Paginator(student_list, 15)
-	page = request.GET.get('page')
-	students = paginator.get_page(page)
-
-	context = {
-		'predmet': predmet,
-		'students': students,
-		'leto': leto
-	}
-
-	return render(request, 'subject.html',context)
+	doc = SimpleDocTemplate(response,pagesize=letter,
+				rightMargin=72,leftMargin=72,
+				topMargin=72,bottomMargin=18)
+	Story=[]
+	logo = "student/Logo_UL_FRI.png"
+	magName = "Pythonista"
+	issueNum = 12
+	subPrice = "99.00"
 
 
+	formatted_time = datetime.date.today()
+	formatted_time = str(formatted_time)
+	tabela = formatted_time.split("-")
+	formatted_time = tabela[2] + "." + tabela[1] + "." + tabela[0]
+	full_name = vpis_.student.ime + " " +  vpis_.student.priimek 
+	address_parts = vpis_.student.naslov_stalno_bivalisce.split(",")
+ 
+	im = Image(logo, 2*inch, 2*inch)
+	Story.append(im)
+			
+	styles=getSampleStyleSheet()
+	styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY))
+	p = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera')
+	p1 = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera',alignment=TA_RIGHT)
+	p2 = ParagraphStyle('MyNormal',parent=styles['Normal'], fontName='Vera',alignment=TA_CENTER)
+	ptext = '<font size=12>%s</font>' % formatted_time
+	par = Paragraph(ptext, p1)
+	Story.append(par)
+	Story.append(Spacer(1, 12))
+ 
+	# Create return address
+	ptext = '<font size=12>%s</font>' % full_name
+	par = Paragraph(ptext, p)
+	Story.append(par)
+	for part in address_parts:
+		ptext = '<font size=12>%s</font>' % part.strip()
+		par = Paragraph(ptext, p)
+		Story.append(par)
+			
+	Story.append(Spacer(1, 50))
 
+	text = "POTRDILO O VPISU"
+	ptext = '<font size=13>%s</font>' % text
+	par = Paragraph(ptext, p2)
+	Story.append(par)
+	Story.append(Spacer(1, 20))
+ 
+	ptext = '<font size=12>Vpisna številka : %d <br/>Priimek, ime: %s, %s<br/>Država rojstva: %s<br/>Študijsko leto: %s<br/>Vrsta vpisa: %s<br/>Način in oblika študija: %s<br/>Letnik,dodatno leto: %s<br/>Študijski program: %s<br/>Vrsta in stopnja študija: %d %s</font>' % (vpis_.student.vpisna_stevilka,vpis_.student.priimek,vpis_.student.ime,vpis_.student.drzava_rojstva.slovenski_naziv,vpis_.studijsko_leto.ime,vpis_.vrsta_vpisa.opis,vpis_.nacin_studija.opis,vpis_.letnik.ime,vpis_.studijski_program.naziv,vpis_.studijski_program.id,vpis_.studijski_program.stopnja)
+	par = Paragraph(ptext, p)
+	Story.append(par)
+	Story.append(Spacer(1, 48))
+			
+			
+	ptext = '<font size=12>prof. dr. Bojan Orel, dekan</font>'
+	par = Paragraph(ptext, p1)
+	Story.append(par)
+	Story.append(Spacer(1, 12))
+	Story.append(PageBreak())
+
+
+	add_story = int(st_potrdil)*Story
+
+	doc.build(add_story)
+	return response

@@ -77,9 +77,9 @@ class VrstaStudija(models.Model):
 #univerzitetni, visokosolski
 
     id = models.IntegerField(primary_key=True,verbose_name="Šifra")
-    opis = models.CharField(max_length=150, verbose_name="Opis")
+    opis = models.CharField(max_length=100, verbose_name="Opis")
     nacin_zakljucka = models.CharField(max_length=100, verbose_name="Način zaključka šolanja")
-    raven_klasius = models.CharField(max_length=10,verbose_name="Raven izobrazbe po KLASIUS-SRV")
+    raven_klasius = models.IntegerField(verbose_name="Raven izobrazbe po KLASIUS-SRV")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
 
     objects = Veljavni()
@@ -132,7 +132,7 @@ class OblikaStudija(models.Model):
 class Predmet(models.Model):
 
     id = models.IntegerField(primary_key=True,verbose_name="Šifra")
-    ime = models.CharField(max_length=100, verbose_name="Ime predmeta")
+    ime = models.CharField(max_length=100,unique=True,verbose_name="Ime predmeta")
     kreditne_tocke=models.IntegerField(default=6, verbose_name="Kreditne točke")
     veljaven = models.BooleanField(default=True, verbose_name="Veljavnost šifranta")
     
@@ -140,7 +140,7 @@ class Predmet(models.Model):
     all_objects = models.Manager()
 
     def __str__(self):
-        return str("(%05d) " % (self.id)) + self.ime
+        return str("(%07d) " % (self.id)) + self.ime
 
 
 class StudijskoLeto(models.Model):

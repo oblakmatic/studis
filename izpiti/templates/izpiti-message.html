@@ -14,7 +14,6 @@
                 <th scope="col">Izvajalec</th>
                 <th scope="col">Datum</th>
                 <th scope="col">Prostor</th>
-                <th scope="col">Prijava</th>
             </tr>
         </thead>
 
@@ -52,10 +51,9 @@
             {% endif %}
 
             <td>
-                {{ rok.datum|date:'d-m-Y' }}, {{ rok.datum|time:"H:i" }}
+                {{ rok.datum|date:'d.m.Y' }}, {{ rok.datum|time:"H:i" }}
             </td>
             <td>{{ rok.prostor_izvajanja }}</td>
-            <td>Prijava je mozna</td>
         </tr>
         {% endfor %}
 

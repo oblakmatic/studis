@@ -19,6 +19,6 @@ urlpatterns = [
     path('podatki/<int:id>', views.all_data, name="all_data"),
     path('potrdi_studente/', views.potrdi_studente, name="potrdi_studente"),
     path('preveri_seznam/', views.preveri_seznam, name="preveri_seznam"),
-    path('predmeti/', views.students_by_subject, name="students_by_subject"),
-    path('predmeti/<int:leto>/<int:id>/', views.subject_data, name="subject_data")
+	path('naroci_potrdila/', views.naroci_potrdila, name="naroci_potrdila"),
+	path('natisni_potrdila/', views.natisni_potrdila, name="natisni_potrdila")
 ]
