@@ -301,8 +301,7 @@ def emso_verify(emso):
 
 def predmetnik(request):
 
-    #A preko request.POST dobis spodnje vrednosti in jih das v get
-    #p_id = request.POST.get('program-id', '') namesto 1000468 npr
+
     if is_student(request.user):
 
         student = vrniStudenta(request.user.email)
@@ -314,61 +313,74 @@ def predmetnik(request):
         leto = vpis.studijsko_leto
         letnik = vpis.letnik
 
-
+        prosta_izbira = vpis.prosta_izbira
 
         predmeti_obvezni = []
         predmeti_izbirni = []
         predmeti_modul = []
-    
-        so_moduli = False
 
-        #1 in 2 letnik
-        if letnik != Letnik.objects.get(ime="3."):
+        #za imena modulov in
+        temporary = []
+
+        #1
+        if letnik == Letnik.objects.get(ime="1."):
         
-            predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik).values('predmet', 'obvezen')
+            predmetniki = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik)
             
-    
-            for i in predmeti_id:
+            for p in predmetniki:
+                if  p.obvezen:
+                    predmeti_obvezni.append(p.predmet)
 
-                predmet = Predmet.objects.filter(id=i['predmet'])
-                if i['obvezen']:
-                    predmeti_obvezni.append(predmet)
+
+
+        #2 letnik
+        elif letnik == Letnik.objects.get(ime="2."):
+        
+            predmetniki = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik)
             
+            for p in predmetniki:
+                if  p.obvezen:
+                    predmeti_obvezni.append(p.predmet)
+
                 else:
-                    predmeti_izbirni.append(predmet)
+                    temporary.append(p.strokoven)
+                    predmeti_izbirni.append(p.predmet)
+
         #3 letnik
         else:
-            so_moduli = True
-            predmeti_id = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, ima_modul=False).values('predmet', 'obvezen')
-            for i in predmeti_id:
-
-                predmet = Predmet.objects.filter(id=i['predmet'])
-                if i['obvezen']:
-                    predmeti_obvezni.append(predmet)
+        
+            predmetniki = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, modul=None)
+            
+            for p in predmetniki:
+                if  p.obvezen:
+                    predmeti_obvezni.append(p.predmet)
 
                 else:
-                    predmeti_izbirni.append(predmet)
-
-            num = Modul.objects.count()
+                    predmeti_izbirni.append(p.predmet)
+                    
+    
+            moduls = Modul.objects.all()
         
-            for m in range(1, num+1):
-                modul = Modul.objects.get(id=m)
-
+    
+            for m in moduls:
+                temporary.append(m.ime)
+                pr = Predmetnik.objects.filter(modul=m)
                 temp=[]
-                for p in modul.predmetniki.all().values():
-        
-                    temp.append(Predmet.objects.filter(id=p["predmet_id"]))
+                for p in pr:
+                    temp.append(p.predmet)
 
+            
                 predmeti_modul.append(temp)
 
 
         context = {
             'predmeti_o': predmeti_obvezni,
-            'predmeti_i': predmeti_izbirni,
-            'predmeti_m': predmeti_modul,
+            'predmeti_i': zip(predmeti_izbirni, temporary),
+            'predmeti_m': zip(predmeti_modul, temporary),
             'letnik': letnik,
-            'so_moduli': so_moduli
+            'prosta_izbira': prosta_izbira
         }
+
         return render(request,'vpis/predmetnik.html', context)
 
 
@@ -379,9 +391,15 @@ def koncaj_predmetnik(request):
     izbrani_predmeti = list(map(int, izbrani_predmeti))
     predmeti = Predmet.objects.filter(id__in=izbrani_predmeti)
 
-    student = vrniStudenta(request.user.email)
-    vpis1 = Vpis.objects.filter(potrjen=False).filter(student=student[0])[0]
+    izbrani_predmeti = request.POST.get('vsi-id', '').split(",")
 
+    izbrani_predmeti = list(map(int, izbrani_predmeti))
+    predmeti = Predmet.objects.filter(id__in=izbrani_predmeti)
+
+    student = vrniStudenta(request.user.email)
+    vpis2 = Vpis.objects.filter(potrjen=False).filter(student=student[0])
+    vpis1 = vpis2[0]
+    
     #TODO manjka vpis key, treba ga je preko predmetnik.html dati sem ali pa kako drugace
     predmetiStudenta = PredmetiStudenta()
     predmetiStudenta.vpis = vpis1
@@ -395,5 +413,7 @@ def koncaj_predmetnik(request):
     context = {
         'predmeti': predmeti,
     }
-
+    
+    vpis1.dokoncan_vpis = True
+    vpis1.save()
     return render(request,'vpis/predmetnik_izpis.html', context)
