@@ -61,9 +61,15 @@
                     </li>
                     {% endif %}
 
+                    {% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/predmeti/">Predmeti</a>
+                    </li>
+                    {% endif %}
+
                     {% if user.groups.all.0.name == "referent" %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/student/potrdi_studente/">Potrdi studente</a>
+                        <a class="nav-link" href="/student/potrdi_studente/">Potrdi študente</a>
                     </li>
                     {% endif %}
 

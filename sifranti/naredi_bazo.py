@@ -557,7 +557,7 @@ def naredi_bazo(request):
 
     user, created = User.objects.get_or_create(username="viljanmahnic", email="viljan.mahnic@fri.uni-lj.si")
     user.first_name = "Viljan"
-    user.last_name = "Mahnic"
+    user.last_name = "Mahnič"
         
     if created:
         user.set_password("adminadmin")

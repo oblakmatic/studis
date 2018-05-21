@@ -2,7 +2,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from student.models import Student, Zeton, Vpis, Kandidat
-from izpiti.models import PredmetiStudenta
+from izpiti.models import PredmetiStudenta, Ucitelj
 from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -568,13 +568,23 @@ def preveri_seznam(request):
 
 def students_by_subject(request):
 
+	if(request.user.groups.all()[0].name == "referent"):
+		predmeti_list = Predmet.objects.all().order_by('ime')
+	elif(request.user.groups.all()[0].name == "professors"):
+		ucitelj = Ucitelj.objects.get(email=request.user.email)
+
+		predmeti_list = ucitelj.predmeti.all()
+		print(predmeti_list)
+	else:
+		return redirect('')
 
 	leto = StudijskoLeto.objects.latest('id')
 
 	if request.POST.get('izbrano-leto') != None:
 		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))
 
-	predmeti_list = Predmet.objects.all().order_by('ime')
+	
+
 	paginator = Paginator(predmeti_list, 24)
 	page = request.GET.get('page')
 	predmeti = paginator.get_page(page)
@@ -598,12 +608,17 @@ def subject_data(request, leto, id):
 
 	student_list = []
 
+
 	for pr in predmetiStudenta:
 		if pr.vpis.studijsko_leto==leto and pr.vpis.potrjen :
 			for p in pr.predmeti.all():
 				if p == predmet:
 					student_list.append(pr.vpis)
 
+	
+	student_list = sorted(student_list, key=lambda x: ([alphabet.index(c) for c in x.student.priimek.lower()], \
+																	   [alphabet.index(c) for c in x.student.ime.lower()], \
+																	   [alphabet.index(c) for c in str(x.student.vpisna_stevilka)]))
 	paginator = Paginator(student_list, 15)
 	page = request.GET.get('page')
 	students = paginator.get_page(page)
