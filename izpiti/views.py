@@ -899,8 +899,4 @@ def sort_prijave(prijave):
 
 	return new_prijave
 
-def uredi_izpit():
-	
-
-def izbrisi_izpit():
 	
