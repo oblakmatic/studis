@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container sifrant">
+	<h4>Naslov za posiljanje: </h4>
+	{{ student.naslov_stalno_bivalisce }}
+
+	<h4>Vpisi</h4>
+	<table style="width: 100%" class="table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Studijsko Leto</th>
+				<th>Studijski program</th>
+				<th>Letnik</th>
+				<th>Vrsta Vpisa</th>
+				<th>Stevilo potrdil</th>
+				<th>Naroci potrdilo o vpisu</th>
+				<th>Stevilo narocenih potrdil</th>
+			</tr>
+		</thead>
+		{% for t in vpisi %}
+		<tr>
+			<td>{{forloop.counter}}.</td>
+			<td>{{t.studijsko_leto}}</td>
+			<td>{{t.studijski_program}}</td>
+			<td>{{t.letnik}}</td>
+			<td>{{t.vrsta_vpisa}}</td>
+			<form action="/student/naroci_potrdila/" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="studijsko_leto" value={{ t.studijsko_leto.ime }}>
+				<td><input type="number" name="st_potrdil" min="1" max="6"></td>
+				<td><button type="submit" name="naroci" class="btn btn-outline-primary mt-2">Naroci</button></td>
+			</form>
+			{% if t.st_narocenih_potrdil != 0 %}
+			<td>{{t.st_narocenih_potrdil}} (v obdelavi)</td>
+			{% else %}
+			<td>{{t.st_narocenih_potrdil}}</td>
+			{% endif %}
+		</tr>
+		{% endfor %}
+
+
+	</table>
+
+
+
+
+</div>
+{% endblock %}

@@ -59,6 +59,7 @@ def uvozi_poste():
         
     return
 
+
 def naredi_bazo(request):
     
     print('\x1b[6;30;42m' + 'Začetek delanja baze ' + '\x1b[0m')
@@ -180,8 +181,8 @@ def naredi_bazo(request):
     a_izv_teh = IzvedbaPredmeta(predmet = a_teh, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
     a_izv_teh.save()
 
-    a = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
-    a.save()
+    a_obl_izv = IzvedbaPredmeta(predmet = a_obl, studijsko_leto = a_17_18, ucitelj_1 = a_narvika)
+    a_obl_izv.save()
     a = IzvedbaPredmeta(predmet = a_ep, studijsko_leto = a_17_18, ucitelj_1 = a_darja, ucitelj_2 = a_jaka, ucitelj_3 = a_mateja)
     a.save()
     
@@ -237,9 +238,8 @@ def naredi_bazo(request):
     zeton2.save()
 
     #izvedba
-    a_ns2.save()
-    a = IzvedbaPredmeta(predmet = a_P1, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
-    a.save()
+    a_p1_izv = IzvedbaPredmeta(predmet = a_P1, studijsko_leto = a_17_18, ucitelj_1 = a_vilijan)
+    a_p1_izv.save()
 
     a_aljaz = Student(vpisna_stevilka = "63150255", emso = "5869362456789", priimek="Rupar", ime="Aljaž", naslov_stalno_bivalisce="Godešič 163, 4220 Škofja Loka", drzava=a_slo, drzava_rojstva = a_slo, posta= a_sklPosta, obcina=a_sklObcina,obcina_rojstva= a_ljObcina, telefon="031866686", email="ar1961@student.uni-lj.si")
     a_aljaz.save()
@@ -308,9 +308,41 @@ def naredi_bazo(request):
     a.save()
 
     #podatki za vpis ocen izpita
+    #podatki za vpis ocen izpita
     new_date = datetime.datetime(2018, 3, 3, 14, 15)
     a_rok = Rok(izvedba_predmeta = a_izv_teh, datum = new_date, prostor_izvajanja = "A1")
     a_rok.save()
+
+    #roki za demonstracijo
+    rok_date = datetime.datetime(2018, 5, 11, 12, 10)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 14, 15, 55)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 15, 6, 5)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 25, 13, 2)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 5, 6, 18, 7)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 6, 5, 16, 35)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+    rok_date = datetime.datetime(2018, 6, 6, 12, 15)
+    rok1 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date)
+    rok1.save()
+
+
 
     new_date = datetime.datetime(2018, 2, 15, 14, 30)
     a_prijava1 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaAljaz, rok = a_rok, zaporedna_stevilka_polaganja = 1)
@@ -327,6 +359,23 @@ def naredi_bazo(request):
     new_date = datetime.datetime(2018, 2, 12, 19, 20)
     a_prijava4 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaMaja, rok = a_rok, zaporedna_stevilka_polaganja = 1)
     a_prijava4.save()
+
+
+    #zagovor odjave
+
+    #rok na katerega se lahko prijavis in odjavis.
+    rok_date = datetime.datetime(2018, 6, 29, 10, 10)
+    rok1 = Rok(izvedba_predmeta = a_p1_izv, datum = rok_date)
+    rok1.save()
+
+    #rok na katerega si prijavljen vendar odjava ni več mogoča
+    rok_date = datetime.datetime(2018, 5, 21, 19, 00)
+    rok1 = Rok(izvedba_predmeta = a_p1_izv, datum = rok_date)
+    rok1.save()
+
+    new_date = datetime.datetime(2018, 5, 18, 15, 15)
+    a_prijava5 = Prijava(created_at = new_date, predmeti_studenta = a_predmetiStudentaAljaz, rok = rok1, zaporedna_stevilka_polaganja = 1)
+    a_prijava5.save()
 
 
 

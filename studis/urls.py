@@ -18,7 +18,6 @@ from django.urls import path, re_path, include
 from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
 from studis.views import login, auth_view, logout, invalid, home_view
-from sifranti.views import naredi_bazo
 
 urlpatterns = [
 	path('', home_view, name='home'),
@@ -37,8 +36,7 @@ urlpatterns = [
     path('password_reset/done/', auth_views.password_reset_done, name='password_reset_done'),
     re_path('reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',
         auth_views.password_reset_confirm, name='password_reset_confirm'),
-    path('reset/done/', auth_views.password_reset_complete, name='password_reset_complete'),
-    path('naredibazo/',naredi_bazo,name='naredibazo'),
+    path('reset/done/', auth_views.password_reset_complete, name='password_reset_complete')
 
 ]
     

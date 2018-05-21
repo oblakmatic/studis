@@ -112,10 +112,12 @@ ENV/
 \.idea/
 
 \.vscode/
-
+.vscode
 \.vs/
+.vs/
 
 *.pyc
 db.sqlite3
 
-*/migrations/
+\**/migrations/
+**/migrations/
