@@ -2,6 +2,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from student.models import Student, Zeton, Vpis, Kandidat
+from izpiti.models import PredmetiStudenta, Ucitelj
 from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -513,13 +514,71 @@ def naroci_potrdila(request):
 
 	student = Student.objects.get(email = request.user.email)
 	vpisi = Vpis.objects.filter(student = student.vpisna_stevilka)
+	
+def students_by_subject(request):
+
+	if(request.user.groups.all()[0].name == "referent"):
+		predmeti_list = Predmet.objects.all().order_by('ime')
+	elif(request.user.groups.all()[0].name == "professors"):
+		ucitelj = Ucitelj.objects.get(email=request.user.email)
+
+		predmeti_list = ucitelj.predmeti.all()
+		print(predmeti_list)
+	else:
+		return redirect('')
+
+	leto = StudijskoLeto.objects.latest('id')
+
+	if request.POST.get('izbrano-leto') != None:
+		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))
+
+	
+
+	paginator = Paginator(predmeti_list, 24)
+	page = request.GET.get('page')
+	predmeti = paginator.get_page(page)
+			
+	leta = StudijskoLeto.objects.all()
+	context = {
+		'predmeti': predmeti,
+		'leta': leta,
+		'leto': leto
+	}
+
+	return render(request, 'all_subjects.html',context)
+
+def subject_data(request, leto, id):
+
+	predmet = Predmet.objects.get(id=id)
+
+	leto = StudijskoLeto.objects.get(id=leto)		
+
+	predmetiStudenta = PredmetiStudenta.objects.all()
+
+	student_list = []
+
+
+	for pr in predmetiStudenta:
+		if pr.vpis.studijsko_leto==leto and pr.vpis.potrjen :
+			for p in pr.predmeti.all():
+				if p == predmet:
+					student_list.append(pr.vpis)
+
+	
+	student_list = sorted(student_list, key=lambda x: ([alphabet.index(c) for c in x.student.priimek.lower()], \
+																	   [alphabet.index(c) for c in x.student.ime.lower()], \
+																	   [alphabet.index(c) for c in str(x.student.vpisna_stevilka)]))
+	paginator = Paginator(student_list, 15)
+	page = request.GET.get('page')
+	students = paginator.get_page(page)
 
 	context = {
-		'student': student,
-		'vpisi': vpisi
-		}
+		'predmet': predmet,
+		'students': students,
+		'leto': leto
+	}
 
-	return render(request, 'naroci_potrdila.html',context)
+	return render(request, 'subject.html',context)
 
 def natisni_potrdila(request): # dodaj se da izbrise stevilo narocenih potrdil.
 	if request.method == 'POST' and 'natisni' in request.POST:

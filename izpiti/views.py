@@ -898,3 +898,5 @@ def sort_prijave(prijave):
 				break
 
 	return new_prijave
+
+	

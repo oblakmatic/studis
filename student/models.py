@@ -48,6 +48,7 @@ class Zeton(models.Model):
     nacin_studija = models.ForeignKey(NacinStudija, null=True, on_delete= models.SET_NULL)
     # vrsta studija je kao oblika studija
     vrsta_studija  = models.ForeignKey(VrstaStudija, null=True, on_delete= models.SET_NULL)
+    oblika_studija = models.ForeignKey(OblikaStudija, null=True, on_delete= models.SET_NULL)
     # ce ima pravico do proste izbire predmetov v 3.letniku
     pravica_do_izbire = models.BooleanField(default = False)
     #ali je bil zeton izkoriscen, torej ce ga je student ze uporabil za vpis
@@ -77,6 +78,8 @@ class Vpis(models.Model):
     class Meta:
         unique_together = (('student', 'studijsko_leto'),)
     
+class Modul(models.Model):
+    ime = models.CharField(max_length=100, unique=True,verbose_name="Ime Modula")
 
 class Predmetnik(models.Model):
     studijski_program = models.ForeignKey(StudijskiProgram, on_delete= models.CASCADE)
@@ -87,11 +90,10 @@ class Predmetnik(models.Model):
     ima_modul = models.BooleanField(default = False)
     strokoven = models.BooleanField(default = False)
 
+    modul = models.ForeignKey(Modul, null=True, blank=True, on_delete= models.SET_NULL)
+
     class Meta:
         unique_together = (('studijski_program', 'studijsko_leto', 'letnik', 'predmet'),)
 
-class Modul(models.Model):
-    ime = models.CharField(max_length=100, unique=True,verbose_name="Ime Modula")
-    predmetniki = models.ManyToManyField(Predmetnik, null=True)
 
 

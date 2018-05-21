@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Seznam predmetov{% endblock %}
+
+{% block content %}
+<div class="container sifrant">
+
+<button class="btn btn-outline-secondary btn-sm mb-2" onclick="window.history.back();">&lt; Nazaj</button>
+
+
+<h3>{{predmet}}</h3>
+<h5>{{leto}}</h5>
+<h5>{{ sporocilo }}</h5>
+
+{% if students.start_index > 0 %}
+<table class="table mt-4">
+    <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Priimek</th>
+          <th scope="col">Ime</th>
+          <th scope="col">Vpisna številka</th>
+          <th scope="col">Email</th>
+          <th scope="col">Vrsta vpisa</th>
+        </tr>
+      </thead>
+<tbody>
+  {% for t in students %}
+    
+      <td>{{ forloop.counter|add:students.start_index|add:"-1"}}</td>
+      <td>{{ t.student.priimek }}</td>
+      <td>{{ t.student.ime }}</td>
+      <td>{{ t.student.vpisna_stevilka }}</td>
+      <td>{{ t.student.email }}</td>
+      <td>{{ t.vrsta_vpisa }}</td>
+    </tr>
+
+  {% endfor %}
+</tbody>
+  </table>
+
+
+  <div>
+    <ul class="pagination">
+     
+        {% if students.has_previous %}
+          <li class="page-item">
+            <a href="?page={{ students.previous_page_number }}" class="page-link">&laquo;</a>
+          </li>
+      {% else %}
+          <li class="page-item disabled">
+            <a class="page-link">&laquo;</a>
+          </li>
+        {% endif %}
+
+        {% for pg in students.paginator.page_range %}
+          {% if students.number == pg %}
+            <li class="page-item active">
+              <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+            </li>
+          {% else %}
+            <li class="page-item">
+              <a href="?page={{pg}}" class="page-link">{{pg}}</a>
+            </li>
+          {% endif %}
+      {% endfor %}
+     
+
+      {% if students.has_next %}
+          <li class="page-item">
+            <a href="?page={{ students.next_page_number }}" class="page-link">&raquo;</a>
+          </li>
+      {% else %}
+          <li class="page-item disabled">
+            <a class="page-link">&raquo;</a>
+          </li>
+        {% endif %}
+
+       
+    </ul>
+  </div>
+
+{% else %}
+<p>V ta predmet trenutno ni vpisan noben študent.</p>
+{% endif %}
+
+</div>
+{% endblock %}
