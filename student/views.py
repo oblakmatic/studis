@@ -27,6 +27,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
+import pdfkit
+from django.template.loader import render_to_string
+from django.core.files.storage import FileSystemStorage
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from operator import itemgetter, attrgetter
 
@@ -572,6 +576,17 @@ def subject_data(request, leto, id):
 	page = request.GET.get('page')
 	students = paginator.get_page(page)
 
+	#naredi pdf tabelo vpisanih študentov v predmet
+	if request.method == "POST":
+		naredi_predmet_pdf(predmet, leto, student_list)
+
+		name = str(predmet.id) +'.pdf'
+		fs = FileSystemStorage('/tmp')
+		with fs.open(name) as pdf:
+			response = HttpResponse(pdf, content_type='application/pdf')
+			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+			return response
+
 	context = {
 		'predmet': predmet,
 		'students': students,
@@ -670,3 +685,64 @@ def natisni_potrdilo(vpis_student_email, studijsko_leto_ime, st_potrdil):
 
 	doc.build(add_story)
 	return response
+
+def naredi_predmet_pdf(predmet, leto, student_list):
+	
+	context = {
+	   'predmet' : predmet,
+	   'leto' : leto,
+	   'students': student_list,
+	}
+
+	options = {
+    	'page-size': 'A4',
+        'dpi': 600,
+        '--footer-right': '[page]',
+	}
+
+	html_string =  render_to_string('pdf_predmet.html',context)
+	pdfkit.from_string( html_string,'/tmp/'+ str(predmet.id) + '.pdf', options=options)
+	return
+
+def naredi_predmet_csv(request, leto, id):
+
+	predmet = Predmet.objects.get(id=id)
+
+	leto = StudijskoLeto.objects.get(id=leto)		
+
+	predmetiStudenta = PredmetiStudenta.objects.all()
+
+	student_list = []
+
+
+	for pr in predmetiStudenta:
+		if pr.vpis.studijsko_leto==leto and pr.vpis.potrjen :
+			for p in pr.predmeti.all():
+				if p == predmet:
+					student_list.append(pr.vpis)
+
+	
+	student_list = sorted(student_list, key=lambda x: ([alphabet.index(c) for c in x.student.priimek.lower()], \
+																	   [alphabet.index(c) for c in x.student.ime.lower()], \
+																	   [alphabet.index(c) for c in str(x.student.vpisna_stevilka)]))
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="studenti.csv"'
+
+	writer = csv.writer(response)
+
+	writer.writerow([str(predmet).encode('UTF-8').decode('UTF-8')])
+	writer.writerow([str(leto).encode('UTF-8').decode('UTF-8')])
+	writer.writerow(['#', 'Priimek', 'Ime', 'Vpisna številka'.encode('UTF-8').decode('UTF-8'), "Email", "Vrsta vpisa"])
+
+	for num, student in enumerate(student_list):
+		 writer.writerow([str(num), student.student.priimek.encode('UTF-8').decode('UTF-8'), 
+		 	student.student.ime.encode('UTF-8').decode('UTF-8'), 
+		 	student.student.vpisna_stevilka, student.student.email, 
+		 	str(student.vrsta_vpisa).encode('UTF-8').decode('UTF-8')])
+
+	return response
+
+
+
+
+

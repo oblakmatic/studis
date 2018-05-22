@@ -7,8 +7,26 @@
 
 <button class="btn btn-outline-secondary btn-sm mb-2" onclick="window.history.back();">&lt; Nazaj</button>
 
+<div class="row">
+    <div class="col-sm-9">
+      <h3>{{predmet}}</h3>
+    </div>
+{% if students.start_index > 0 %}
+  <div class="col-sm-3">
+    <form  method="post" action="/student/predmeti/{{leto.id}}/{{predmet.id}}/">
+    {% csrf_token %}
+        <button type="submit" class="btn btn-outline-primary mr-2" style="float:right">Izvozi PDF</button>
+    </form>
 
-<h3>{{predmet}}</h3>
+    <form  method="post" action="/student/predmeti/{{leto.id}}/{{predmet.id}}/csv">
+    {% csrf_token %}
+        <button type="submit" class="btn btn-outline-primary mr-2" style="float:right">Izvozi CSV</button>
+    </form>
+  </div>
+
+{% endif %}
+
+</div>
 <h5>{{leto}}</h5>
 <h5>{{ sporocilo }}</h5>
 
@@ -25,19 +43,21 @@
         </tr>
       </thead>
 <tbody>
+  
   {% for t in students %}
-    
+  <tr>
       <td>{{ forloop.counter|add:students.start_index|add:"-1"}}</td>
       <td>{{ t.student.priimek }}</td>
       <td>{{ t.student.ime }}</td>
       <td>{{ t.student.vpisna_stevilka }}</td>
       <td>{{ t.student.email }}</td>
       <td>{{ t.vrsta_vpisa }}</td>
-    </tr>
 
+  </tr>
   {% endfor %}
+ 
 </tbody>
-  </table>
+</table>
 
 
   <div>
