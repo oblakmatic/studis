@@ -22,6 +22,7 @@ urlpatterns = [
 	path('naroci_potrdila/', views.naroci_potrdila, name="naroci_potrdila"),
 	path('natisni_potrdila/', views.natisni_potrdila, name="natisni_potrdila"),
     path('predmeti/', views.students_by_subject, name="students_by_subject"),
-    path('predmeti/<int:leto>/<int:id>/', views.subject_data, name="subject_data")
+    path('predmeti/<int:leto>/<int:id>/', views.subject_data, name="subject_data"),
+    path('predmeti/<int:leto>/<int:id>/csv', views.naredi_predmet_csv, name="naredi_premdmet_csv"),
 
 ]

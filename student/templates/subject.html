@@ -11,12 +11,21 @@
     <div class="col-sm-9">
       <h3>{{predmet}}</h3>
     </div>
+{% if students.start_index > 0 %}
   <div class="col-sm-3">
-    <form  method="post">
+    <form  method="post" action="/student/predmeti/{{leto.id}}/{{predmet.id}}/">
     {% csrf_token %}
-        <button type="submit" class="btn btn-outline-primary" style="float:right">Izvozi PDF</button>
+        <button type="submit" class="btn btn-outline-primary mr-2" style="float:right">Izvozi PDF</button>
+    </form>
+
+    <form  method="post" action="/student/predmeti/{{leto.id}}/{{predmet.id}}/csv">
+    {% csrf_token %}
+        <button type="submit" class="btn btn-outline-primary mr-2" style="float:right">Izvozi CSV</button>
     </form>
   </div>
+
+{% endif %}
+
 </div>
 <h5>{{leto}}</h5>
 <h5>{{ sporocilo }}</h5>

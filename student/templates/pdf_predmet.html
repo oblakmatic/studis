@@ -1,5 +1,14 @@
 <head>
     <meta charset="UTF-8"> 
+    <style>
+    th, td{
+      text-align:left;
+      width:200px;
+      height:35px;
+    }
+
+
+    </style>
 </head>
 
 <h3>{{predmet}}</h3>
@@ -7,27 +16,27 @@
 
 
 {% if students %}
-<table class="table mt-4">
+<table >
     <thead>
         <tr>
-          <th scope="col" class="mr-3 pdf-m" >#</th>
-          <th scope="col" class="mr-3 pdf-m" >Priimek</th>
-          <th scope="col" class="mr-3 pdf-m" >Ime</th>
-          <th scope="col" class="mr-3 pdf-m" >Vpisna številka</th>
-          <th scope="col" class="mr-3 pdf-m" >Email</th>
-          <th scope="col" class="pdf-m">Vrsta vpisa</th>
+          <th scope="col"  >#</th>
+          <th scope="col"  >Priimek</th>
+          <th scope="col"  >Ime</th>
+          <th scope="col"  >Vpisna številka</th>
+          <th scope="col"  >Email</th>
+          <th scope="col" >Vrsta vpisa</th>
         </tr>
       </thead>
 <tbody>
   
   {% for t in students %}
     <tr class="mt-4">
-      <td class="mr-3 pdf-m" >{{ forloop.counter }}</td>
-      <td class="mr-3 pdf-m" >{{ t.student.priimek }}</td>
-      <td class="mr-3 pdf-m" >{{ t.student.ime }}</td>
-      <td class="mr-3 pdf-m" >{{ t.student.vpisna_stevilka }}</td>
-      <td class="mr-3 pdf-m" >{{ t.student.email }}</td>
-      <td class="pdf-m" >{{ t.vrsta_vpisa }}</td>
+      <td >{{ forloop.counter }}</td>
+      <td >{{ t.student.priimek }}</td>
+      <td >{{ t.student.ime }}</td>
+      <td >{{ t.student.vpisna_stevilka }}</td>
+      <td  >{{ t.student.email }}</td>
+      <td >{{ t.vrsta_vpisa }}</td>
     </tr>
   {% endfor %}
    
