@@ -24,5 +24,6 @@ urlpatterns = [
     path('predmeti/', views.students_by_subject, name="students_by_subject"),
     path('predmeti/<int:leto>/<int:id>/', views.subject_data, name="subject_data"),
     path('predmeti/<int:leto>/<int:id>/csv', views.naredi_predmet_csv, name="naredi_premdmet_csv"),
+    path('predmeti/stevilo/', views.students_by_number, name="students_by_number"),
 
 ]

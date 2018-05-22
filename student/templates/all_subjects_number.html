@@ -5,38 +5,53 @@
 {% block content %}
 <div class="container sifrant">
 
-<h3>Seznam predmetov</h3>
-
+<h3>Seznam predmetov po številu vpisanih</h3>
 
 <h5>{{ sporocilo }}</h5>
 
+<form method="post">
+  {% csrf_token %}
 <div class="row">
+ 
   <div class="col-sm-2">
-  <form method="post">
-    {% csrf_token %}
-    <div class="form-group">
-      <select class="form-control" name="izbrano-leto" onchange="this.form.submit()">
-        {% for l in leta %}
-          <option {% if l == leto %} selected {% endif %}>{{ l.ime }}</option>
-        {% endfor %}
-      </select>
-    </div>
-  </form>
+      <div class="form-group mr-1">
+        <select class="form-control" name="izbrano-leto" onchange="this.form.submit()">
+          {% for l in leta %}
+            <option {% if l == leto %} selected {% endif %}>{{ l.ime }}</option>
+          {% endfor %}
+        </select>
+      </div>
   </div>
-{% if user.groups.all.0.name == "referent" %}
-<div class="col-sm-4">
-  <a href="/student/predmeti/stevilo/" class="btn btn-outline-primary">Število vpisanih</a>
-</div>
 
-{% endif %}
+  <div class="col-sm-3">
+      <div class="form-group mr-1">
+        <select class="form-control" name="izbran-program" onchange="this.form.submit()">
+          {% for l in programi %}
+            <option {% if l == program %} selected {% endif %}>{{ l.naziv }}</option>
+          {% endfor %}
+        </select>
+      </div>
+  </div>
+
+  <div class="col-sm-1">
+      <div class="form-group">
+        <select class="form-control" name="izbran-letnik" onchange="this.form.submit()">
+          {% for l in letniki %}
+            <option {% if l == letnik %} selected {% endif %}>{{ l }}</option>
+          {% endfor %}
+        </select>
+      </div>
+  </div>
 </div>
+</form>
+
 
 {% if predmeti %}
 <ul class="list_group row">
 {% for temp in predmeti %}
 	
-		<li class="list-group-item mb-2 col-xs-6 myhover" style="width: 44%; margin-right: 2%">
-			<a href="{{leto.id}}/{{temp.id}}" style="color:#373a3c">{{ temp }}</a>
+		<li class="list-group-item mb-2 col-xs-6" style="width: 44%; margin-right: 2%">
+			{{ temp }}
 		</li>
 
 {% endfor %}

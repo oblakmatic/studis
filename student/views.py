@@ -1,7 +1,7 @@
 ﻿from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from student.models import Student, Zeton, Vpis, Kandidat
+from student.models import Student, Zeton, Vpis, Kandidat, Predmetnik
 from izpiti.models import PredmetiStudenta, Ucitelj
 from sifranti.models import *
 from django.contrib.auth.models import User
@@ -685,6 +685,65 @@ def natisni_potrdilo(vpis_student_email, studijsko_leto_ime, st_potrdil):
 
 	doc.build(add_story)
 	return response
+
+
+def students_by_number(request):
+
+
+	leto = StudijskoLeto.objects.latest('id')
+	program = StudijskiProgram.objects.get(id=1000468)
+	letnik = Letnik.objects.get(ime="1.")
+
+	if request.POST.get('izbrano-leto') != None:
+		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))
+
+	if request.POST.get('izbran-program') != None:
+		program = StudijskiProgram.objects.get(naziv=request.POST.get('izbran-program'))
+
+	if request.POST.get('izbran-letnik') != None:
+		letnik = Letnik.objects.get(ime=request.POST.get('izbran-letnik'))
+
+
+	predmetnik_list = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik).values('predmet')
+
+	predmeti_list=[]
+	for p in predmetnik_list:
+		predmeti_list.append(p['predmet'])
+
+	predmeti_list=Predmet.objects.filter(id__in=predmeti_list).order_by('ime')
+
+	predmetiStudenta = PredmetiStudenta.objects.all()
+
+	student_list = []
+
+
+	for pr in predmetiStudenta:
+		if pr.vpis.studijsko_leto==leto and pr.vpis.studijski_program==program and pr.vpis.letnik==letnik and pr.vpis.potrjen :
+			for p in pr.predmeti.all():
+				print(p)
+				if p == predmet:
+					student_list.append(pr.vpis)
+
+
+	paginator = Paginator(predmeti_list, 24)
+	page = request.GET.get('page')
+	predmeti = paginator.get_page(page)
+			
+	leta = StudijskoLeto.objects.all()
+	programi = StudijskiProgram.objects.all()
+	letniki = Letnik.objects.all()
+
+	context = {
+		'predmeti': predmeti,
+		'leta': leta,
+		'leto': leto,
+		'programi': programi,
+		'program': program,
+		'letniki': letniki,
+		'letnik': letnik
+	}
+
+	return render(request, 'all_subjects_number.html',context)
 
 def naredi_predmet_pdf(predmet, leto, student_list):
 	
