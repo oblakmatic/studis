@@ -27,6 +27,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
+import pdfkit
+from django.template.loader import render_to_string
+from django.core.files.storage import FileSystemStorage
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from operator import itemgetter, attrgetter
 
@@ -572,6 +576,17 @@ def subject_data(request, leto, id):
 	page = request.GET.get('page')
 	students = paginator.get_page(page)
 
+	#naredi pdf tabelo vpisanih študentov v predmet
+	if request.method == "POST":
+		naredi_predmet_pdf(predmet, leto, student_list)
+
+		name = str(predmet.id) +'.pdf'
+		fs = FileSystemStorage('/tmp')
+		with fs.open(name) as pdf:
+			response = HttpResponse(pdf, content_type='application/pdf')
+			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+			return response
+
 	context = {
 		'predmet': predmet,
 		'students': students,
@@ -670,3 +685,27 @@ def natisni_potrdilo(vpis_student_email, studijsko_leto_ime, st_potrdil):
 
 	doc.build(add_story)
 	return response
+
+def naredi_predmet_pdf(predmet, leto, student_list):
+	
+	context = {
+	   'predmet' : predmet,
+	   'leto' : leto,
+	   'students': student_list,
+	}
+
+	options = {
+    	'page-size': 'A4',
+        'dpi': 600
+	}
+
+	html_string =  render_to_string('pdf_predmet.html',context)
+	pdfkit.from_string( html_string,'/tmp/'+ str(predmet.id) + '.pdf', options=options)
+	return
+
+
+
+
+
+
+

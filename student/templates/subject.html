@@ -7,8 +7,17 @@
 
 <button class="btn btn-outline-secondary btn-sm mb-2" onclick="window.history.back();">&lt; Nazaj</button>
 
-
-<h3>{{predmet}}</h3>
+<div class="row">
+    <div class="col-sm-9">
+      <h3>{{predmet}}</h3>
+    </div>
+  <div class="col-sm-3">
+    <form  method="post">
+    {% csrf_token %}
+        <button type="submit" class="btn btn-outline-primary" style="float:right">Izvozi PDF</button>
+    </form>
+  </div>
+</div>
 <h5>{{leto}}</h5>
 <h5>{{ sporocilo }}</h5>
 
@@ -25,19 +34,21 @@
         </tr>
       </thead>
 <tbody>
+  
   {% for t in students %}
-    
+  <tr>
       <td>{{ forloop.counter|add:students.start_index|add:"-1"}}</td>
       <td>{{ t.student.priimek }}</td>
       <td>{{ t.student.ime }}</td>
       <td>{{ t.student.vpisna_stevilka }}</td>
       <td>{{ t.student.email }}</td>
       <td>{{ t.vrsta_vpisa }}</td>
-    </tr>
 
+  </tr>
   {% endfor %}
+ 
 </tbody>
-  </table>
+</table>
 
 
   <div>

@@ -1,0 +1,37 @@
+<head>
+    <meta charset="UTF-8"> 
+</head>
+
+<h3>{{predmet}}</h3>
+<h5>{{leto}}</h5>
+
+
+{% if students %}
+<table class="table mt-4">
+    <thead>
+        <tr>
+          <th scope="col" class="mr-3 pdf-m" >#</th>
+          <th scope="col" class="mr-3 pdf-m" >Priimek</th>
+          <th scope="col" class="mr-3 pdf-m" >Ime</th>
+          <th scope="col" class="mr-3 pdf-m" >Vpisna številka</th>
+          <th scope="col" class="mr-3 pdf-m" >Email</th>
+          <th scope="col" class="pdf-m">Vrsta vpisa</th>
+        </tr>
+      </thead>
+<tbody>
+  
+  {% for t in students %}
+    <tr class="mt-4">
+      <td class="mr-3 pdf-m" >{{ forloop.counter }}</td>
+      <td class="mr-3 pdf-m" >{{ t.student.priimek }}</td>
+      <td class="mr-3 pdf-m" >{{ t.student.ime }}</td>
+      <td class="mr-3 pdf-m" >{{ t.student.vpisna_stevilka }}</td>
+      <td class="mr-3 pdf-m" >{{ t.student.email }}</td>
+      <td class="pdf-m" >{{ t.vrsta_vpisa }}</td>
+    </tr>
+  {% endfor %}
+   
+</tbody>
+</table>
+
+{% endif %}
