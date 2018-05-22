@@ -3,65 +3,137 @@
 
 <div class="container sifrant">
     <h3>Izberi rok</h3>
-    
-    <thead>
-        <table class="table">
 
-            <thead>
-                <tr>
-                    <th scope="col">Predmet</th>
-                    <th scope="col">Izvajalec</th>
-                    <th scope="col">Datum</th>
-                    <th scope="col">Izberi rok za vnos ocen</th>
-                    <th scope="col">Seznam prijavljenih</th>
+	<table class="table">
+		<thead>
+			<tr>
+				<th scope="col" width="20">Zaporedna stevilka</th>
+				<th scope="col">Predmet</th>
+				<th scope="col">Izvajalec</th>
+				<th scope="col">Datum</th>
+				<th scope="col">Izberi rok za vnos ocen</th>
+				<th scope="col">Seznam prijavljenih</th>
+			</tr>
+		</thead>
+		{% for rok in arr %}
+		<tr>
+			<td>
+				{{ forloop.counter }}.
+			</td>
+			<td>
+				{{ rok.izvedba_predmeta.predmet }}
+			</td>
+			{% if rok.izvedba_predmeta.ucitelj_3 != null %}
+			<td>
+				{{ rok.izvedba_predmeta.ucitelj_1.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+				{{ rok.izvedba_predmeta.ucitelj_2.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_2.priimek }},
+				{{ rok.izvedba_predmeta.ucitelj_3.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_3.priimek }}
+			</td>
+			{% elif rok.izvedba_predmeta.ucitelj_2 != null %}
+			<td>
+				{{ rok.izvedba_predmeta.ucitelj_1.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+				{{ rok.izvedba_predmeta.ucitelj_2.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_2.priimek }}
+			</td>
+			{% elif rok.izvedba_predmeta.ucitelj_1 != null %}
+			<td>
+				{{ rok.izvedba_predmeta.ucitelj_1.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_1.priimek }}
+			</td>
+			{% endif %}
+			<td>{{ rok.datum|date:'d.m.Y' }}, {{ rok.datum|time:'H:i' }}</td>
+			<form action="/izpiti/vnesi_ocene_predmeta/" method="post">
+				{% csrf_token %}
+				<td>
+					<input type="hidden" name="id_rok" value={{ rok.id }}>
+					<button type="submit" name="vnesi_ocene" class="btn btn-outline-primary mt-2">Vnesi ocene</button>
+				</td>
 
-                </tr>
-            </thead>
-            {% for rok in arr %}
-            <tr>
-                <td>
-                    {{ rok.izvedba_predmeta.predmet }}
-                </td>
-                {% if rok.izvedba_predmeta.ucitelj_3 != null %}
-                <td>
-                    {{ rok.izvedba_predmeta.ucitelj_1.ime }}
-                    {{ rok.izvedba_predmeta.ucitelj_1.priimek }},
-                    {{ rok.izvedba_predmeta.ucitelj_2.ime }}
-                    {{ rok.izvedba_predmeta.ucitelj_2.priimek }},
-                    {{ rok.izvedba_predmeta.ucitelj_3.ime }}
-                    {{ rok.izvedba_predmeta.ucitelj_3.priimek }}
-                </td>
-                {% elif rok.izvedba_predmeta.ucitelj_2 != null %}
-                <td>
-                    {{ rok.izvedba_predmeta.ucitelj_1.ime }}
-                    {{ rok.izvedba_predmeta.ucitelj_1.priimek }},
-                    {{ rok.izvedba_predmeta.ucitelj_2.ime }}
-                    {{ rok.izvedba_predmeta.ucitelj_2.priimek }}
-                </td>
-                {% elif rok.izvedba_predmeta.ucitelj_1 != null %}
-                <td>
-                    {{ rok.izvedba_predmeta.ucitelj_1.ime }}
-                    {{ rok.izvedba_predmeta.ucitelj_1.priimek }}
-                </td>
-                {% endif %}
-                <td>{{ rok.datum|date:'d-m-Y' }}, {{ rok.datum|time:'H:i' }}</td>
-                <form action="/izpiti/vnesi_ocene_predmeta/" method="post">
-                    {% csrf_token %}
-                    <td>
-                        <input type="hidden" name="id_rok" value={{ rok.id }}>
-                        <button type="submit" name="vnesi_ocene" class="btn btn-outline-primary mt-2">Vnesi ocene</button>
-                    </td>
-                    
-                </form>
-                <form action="/izpiti/seznam_prijavljenih/" method="post">
-                    {% csrf_token %}
-                    <td>
-                        <input type="hidden" name="id_rok" value={{ rok.id }}>
-                        <button type="submit" name="seznam" class="btn btn-outline-primary mt-2">Seznam</button>
-                    </td>
-                </form>
-            </tr>
-            {% endfor %}
+			</form>
+			<form action="/izpiti/seznam_prijavljenih/" method="post">
+				{% csrf_token %}
+				<td>
+					<input type="hidden" name="id_rok" value={{ rok.id }}>
+					<button type="submit" name="seznam" class="btn btn-outline-primary mt-2">Seznam</button>
+				</td>
+			</form>
+			<form action="/izpiti/uredi_rok/" method="post">
+				{% csrf_token %}
+				<td>
+					<input type="hidden" name="id_rok" value={{ rok.id }}>
+					<button type="submit" name="uredi" class="btn btn-outline-primary mt-2">Uredi</button>
+				</td>
+			</form>
+			<form action="/izpiti/izbrisi_rok/" method="post">
+				{% csrf_token %}
+				<td>
+					<input type="hidden" name="id_rok" value={{ rok.id }}>
+					<button type="submit" name="izbrisi" class="btn btn-outline-primary mt-2">Izbriši</button>
+				</td>
+			</form>
+		</tr>
+		{% endfor %}
+		</table>
+
+		<h3>Razpisani roki od danes naprej</h3>
+
+		<thead>
+			<table class="table">
+
+				<thead>
+					<tr>
+						<th scope="col" width="20">Zaporedna stevilka</th>
+						<th scope="col">Predmet</th>
+						<th scope="col">Izvajalec</th>
+						<th scope="col">Datum</th>
+						<th scope="col">Seznam prijavljenih</th>
+					</tr>
+				</thead>
+				{% for rok in roki_forward %}
+				<tr>
+					<td>
+						{{ forloop.counter }}.
+					</td>
+					<td>
+						{{ rok.izvedba_predmeta.predmet }}
+					</td>
+					{% if rok.izvedba_predmeta.ucitelj_3 != null %}
+					<td>
+						{{ rok.izvedba_predmeta.ucitelj_1.ime }}
+						{{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+						{{ rok.izvedba_predmeta.ucitelj_2.ime }}
+						{{ rok.izvedba_predmeta.ucitelj_2.priimek }},
+						{{ rok.izvedba_predmeta.ucitelj_3.ime }}
+						{{ rok.izvedba_predmeta.ucitelj_3.priimek }}
+					</td>
+					{% elif rok.izvedba_predmeta.ucitelj_2 != null %}
+					<td>
+						{{ rok.izvedba_predmeta.ucitelj_1.ime }}
+						{{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+						{{ rok.izvedba_predmeta.ucitelj_2.ime }}
+						{{ rok.izvedba_predmeta.ucitelj_2.priimek }}
+					</td>
+					{% elif rok.izvedba_predmeta.ucitelj_1 != null %}
+					<td>
+						{{ rok.izvedba_predmeta.ucitelj_1.ime }}
+						{{ rok.izvedba_predmeta.ucitelj_1.priimek }}
+					</td>
+					{% endif %}
+					<td>{{ rok.datum|date:'d.m.Y' }}, {{ rok.datum|time:'H:i' }}</td>
+
+					<form action="/izpiti/seznam_prijavljenih/" method="post">
+						{% csrf_token %}
+						<td>
+							<input type="hidden" name="id_rok" value={{ rok.id }}>
+							<button type="submit" name="seznam" class="btn btn-outline-primary mt-2">Seznam</button>
+						</td>
+					</form>
+				</tr>
+				{% endfor %}
 </div>
 
 

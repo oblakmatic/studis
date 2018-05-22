@@ -11,69 +11,75 @@
     <table class="table">
 
         <thead>
-            <tr>
-                <th scope="col">Letnik</th>
-                <th scope="col">Predmet</th>
-                <th scope="col">Izvajalec</th>
-                <th scope="col">Datum</th>
-                <th scope="col">Prijava</th>
-            </tr>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Letnik</th>
+				<th scope="col">Predmet</th>
+				<th scope="col">Izvajalec</th>
+				<th scope="col">Datum</th>
+				<th scope="col">Prijava</th>
+			</tr>
         </thead>
 
         {% for rok in arr %}
 
-        <tr>
-            <td>
-                {{ rok.izvedba_predmeta.studijsko_leto }}
-            </td>
-            <td>
-                {{ rok.izvedba_predmeta.predmet }}
-            </td>
+		<tr>
+			<td>
+				{{ forloop.counter }}.
+			</td>
+			<td>
+				{{ rok.izvedba_predmeta.studijsko_leto }}
+			</td>
+			<td>
+				{{ rok.izvedba_predmeta.predmet }}
+			</td>
 
-            {% if rok.izvedba_predmeta.ucitelj_3 != null %}
-            <td>
-                {{ rok.izvedba_predmeta.ucitelj_1.ime }}
-                {{ rok.izvedba_predmeta.ucitelj_1.priimek }},
-                {{ rok.izvedba_predmeta.ucitelj_2.ime }}
-                {{ rok.izvedba_predmeta.ucitelj_2.priimek }},
-                {{ rok.izvedba_predmeta.ucitelj_3.ime }}
-                {{ rok.izvedba_predmeta.ucitelj_3.priimek }}
-            </td>
-            {% elif rok.izvedba_predmeta.ucitelj_2 != null %}
-            <td>
-                {{ rok.izvedba_predmeta.ucitelj_1.ime }}
-                {{ rok.izvedba_predmeta.ucitelj_1.priimek }},
-                {{ rok.izvedba_predmeta.ucitelj_2.ime }}
-                {{ rok.izvedba_predmeta.ucitelj_2.priimek }}
-            </td>
-            {% elif rok.izvedba_predmeta.ucitelj_1 != null %}
-            <td>
-                {{ rok.izvedba_predmeta.ucitelj_1.ime }}
-                {{ rok.izvedba_predmeta.ucitelj_1.priimek }}
-            </td>
-            {% endif %}
+			{% if rok.izvedba_predmeta.ucitelj_3 != null %}
+			<td>
+				{{ rok.izvedba_predmeta.ucitelj_1.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+				{{ rok.izvedba_predmeta.ucitelj_2.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_2.priimek }},
+				{{ rok.izvedba_predmeta.ucitelj_3.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_3.priimek }}
+			</td>
+			{% elif rok.izvedba_predmeta.ucitelj_2 != null %}
+			<td>
+				{{ rok.izvedba_predmeta.ucitelj_1.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_1.priimek }},
+				{{ rok.izvedba_predmeta.ucitelj_2.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_2.priimek }}
+			</td>
+			{% elif rok.izvedba_predmeta.ucitelj_1 != null %}
+			<td>
+				{{ rok.izvedba_predmeta.ucitelj_1.ime }}
+				{{ rok.izvedba_predmeta.ucitelj_1.priimek }}
+			</td>
+			{% endif %}
 
-            <td>{{ rok.datum }}</td>
+			<td>{{ rok.datum|date:'d.m.Y' }}, {{ rok.datum|time:"H:i" }}</td>
 
-            <form action="/izpiti/prijava/" method="post">
-                {% csrf_token %}
-                <td>
-                    <input type="hidden" name="predmeti_studenta" value={{ predmetiStudenta.id }}>
-                    <input type="hidden" name="rok_" value={{ rok.id }}>
-                    {% if rok in disabled %}
-                    <p>Prijava onemogočena!</p>
-                    {% elif rok in disabled_odjava %}
-                    <p>Odjava onemogočena!</p>
-                    {% elif rok in payable %}
-                    <button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2" >Prijavi se (plačljivo)</button>
-                    {% elif rok in arr1 %}
-                    <button type="submit" onclick ="myFunction(&quot;{{ rok.datum }}&quot;)" name="odjava_izpit" class="btn btn-outline-primary mt-2">Odjavi se</button>
-                    {% else %}
-                    <button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2" >Prijavi se</button>
-                    {% endif %}
-                </td>
-            </form>
-        </tr>
+			<form action="/izpiti/prijava/" method="post">
+				{% csrf_token %}
+				<td>
+					<input type="hidden" name="predmeti_studenta" value={{ predmetiStudenta.id }}>
+					<input type="hidden" name="rok_" value={{ rok.id }}>
+					{% if rok in disabled and rok in disabled_odjava %}
+					<p>Odjava onemogočena!</p>
+					{% elif rok in disabled %}
+					<p>Prijava onemogočena!</p>
+					{% elif rok in disabled_odjava %}
+					<p>Odjava onemogočena!</p>
+					{% elif rok in payable %}
+					<button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2">Prijavi se (plačljivo)</button>
+					{% elif rok in arr1 %}
+					<button type="submit" onclick="myFunction(&quot;{{ rok.datum }}&quot;)" name="odjava_izpit" class="btn btn-outline-primary mt-2">Odjavi se</button>
+					{% else %}
+					<button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2">Prijavi se</button>
+					{% endif %}
+				</td>
+			</form>
+		</tr>
         {% endfor %}
 
 </div>

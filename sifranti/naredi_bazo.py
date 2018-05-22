@@ -367,7 +367,6 @@ def naredi_bazo(request):
     a_ns2.save()
     #naredi 2 zetona za studenta
 
-
     a_oblika = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )
     a_oblika.save()
 

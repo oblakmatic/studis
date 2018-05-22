@@ -6,7 +6,10 @@
 <div class="container sifrant">
 
 <h3>Osebni podatki</h3>
-
+	<form action="/student/naroci_potrdila/" method="post">
+		{% csrf_token %}
+		<button type="submit" name="naroci_potrdilo" class="btn btn-outline-primary mt-2">Naroči potrdila o vpisu</button>
+	</form>
 <table class="table">
 	<thead>
 	    <tr>
@@ -26,26 +29,26 @@
 <h3>Vpisi</h3>
 <table style="width: 100%">
     <thead>
-        <tr>
-            <th>#</th>
-            <th>Študijsko Leto</th>
-            <th>Študijski Program</th>
-            <th>Letnik</th>
-            <th>Vrsta Vpisa</th>
-            <th>Način Študija</th>
-            <th>Vrsta Študija</th>
-        </tr>
+		<tr>
+			<th>#</th>
+			<th>Študijsko Leto</th>
+			<th>Študijski Program</th>
+			<th>Letnik</th>
+			<th>Vrsta Vpisa</th>
+			<th>Način Študija</th>
+			<th>Vrsta Študija</th>
+		</tr>
     </thead>
     {% for t in vpisi %}
-    <tr>
-        <td>{{forloop.counter}}</td>
-        <td>{{t.studijsko_leto}}</td>
-        <td>{{t.studijski_program}}</td>
-        <td>{{t.letnik}}</td>
-        <td>{{t.vrsta_vpisa}}</td>
-        <td>{{t.nacin_studija}}</td>
-        <td>{{t.vrsta_studija}}</td>
-    </tr>
+	<tr>
+		<td>{{forloop.counter}}</td>
+		<td>{{t.studijsko_leto}}</td>
+		<td>{{t.studijski_program}}</td>
+		<td>{{t.letnik}}</td>
+		<td>{{t.vrsta_vpisa}}</td>
+		<td>{{t.nacin_studija}}</td>
+		<td>{{t.vrsta_studija}}</td>
+	</tr>
     {% endfor %}
 </table>
 

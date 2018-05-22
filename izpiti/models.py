@@ -7,7 +7,7 @@ from datetime import datetime
 class Ucitelj(models.Model):
     ime = models.CharField(max_length = 30)
     priimek = models.CharField(max_length = 30)
-    email = models.CharField(max_length = 100, unique = True)
+    email = models.CharField(max_length = 60, unique = True)
     predmeti = models.ManyToManyField(Predmet, null = True)#dodv da ves kere mu pokazat za vpis roka
 
     def __str__(self):

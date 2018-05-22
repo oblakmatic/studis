@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container sifrant">
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Student</th>
+				<th>Stevilo potrdil</th>
+				<th>Natisni</th>
+			</tr>
+		</thead>
+
+		{% for t in vpisi %}
+		<tr>
+			<td>{{forloop.counter}}.</td>
+			<td>{{t.student}}</td>
+			<td>{{t.st_narocenih_potrdil}}</td>
+			
+			<form action="/student/natisni_potrdila/" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="st_potrdil_" value={{ t.st_narocenih_potrdil }}>
+				<input type="hidden" name="email_" value={{ t.student.email }}>
+				<input type="hidden" name="stud_leto" value={{ t.studijsko_leto }}>
+				<td><button type="submit" name="natisni" class="btn btn-outline-primary mt-2">Natisni</button></td>
+			</form>
+		</tr>
+		{% endfor %}
+
+</div>
+{% endblock %}

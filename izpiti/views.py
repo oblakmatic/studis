@@ -37,6 +37,10 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
 
+
+alphabet = 'abcčdefghijklmnopqrsštuvwxyzž0123456789'
+
+
 # Create your views here.
 def index_izpiti(request):
 
@@ -238,10 +242,13 @@ def prijava(request):
 					vnesi_rok = rok
 		
 			all_prijava = Prijava.objects.all()
+			ime_priimek = request.user.first_name + " " + request.user.last_name
 			for prijava in all_prijava:
 				if prijava.predmeti_studenta == vnesi_predmeti_studenta and prijava.rok == vnesi_rok:
 					print("prijava oznacena kot neaktivna!")
 					prijava.aktivna_prijava = False
+					prijava.odjavitelj = ime_priimek
+					prijava.cas_odjave = datetime.now()
 					prijava.save()
 
 #PRIJAVA NA IZPIT
@@ -398,8 +405,12 @@ def izberi_rok(request):
 		email_ = request.user.email
 		roki = Rok.objects.filter( Q(izvedba_predmeta__ucitelj_1__email = email_) | Q(izvedba_predmeta__ucitelj_2__email = email_) | Q(izvedba_predmeta__ucitelj_3__email = email_) , Q(datum__lte=datetime.now().date())).order_by("datum")
 
+		#prikaz rokov v prihodnosti --> za prikaz seznama prijavljenih, onemogočen vnos ocene!
+		roki_forward = Rok.objects.filter( Q(izvedba_predmeta__ucitelj_1__email = email_) | Q(izvedba_predmeta__ucitelj_2__email = email_) | Q(izvedba_predmeta__ucitelj_3__email = email_) , Q(datum__gt=datetime.now().date())).order_by("datum")
+
 		context = {
-			'arr': roki
+			'arr': roki,
+			'roki_forward': roki_forward
 			}
 
 		return render(request,'vnesi_ocene.html', context)
@@ -407,8 +418,12 @@ def izberi_rok(request):
 		curr_roki = []
 		roki = Rok.objects.filter(datum__lte=datetime.now().date()).order_by("datum")
 
+		#prikaz rokov v prihodnosti --> za prikaz seznama prijavljenih, onemogočen vnos ocene!
+		roki_forward = Rok.objects.filter(datum__gt=datetime.now().date()).order_by("datum")
+
 		context = {
-			'arr': roki
+			'arr': roki,
+			'roki_forward': roki_forward
 			}
 
 		return render(request,'vnesi_ocene.html', context)
@@ -424,13 +439,19 @@ def vnesi_ocene_predmeta(request):
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
 			prijave = sort_prijave(prijave)
 
-			formset = formset_factory(ocenaForm, extra = prijave.count())
+			formset = formset_factory(ocenaForm, extra = len(prijave))
+
+			#dodal paginator
+			paginator = Paginator(prijave, 20)
+			page = request.GET.get('page')
+			all_students = paginator.get_page(page)
 			
 			context = {
 				'arr': prijave,
 				'formset': formset,
 				'rok_id': rok_id
 				}
+
 
 			return render(request,'vnesi_ocene_predmeta.html',context)
 
@@ -439,6 +460,7 @@ def vnesi_ocene_predmeta(request):
 			formsetOcena = formset_factory(ocenaForm)
 			formset = formsetOcena(request.POST)
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
+			prijave = sort_prijave(prijave)
 			ime_ = request.user.first_name
 			priimek_ = request.user.last_name
 			ime_priimek = ime_ + " " + priimek_
@@ -469,7 +491,9 @@ def vnesi_ocene_predmeta(request):
 			
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
 			prijave = sort_prijave(prijave)
-			formset = formset_factory(ocenaForm, extra = prijave.count())
+			formset = formset_factory(ocenaForm, extra = len(prijave))
+
+
 			context = {
 				'arr': prijave,
 				'formset': formset,
@@ -485,7 +509,7 @@ def vnesi_ocene_predmeta(request):
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
 			prijave = sort_prijave(prijave)
 			
-			formset = formset_factory(ocenaForm, extra = prijave.count())
+			formset = formset_factory(ocenaForm, extra = len(prijave))
 			
 			context = {
 				'arr': prijave,
@@ -500,6 +524,7 @@ def vnesi_ocene_predmeta(request):
 			formsetOcena = formset_factory(ocenaForm)
 			formset = formsetOcena(request.POST)
 			prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True)
+			prijave = sort_prijave(prijave)
 			ime_ = request.user.first_name
 			priimek_ = request.user.last_name
 			ime_priimek = ime_ + " " + priimek_
@@ -530,7 +555,7 @@ def vnesi_ocene_predmeta(request):
 			
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
 			prijave = sort_prijave(prijave)
-			formset = formset_factory(ocenaForm, extra = prijave.count())
+			formset = formset_factory(ocenaForm, extra = len(prijave))
 			context = {
 				'arr': prijave,
 				'formset': formset,
@@ -549,7 +574,7 @@ def vnesi_koncne_ocene(request):
 
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
 			prijave = sort_prijave(prijave)
-			formset = formset_factory(ocenaForm, extra = prijave.count())
+			formset = formset_factory(ocenaForm, extra = len(prijave))
 			
 			context = {
 				'arr': prijave,
@@ -564,6 +589,7 @@ def vnesi_koncne_ocene(request):
 			formsetOcena = formset_factory(ocenaForm)
 			formset = formsetOcena(request.POST)
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
+			prijave = sort_prijave(prijave)
 			ime_ = request.user.first_name
 			priimek_ = request.user.last_name
 			ime_priimek = ime_ + " " + priimek_
@@ -594,7 +620,8 @@ def vnesi_koncne_ocene(request):
 			
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
 			prijave = sort_prijave(prijave)
-			formset = formset_factory(ocenaForm, extra = prijave.count())
+			formset = formset_factory(ocenaForm, extra = len(prijave))
+			
 			context = {
 				'arr': prijave,
 				'formset': formset,
@@ -609,7 +636,7 @@ def vnesi_koncne_ocene(request):
 
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
 			
-			formset = formset_factory(ocenaForm, extra = prijave.count())
+			formset = formset_factory(ocenaForm, extra = len(prijave))
 			
 			context = {
 				'arr': prijave,
@@ -624,6 +651,7 @@ def vnesi_koncne_ocene(request):
 			formsetOcena = formset_factory(ocenaForm)
 			formset = formsetOcena(request.POST)
 			prijave = Prijava.objects.filter(rok__id = rok_id, aktivna_prijava = True)
+			prijave = sort_prijave(prijave)
 			ime_ = request.user.first_name
 			priimek_ = request.user.last_name
 			ime_priimek = ime_ + " " + priimek_
@@ -648,7 +676,7 @@ def vnesi_koncne_ocene(request):
 			
 			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
 			prijave = sort_prijave(prijave)
-			formset = formset_factory(ocenaForm, extra = prijave.count())
+			formset = formset_factory(ocenaForm, extra = len(prijave))
 			context = {
 				'arr': prijave,
 				'formset': formset,
@@ -667,7 +695,7 @@ def seznam_prijavljenih(request):
 	
 	if request.method == 'POST' and 'seznam' in request.POST:
 		rok_id = request.POST['id_rok']
-		prijave = Prijava.objects.filter(rok__id = rok_id)
+		prijave = Prijava.objects.filter(rok__id = rok_id,aktivna_prijava = True)
 		prijave = sort_prijave(prijave)
 
 
@@ -684,7 +712,7 @@ def seznam_prijavljenih(request):
 
 		rok_id = request.POST.get('id_rok')
 
-		prijave = Prijava.objects.filter(rok__id = rok_id)
+		prijave = Prijava.objects.filter(rok__id = rok_id,aktivna_prijava = True)
 		prijave = sort_prijave(prijave)
 		rok = Rok.objects.filter(id = rok_id)[0]
 		print(rok)
@@ -807,7 +835,7 @@ def seznam_prijavljenih(request):
 		response['Content-Disposition'] = 'attachment; filename="izpiti.csv"'
 		writer = csv.writer(response)
 
-		prijave = Prijava.objects.filter(rok__id = rok_id)
+		prijave = Prijava.objects.filter(rok__id = rok_id,aktivna_prijava = True)
 		prijave = sort_prijave(prijave)
 		header = ["Vpisna stevilka", "Priimek","Ime", "Vrnjena prijava/cas odjave/odjavitelj", "Stevilo tock izpita", "Ocena izpita", "Zaporedna stevilka polaganja"]
 		writer.writerow(header)
@@ -844,23 +872,31 @@ def seznam_prijavljenih(request):
 		return response
 
 def sort_prijave(prijave):
-
 	
 	imena = []
 	for prijava_ in prijave:
-		p_i = prijava_.predmeti_studenta.vpis.student.priimek+ prijava_.predmeti_studenta.vpis.student.ime
+		p_i = (prijava_.predmeti_studenta.vpis.student.priimek, \
+			prijava_.predmeti_studenta.vpis.student.ime, \
+			prijava_.predmeti_studenta.vpis.student.vpisna_stevilka)
 		imena.append(p_i)
+		print(p_i)
 
-	imena = sorted(imena)
+	imena = sorted(imena, key=lambda student: (  [alphabet.index(c) for c in student[0].lower()], \
+												 [alphabet.index(c) for c in student[1].lower()], \
+												 [alphabet.index(c) for c in str(student[2])]))
 
 	new_prijave = []
 	while imena:
 		print(imena)
 		for prijava_ in prijave:
-			p_i = prijava_.predmeti_studenta.vpis.student.priimek+ prijava_.predmeti_studenta.vpis.student.ime
+			p_i = (prijava_.predmeti_studenta.vpis.student.priimek, \
+				prijava_.predmeti_studenta.vpis.student.ime, \
+				prijava_.predmeti_studenta.vpis.student.vpisna_stevilka)
 			if p_i == imena[0]:
 				new_prijave.append(prijava_)
 				del imena[0]
 				break
 
 	return new_prijave
+
+	

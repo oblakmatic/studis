@@ -6,9 +6,10 @@
 
 
 .mycard{
-	width: 17rem; 
-	margin-right: 1%; 
+	width: 99%; 
 	height: 100%;
+	margin-bottom: 20px;
+	
 }
 
 .myhover:hover{
