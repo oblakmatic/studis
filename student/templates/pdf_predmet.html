@@ -5,8 +5,8 @@
       text-align:left;
       width:200px;
       height:35px;
+      border-bottom: 1px solid #ddd;
     }
-
 
     </style>
 </head>
@@ -16,7 +16,7 @@
 
 
 {% if students %}
-<table >
+<table>
     <thead>
         <tr>
           <th scope="col"  >#</th>
@@ -30,7 +30,7 @@
 <tbody>
   
   {% for t in students %}
-    <tr class="mt-4">
+    <tr >
       <td >{{ forloop.counter }}</td>
       <td >{{ t.student.priimek }}</td>
       <td >{{ t.student.ime }}</td>
