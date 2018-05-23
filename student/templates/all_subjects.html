@@ -36,7 +36,9 @@
 {% for temp in predmeti %}
 	
 		<li class="list-group-item mb-2 col-xs-6 myhover" style="width: 44%; margin-right: 2%">
-			<a href="{{leto.id}}/{{temp.id}}" style="color:#373a3c">{{ temp }}</a>
+			<a href="{{leto.id}}/{{temp.id}}" style="color:#373a3c">
+        {{ forloop.counter }}&#8228; {{ temp }}
+      </a>
 		</li>
 
 {% endfor %}

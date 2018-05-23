@@ -15,12 +15,12 @@
   <div class="col-sm-3">
     <form  method="post" action="/student/predmeti/{{leto.id}}/{{predmet.id}}/">
     {% csrf_token %}
-        <button type="submit" class="btn btn-outline-primary mr-2" style="float:right">Izvozi PDF</button>
+        <button type="submit" class="btn btn-outline-secondary mr-2" style="float:right">Izvozi PDF</button>
     </form>
 
     <form  method="post" action="/student/predmeti/{{leto.id}}/{{predmet.id}}/csv">
     {% csrf_token %}
-        <button type="submit" class="btn btn-outline-primary mr-2" style="float:right">Izvozi CSV</button>
+        <button type="submit" class="btn btn-outline-secondary mr-2" style="float:right">Izvozi CSV</button>
     </form>
   </div>
 

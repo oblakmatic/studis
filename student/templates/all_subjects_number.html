@@ -42,8 +42,18 @@
         </select>
       </div>
   </div>
-</div>
 </form>
+  <div class="col-sm-6">
+
+    <button type="submit" name="save_pdf" value="SavePDF" class="btn btn-outline-secondary mr-2" style="float:right">Izvozi PDF</button>
+
+    <form  method="post" action="/student/predmeti/stevilo/{{leto.id}}/{{program.id}}/{{letnik.id}}/csv/">
+      {% csrf_token %}
+      <button type="submit" name="save_csv" value="SaveCSV" class="btn btn-outline-secondary mr-2" style="float:right">Izvozi CSV</button>
+    </form>
+  </div>
+</div>
+
 
 
 {% if predmeti %}
@@ -51,7 +61,8 @@
 {% for temp in predmeti %}
 	
 		<li class="list-group-item mb-2 col-xs-6" style="width: 44%; margin-right: 2%">
-			{{ temp }}
+			{{forloop.counter }}&#8228;  ({{temp.id}}) {{ temp.ime }} 
+      <span style="float: right">{{ temp.number}}</span>
 		</li>
 
 {% endfor %}
