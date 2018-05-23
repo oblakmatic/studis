@@ -41,13 +41,21 @@ nas_leto_ob = StudijskoLeto.objects.filter(ime=nas_leto)
 
 
 
-def vpisni_list(request, vpisna):
-    student = Student.objects.filter(vpisna_stevilka=vpisna)
-    vpis = Vpis.objects.filter(student= student[0])
-    narediVpisniList(student,vpis)
+def vpisni_list(request, vpisna, ind_studleto, ind_studleto2):
+    
+    studleto = str(ind_studleto)+"/"+str(ind_studleto2)
+    studleto_ob = StudijskoLeto.objects.get(ime=studleto)
 
-    name = str(vpisna) +"2018"+'.pdf'
+    student = Student.objects.filter(vpisna_stevilka=vpisna)
+    vpis = Vpis.objects.filter(student= student[0]).filter(studijsko_leto = studleto_ob)
+    
+    name = str(vpisna) +str(ind_studleto)+'.pdf'
     fs = FileSystemStorage('/tmp')
+    
+    if not fs.exists(name):
+        #print("Generiram pdf")
+        narediVpisniList(student,vpis)
+    
     with fs.open(name) as pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
@@ -85,9 +93,9 @@ def index2_vpis_post(request,index):
                 zeton1 = zeton[index]
                 
                 if len(zeton) == 2:
-                    print("evo me")
+                    #print("evo me")
                     drugind = (index+1)%2
-                    print(str(index)+ str(drugind))
+                    #print(str(index)+ str(drugind))
                     zeton2 = zeton[drugind]
                     zeton2.izkoriscen =True
                     zeton2.save()
@@ -498,20 +506,20 @@ def preveri_emso_datum(emso, datum):
 # program hoce delati, zeton dodelimo studentu
 def narediZetonZaKandidata(student1,kandidat):
     
-    print(student1)
-    print(kandidat)
-    print("neki")
+    #print(student1)
+    #print(kandidat)
+    #print("neki")
     if Zeton.objects.filter(student=student1[0]).exists():
         return
     
-    print("neki")
+    #print("neki")
     letnik = Letnik.objects.get(ime="1.")
     studij_prog = kandidat.studijski_program
     vrsta_studija = None
     nacin_studija = NacinStudija.objects.get(id=1)
     vrsta_vpisa = VrstaVpisa.objects.get(id=1)
     oblika_studija = OblikaStudija.objects.get(id=1)
-    print("neki")
+    #print("neki")
     if studij_prog.id == 1000470:
         vrsta_studija = VrstaStudija.objects.get(id=16203)
     elif studij_prog.id == 1000468:
@@ -636,5 +644,5 @@ def na(objekt):
         return objekt
     
 def aligumbobstaja(student):
-    print(Zeton.objects.filter(student = student).values())
+    #print(Zeton.objects.filter(student = student).values())
     return Zeton.objects.filter(student = student).filter(izkoriscen = False).exists()

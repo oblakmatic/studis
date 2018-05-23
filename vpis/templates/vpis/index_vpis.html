@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<div class="container sifrant">
+<div class="container sifrant" style="width:40%; margin-top: 40px">
     {% if opozorilo%}
     <div class="alert alert-warning">
        {{opozorilo}}
@@ -21,7 +21,7 @@
             <tr>
                 <td>{{ vpis.studijsko_leto.ime }}</td>
                 <td>{{ vpis.potrjen }}</td>
-                <td><form action="/vpis/vpisni_list/{{ vpis.student.vpisna_stevilka }}/" method="get">
+                <td><form action="/vpis/vpisni_list/{{ vpis.student.vpisna_stevilka }}/{{ vpis.studijsko_leto.ime }}/" method="get">
                     <button type="submit" class="btn btn-outline-primary">Prenesi Vpisni list</button>
                 </form></td>
             </tr>
@@ -39,7 +39,7 @@
         
         {{ studentform }}
         {% if gumbobstaja or gumbobstaja == None %}
-        <button type="submit" class="btn btn-outline-primary">Naslednji korak</button>
+        <button type="submit" class="btn btn-outline-primary mt-1">Naslednji korak</button>
         {% endif %}
     </form>
     <script>
