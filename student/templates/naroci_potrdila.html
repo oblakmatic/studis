@@ -29,14 +29,19 @@
 			<form action="/student/naroci_potrdila/" method="post">
 				{% csrf_token %}
 				<input type="hidden" name="studijsko_leto" value={{ t.studijsko_leto.ime }}>
+
+				{% if t.st_narocenih_potrdil != 0 %}
 				<td><input type="number" name="st_potrdil" min="1" max="6"></td>
+				<td><button type="submit" name="naroci" class="btn btn-outline-primary mt-2" disabled>Naroci</button></td>
+				<td>{{t.st_narocenih_potrdil}} (v obdelavi)</td>
+				{% else %}
+				<td><input type="number" name="st_potrdil" min="1" max="10"></td>
 				<td><button type="submit" name="naroci" class="btn btn-outline-primary mt-2">Naroci</button></td>
+				<td>{{t.st_narocenih_potrdil}}</td>
+				{% endif %}
+
+
 			</form>
-			{% if t.st_narocenih_potrdil != 0 %}
-			<td>{{t.st_narocenih_potrdil}} (v obdelavi)</td>
-			{% else %}
-			<td>{{t.st_narocenih_potrdil}}</td>
-			{% endif %}
 		</tr>
 		{% endfor %}
 

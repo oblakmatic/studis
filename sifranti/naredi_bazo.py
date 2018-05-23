@@ -350,7 +350,7 @@ def naredi_bazo(request):
     a_vv2.save()
     a = VrstaVpisa(id=3, opis="Nadaljevanje letnika", mozni_letniki="Vpis ni več dovoljen.")
     a.save()
-    a = VrstaVpisa(id=4, opis="Podalšanje statuda študenta", mozni_letniki="Vsi letniki, dodatno leto")
+    a = VrstaVpisa(id=4, opis="Podalšanje statusa študenta", mozni_letniki="Vsi letniki, dodatno leto")
     a.save()
     a = VrstaVpisa(id=5, opis="Vpis v semester skupnega št. programa", mozni_letniki="Vsi letniki razen prvega, dodatno leto ni dovoljeno")
     a.save()
@@ -580,6 +580,27 @@ def naredi_bazo(request):
 
     user.save()
 
+    #student z absulventom za zagovor tiskanja potridl o vpisu
+    #-------
+    zanM = Student(vpisna_stevilka = 63150467, emso=1511996500115, ime="Žan", drzava_rojstva=a_slo,obcina_rojstva= a_ljObcina,  priimek="Mongus",naslov_stalno_bivalisce="Plečnikova cesta 12", drzava= Drzava.objects.filter(pk=4)[0], posta= Posta.objects.filter(pk=1293)[0],obcina= Obcina.objects.filter(pk=1)[0],telefon="031874563",email="zm1971@student.uni-lj.si")
+    zanM.save()
+    vpis_zanM = Vpis(student=zanM, studijsko_leto=a_17_18, studijski_program=a_studijskiProgram, letnik=a_3Letnik, vrsta_vpisa=a_vv1,nacin_studija=a_nacinStudija, vrsta_studija=a_vrstaStudija)
+    vpis_zanM.save()
+
+
+    user, created = User.objects.get_or_create(username="zanmongus", email="zm1971@student.uni-lj.si")
+    user.first_name = "Žan"
+    user.last_name = "Mongus"
+        
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        prof_group, status = Group.objects.get_or_create(name='students') 
+        prof_group.user_set.add(user)
+
+    user.save()
+    #-------
 
     print('\x1b[6;30;42m' + 'Uspešno dodana baza! ' + '\x1b[0m')
     return HttpResponse("Narejena baza!")
