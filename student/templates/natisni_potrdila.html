@@ -2,6 +2,11 @@
 
 {% block content %}
 <div class="container sifrant">
+	<form action="/student/natisni_potrdila/" method="post">
+		{% csrf_token %}
+		<td><button type="submit" name="natisni_vse" class="btn btn-outline-primary mt-2">Natisni vse</button></td>
+		<td><button type="submit" name="natisni_vse_done" class="btn btn-outline-primary mt-2">Tiskanje vseh opravljeno</button></td>
+	</form>
 
 	<table class="table">
 		<thead>
@@ -10,6 +15,7 @@
 				<th>Student</th>
 				<th>Stevilo potrdil</th>
 				<th>Natisni</th>
+				<th>Tiskanje opravljeno</th>
 			</tr>
 		</thead>
 
@@ -18,13 +24,14 @@
 			<td>{{forloop.counter}}.</td>
 			<td>{{t.student}}</td>
 			<td>{{t.st_narocenih_potrdil}}</td>
-			
+
 			<form action="/student/natisni_potrdila/" method="post">
 				{% csrf_token %}
 				<input type="hidden" name="st_potrdil_" value={{ t.st_narocenih_potrdil }}>
 				<input type="hidden" name="email_" value={{ t.student.email }}>
 				<input type="hidden" name="stud_leto" value={{ t.studijsko_leto }}>
 				<td><button type="submit" name="natisni" class="btn btn-outline-primary mt-2">Natisni</button></td>
+				<td><button type="submit" name="natisni_done" class="btn btn-outline-primary mt-2">Tiskanje opravljeno</button></td>
 			</form>
 		</tr>
 		{% endfor %}
