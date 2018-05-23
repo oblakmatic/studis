@@ -486,7 +486,7 @@ def preveri_seznam(request):
 			
 			vpis_student_email = request.POST.get('vpis_email')
 			studijsko_leto_ime = request.POST.get('vpis_leto')
-
+			 # se tle mors dodt da bo se to pol delal--------------------------------------------
 			return natisni_potrdilo(vpis_student_email,studijsko_leto_ime, 6)
 			
 
@@ -520,6 +520,11 @@ def naroci_potrdila(request):
 
 	student = Student.objects.get(email = request.user.email)
 	vpisi = Vpis.objects.filter(student = student.vpisna_stevilka)
+	context = {
+		'vpisi': vpisi
+		}
+
+	return render(request, 'naroci_potrdila.html',context)
 	
 def students_by_subject(request):
 
@@ -597,35 +602,56 @@ def subject_data(request, leto, id):
 
 	return render(request, 'subject.html',context)
 
-def natisni_potrdila(request): # dodaj se da izbrise stevilo narocenih potrdil.
+def natisni_potrdila(request): # natisni posamicno
+	Story=[]
+	response = HttpResponse(content_type='application/pdf')
+	response['Content-Disposition'] = 'inline; filename="potrdila.pdf"'
+	doc = SimpleDocTemplate(response,pagesize=letter,
+			rightMargin=72,leftMargin=72,
+			topMargin=72,bottomMargin=18)
+
 	if request.method == 'POST' and 'natisni' in request.POST:
 		st_potrdil = request.POST.get('st_potrdil_')
-		email_ = request.POST.get('email_')
+		email = request.POST.get('email_')
 		stud_leto = request.POST.get('stud_leto')
-		print(email_)
-		print(stud_leto)
-		print(st_potrdil)
 
-		return natisni_potrdilo(email_,stud_leto,st_potrdil)
+		Story = natisni_potrdilo(email,stud_leto,st_potrdil)
+		doc.build(Story)
+		return response
+
+	if request.method == 'POST' and 'natisni_vse' in request.POST: #natisni vse
+		vpisi = Vpis.objects.filter(~Q(st_narocenih_potrdil = 0))
+		
+		for vpis in vpisi:
+			Story = Story + natisni_potrdilo(vpis.student.email, vpis.studijsko_leto, vpis.st_narocenih_potrdil)
+		
+		doc.build(Story)
+		return response
+
+	if request.method == 'POST' and 'natisni_done' in request.POST:
+		email = request.POST.get('email_')
+		stud_leto = request.POST.get('stud_leto')
+		vpis = Vpis.objects.filter(student__email = email, studijsko_leto__ime = stud_leto)[0] #pazi! 2 vpisa ne smeta bitiv istem studijskem letu
+		vpis.st_narocenih_potrdil = 0
+		vpis.save()
+
+	if request.method == 'POST' and 'natisni_vse_done' in request.POST:
+		vpisi = Vpis.objects.filter(~Q(st_narocenih_potrdil = 0))
+		for vpis in vpisi:
+			vpis.st_narocenih_potrdil = 0
+			vpis.save()
 
 	vpisi = Vpis.objects.filter(~Q(st_narocenih_potrdil = 0))
+
 	context= {
 		'vpisi': vpisi
 		}
 
 	return render(request, 'natisni_potrdila.html',context)
 
-def natisni_potrdilo(vpis_student_email, studijsko_leto_ime, st_potrdil):
-	print(studijsko_leto_ime)
-	vpis_ = Vpis.objects.filter(student__email = vpis_student_email, studijsko_leto__ime = studijsko_leto_ime)[0]
-	print(vpis_)
+def natisni_potrdilo(email,studijsko_leto,st_potrdil):
+	vpis_ = Vpis.objects.filter(student__email = email, studijsko_leto__ime = studijsko_leto)[0]
 
-	response = HttpResponse(content_type='application/pdf')
-	response['Content-Disposition'] = 'inline; filename="studenti.pdf"'
-			
-	doc = SimpleDocTemplate(response,pagesize=letter,
-				rightMargin=72,leftMargin=72,
-				topMargin=72,bottomMargin=18)
 	Story=[]
 	logo = "student/Logo_UL_FRI.png"
 	magName = "Pythonista"
@@ -685,10 +711,7 @@ def natisni_potrdilo(vpis_student_email, studijsko_leto_ime, st_potrdil):
 
 	add_story = int(st_potrdil)*Story
 
-	doc.build(add_story)
-	return response
-
-
+	return add_story
 def students_by_number(request):
 
 

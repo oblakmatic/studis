@@ -23,71 +23,77 @@
             <a class="navbar-brand" href="/">Studis</a>
             <div class="collapse navbar-collapse" id="navbarNav">
 
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Domov</a>
-                    </li>
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" href="/">Domov</a>
+					</li>
 
-                    {% if user.is_superuser %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/sifranti/">Šifranti</a>
-                    </li>
+					{% if user.is_superuser %}
+					<li class="nav-item">
+						<a class="nav-link" href="/sifranti/">Šifranti</a>
+					</li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="/student/uvoz">Uvoz študentov</a>
-                    </li>
-                    {% endif %}
+					<li class="nav-item">
+						<a class="nav-link" href="/student/uvoz">Uvoz študentov</a>
+					</li>
+					{% endif %}
 
-                    {% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/student/">Študenti</a>
-                    </li>
-                    {% endif %}
+					{% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
+					<li class="nav-item">
+						<a class="nav-link" href="/student/">Študenti</a>
+					</li>
+					{% endif %}
 
-                    {% if user.groups.all.0.name == "students" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/student/podatki">Moji podatki</a>
-                    </li>
-                    {% endif %}
+					{% if user.groups.all.0.name == "students" %}
+					<li class="nav-item">
+						<a class="nav-link" href="/student/podatki">Moji podatki</a>
+					</li>
+					{% endif %}
 
-                    {% if user.groups.all.0.name == "students" or user.groups.all.0.name == "candidates"  %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/vpis/">Vpis</a>
-                    </li>
-                    {% endif %}
+					{% if user.groups.all.0.name == "students" or user.groups.all.0.name == "candidates"  %}
+					<li class="nav-item">
+						<a class="nav-link" href="/vpis/">Vpis</a>
+					</li>
+					{% endif %}
 
 
-                    {% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/izpiti/">Izpiti</a>
-                    </li>
-                    {% endif %}
+					{% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
+					<li class="nav-item">
+						<a class="nav-link" href="/izpiti/">Izpiti</a>
+					</li>
+					{% endif %}
 
-                    {% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/student/predmeti/">Predmeti</a>
-                    </li>
-                    {% endif %}
+					{% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
+					<li class="nav-item">
+						<a class="nav-link" href="/student/predmeti/">Predmeti</a>
+					</li>
+					{% endif %}
 
-                    {% if user.groups.all.0.name == "referent" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/student/potrdi_studente/">Potrdi študente</a>
-                    </li>
-                    {% endif %}
+					{% if user.groups.all.0.name == "referent" %}
+					<li class="nav-item">
+						<a class="nav-link" href="/student/potrdi_studente/">Potrdi študente</a>
+					</li>
+					{% endif %}
 
-                    {% if user.groups.all.0.name == "students"%}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/izpiti/prijava">Prijava na izpit</a>
-                    </li>
-                    {% endif %}
+					{% if user.groups.all.0.name == "students"%}
+					<li class="nav-item">
+						<a class="nav-link" href="/izpiti/prijava">Prijava na izpit</a>
+					</li>
+					{% endif %}
 
-                    {% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/izpiti/vnesi_ocene/">Izberi rok</a>
-                    </li>
-                    {% endif %}
+					{% if user.groups.all.0.name == "professors" or user.groups.all.0.name == "referent" %}
+					<li class="nav-item">
+						<a class="nav-link" href="/izpiti/vnesi_ocene/">Izberi rok</a>
+					</li>
+					{% endif %}
 
-                </ul>
+					{% if user.groups.all.0.name == "referent" %}
+					<li class="nav-item">
+						<a class="nav-link" href="/student/natisni_potrdila/">Potrdila o vpisu</a>
+					</li>
+					{% endif %}
+
+				</ul>
                 <ul class="navbar-nav ml-auto">
                     <span class="navbar-text mr-4">
                         {{ user.first_name }} {{ user.last_name }}
