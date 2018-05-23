@@ -34,23 +34,28 @@
     <h2>Podatki o študentu</h2>
     
     
-    
     <form action="/vpis/" method="post">
         {% csrf_token %}
         
         {{ studentform }}
+        {% if gumbobstaja or gumbobstaja == None %}
         <button type="submit" class="btn btn-outline-primary">Naslednji korak</button>
+        {% endif %}
     </form>
     <script>
         $(document).ready(function(){
           $( "#id_ima_zacasno" ).change(function() {
             var $input = $( this );
              if ($input.is( ":checked" )){   	
+                id_ima_posto_na_zacasni
                  $("#id_naslov_zacasno_bivalisce").show();
+                 $("#id_ima_posto_na_zacasni").show();
                  $("#id_drzava_zacasno").show();
                  $("label[for='id_naslov_zacasno_bivalisce").show();
                  $("label[for='id_drzava_zacasno']").show();
+                 $("label[for='id_ima_posto_na_zacasni']").show();
              }else{
+                $("#id_ima_posto_na_zacasni").hide();
                 $("#id_naslov_zacasno_bivalisce").hide();
                  $("#id_drzava_zacasno").hide();
                  $("#id_obcina_zacasno").hide();
@@ -59,6 +64,7 @@
                  $("label[for='id_drzava_zacasno']").hide();
                  $("label[for='id_obcina_zacasno']").hide();
                  $("label[for='id_posta_zacasno']").hide();
+                 $("label[for='id_ima_posto_na_zacasni']").hide();
              }
           }).change();
           $( "#id_drzava_zacasno" ).change(function() {

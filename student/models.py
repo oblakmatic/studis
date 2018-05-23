@@ -18,7 +18,12 @@ class Student(models.Model):
     obcina = models.ForeignKey(Obcina, on_delete = models.SET_NULL, blank=True, null=True, verbose_name= "Občina stalno",related_name="obcina_stalno")
     posta = models.ForeignKey(Posta,blank=True, on_delete = models.SET_NULL, null=True, verbose_name= "Pošta",related_name="posta")
 
+    #ce sploh potrebuje zacasni naslov
+    # if true ima zacasno bivalisce
     ima_zacasno = models.BooleanField(default=False, verbose_name="Začasni naslov")
+    # if true posilji posto na zacasni naslov otherwise na stalno bivalisce
+    ima_posto_na_zacasni = models.BooleanField(default=False, verbose_name="Pošiljanje pošte na začasni naslov")
+
     naslov_zacasno_bivalisce = models.CharField(max_length = 260, blank=True, null=True, verbose_name= "Začasno prebivališče")
     drzava_zacasno = models.ForeignKey(Drzava, null=True, blank=True,on_delete = models.SET_NULL, verbose_name= "Država začasno",related_name="drzava_zacasno")
     obcina_zacasno = models.ForeignKey(Obcina, blank=True,on_delete = models.SET_NULL, null=True, verbose_name= "Občina začasno",related_name="obcina_zacasno")
