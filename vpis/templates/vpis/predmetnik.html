@@ -34,7 +34,7 @@
             {% for t in predmeti_o %}
     
                 <li class="list-group-item" >
-                    {{ t.ime }} 
+                    {{ t }} 
 
                     <span style="float: right"><input type="checkbox" checked disabled class="form-check-input" name="izbran-predmet" id= {{ t.id }} data-kt={{t.kreditne_tocke}}> <label> {{ t.kreditne_tocke }} KT</label></span>
                 </li>
