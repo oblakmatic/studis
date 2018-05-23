@@ -140,7 +140,7 @@ class Predmet(models.Model):
     all_objects = models.Manager()
 
     def __str__(self):
-        return str("(%07d) " % (self.id)) + self.ime
+        return str("(%05d) " % (self.id)) + self.ime
 
 
 class StudijskoLeto(models.Model):

@@ -1,13 +1,14 @@
 ﻿from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from student.models import Student, Zeton, Vpis, Kandidat
+from student.models import Student, Zeton, Vpis, Kandidat, Predmetnik
 from izpiti.models import PredmetiStudenta, Ucitelj
 from sifranti.models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 import csv
 import datetime
+import codecs
 from reportlab.pdfgen import canvas
 from reportlab.platypus import *
 from reportlab.lib.styles import getSampleStyleSheet
@@ -687,6 +688,84 @@ def natisni_potrdilo(vpis_student_email, studijsko_leto_ime, st_potrdil):
 	doc.build(add_story)
 	return response
 
+
+def students_by_number(request):
+
+
+	leto = StudijskoLeto.objects.latest('id')
+	program = StudijskiProgram.objects.get(id=1000468)
+	letnik = Letnik.objects.get(ime="1.")
+
+	if request.POST.get('izbrano-leto') != None:
+		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))
+
+	if request.POST.get('izbran-program') != None:
+		program = StudijskiProgram.objects.get(naziv=request.POST.get('izbran-program'))
+
+	if request.POST.get('izbran-letnik') != None:
+		letnik = Letnik.objects.get(ime=request.POST.get('izbran-letnik'))
+
+
+	predmetnik_list = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik).values('predmet')
+
+	predmeti_list=[]
+	for p in predmetnik_list:
+		predmeti_list.append(p['predmet'])
+
+	predmeti_list=Predmet.objects.filter(id__in=predmeti_list).order_by('ime').values()
+
+	predmetiStudenta = PredmetiStudenta.objects.all()
+
+	student_list = []
+
+	predmeti_number = [0] * predmeti_list.count()
+
+	#prestej predmete
+	for pr in predmetiStudenta:
+		if pr.vpis.studijsko_leto==leto and pr.vpis.studijski_program==program and pr.vpis.letnik==letnik and pr.vpis.potrjen :
+			for p in pr.predmeti.all():
+				for i, p2 in enumerate(predmeti_list):
+					if p.ime == p2['ime']:
+						predmeti_number[i]+=1
+						break
+
+	for i, p in enumerate(predmeti_list):
+		p['number'] = predmeti_number[i]
+
+
+	#PDF		
+
+	if request.POST.get("save_pdf"):
+		naredi_stevilo_pdf(leto, letnik, program, predmeti_list)
+		name = str(program.id) +'.pdf'
+		fs = FileSystemStorage('/tmp')
+		with fs.open(name) as pdf:
+			response = HttpResponse(pdf, content_type='application/pdf')
+			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+			return response
+	
+	#pages
+	paginator = Paginator(predmeti_list, 40)
+	page = request.GET.get('page')
+	predmeti = paginator.get_page(page)
+			
+	leta = StudijskoLeto.objects.all()
+	programi = StudijskiProgram.objects.all()
+	letniki = Letnik.objects.all()
+
+	context = {
+		'predmeti': predmeti,
+		'numbers': predmeti_number,
+		'leta': leta,
+		'leto': leto,
+		'programi': programi,
+		'program': program,
+		'letniki': letniki,
+		'letnik': letnik
+	}
+
+	return render(request, 'all_subjects_number.html',context)
+
 def naredi_predmet_pdf(predmet, leto, student_list):
 	
 	context = {
@@ -703,6 +782,25 @@ def naredi_predmet_pdf(predmet, leto, student_list):
 
 	html_string =  render_to_string('pdf_predmet.html',context)
 	pdfkit.from_string( html_string,'/tmp/'+ str(predmet.id) + '.pdf', options=options)
+	return
+
+def naredi_stevilo_pdf(leto, letnik, program, predmeti):
+	
+	context = {
+	   'leto': leto,
+	   'program': program,
+	   'letnik': letnik,
+	   'predmeti': predmeti
+	}
+
+	options = {
+    	'page-size': 'A4',
+        'dpi': 600,
+        '--footer-right': '[page]',
+	}
+
+	html_string =  render_to_string('pdf_stevilo.html',context)
+	pdfkit.from_string( html_string,'/tmp/'+ str(program.id) + '.pdf', options=options)
 	return
 
 def naredi_predmet_csv(request, leto, id):
@@ -728,22 +826,70 @@ def naredi_predmet_csv(request, leto, id):
 																	   [alphabet.index(c) for c in str(x.student.vpisna_stevilka)]))
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="studenti.csv"'
+	response.write(codecs.BOM_UTF8)
 
 	writer = csv.writer(response)
 
-	writer.writerow([str(predmet).encode('UTF-8').decode('UTF-8')])
-	writer.writerow([str(leto).encode('UTF-8').decode('UTF-8')])
-	writer.writerow(['#', 'Priimek', 'Ime', 'Vpisna številka'.encode('UTF-8').decode('UTF-8'), "Email", "Vrsta vpisa"])
+	writer.writerow([str(predmet)])
+	writer.writerow([str(leto)])
+	writer.writerow(['#', 'Priimek', 'Ime', 'Vpisna številka', "Email", "Vrsta vpisa"])
 
 	for num, student in enumerate(student_list):
-		 writer.writerow([str(num), student.student.priimek.encode('UTF-8').decode('UTF-8'), 
-		 	student.student.ime.encode('UTF-8').decode('UTF-8'), 
+		 writer.writerow([str(num), student.student.priimek, 
+		 	student.student.ime, 
 		 	student.student.vpisna_stevilka, student.student.email, 
-		 	str(student.vrsta_vpisa).encode('UTF-8').decode('UTF-8')])
+		 	str(student.vrsta_vpisa)])
 
 	return response
 
+def naredi_stevilo_csv(request, leto, program, letnik):
 
+	leto = StudijskoLeto.objects.get(id=leto)
+	program = StudijskiProgram.objects.get(id=program)
+	letnik = Letnik.objects.get(id=letnik)
+
+
+	predmetnik_list = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik).values('predmet')
+
+	predmeti_list=[]
+	for p in predmetnik_list:
+		predmeti_list.append(p['predmet'])
+
+	predmeti_list=Predmet.objects.filter(id__in=predmeti_list).order_by('ime').values()
+
+	predmetiStudenta = PredmetiStudenta.objects.all()
+
+	student_list = []
+
+	predmeti_number = [0] * predmeti_list.count()
+
+	#prestej predmete
+	for pr in predmetiStudenta:
+		if pr.vpis.studijsko_leto==leto and pr.vpis.studijski_program==program and pr.vpis.letnik==letnik and pr.vpis.potrjen :
+			for p in pr.predmeti.all():
+				for i, p2 in enumerate(predmeti_list):
+					if p.ime == p2['ime']:
+						predmeti_number[i]+=1
+						break
+
+	for i, p in enumerate(predmeti_list):
+		p['number'] = predmeti_number[i]
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="stevilo_studentov.csv"'
+	response.write(codecs.BOM_UTF8)
+
+	writer = csv.writer(response)
+
+	writer.writerow([str(program)])
+	writer.writerow([str(leto)])
+	writer.writerow([str(letnik) + "letnik"])
+
+	for num, p in enumerate(predmeti_list):
+		 writer.writerow([str(num), str(p['id']), str(p['ime']), str(p['number'])])
+
+
+	return response
 
 
 

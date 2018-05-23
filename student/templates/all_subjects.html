@@ -10,24 +10,35 @@
 
 <h5>{{ sporocilo }}</h5>
 
-<form method="post">
-  {% csrf_token %}
-  <div class="form-group col-sm-2 row">
-    <select class="form-control" name="izbrano-leto" onchange="this.form.submit()">
-      {% for l in leta %}
-        <option {% if l == leto %} selected {% endif %}>{{ l.ime }}</option>
-      {% endfor %}
-    </select>
+<div class="row">
+  <div class="col-sm-2">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <select class="form-control" name="izbrano-leto" onchange="this.form.submit()">
+        {% for l in leta %}
+          <option {% if l == leto %} selected {% endif %}>{{ l.ime }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </form>
   </div>
-</form>
+{% if user.groups.all.0.name == "referent" %}
+<div class="col-sm-4">
+  <a href="/student/predmeti/stevilo/" class="btn btn-outline-primary">Število vpisanih</a>
+</div>
 
+{% endif %}
+</div>
 
 {% if predmeti %}
 <ul class="list_group row">
 {% for temp in predmeti %}
 	
 		<li class="list-group-item mb-2 col-xs-6 myhover" style="width: 44%; margin-right: 2%">
-			<a href="{{leto.id}}/{{temp.id}}" style="color:#373a3c">{{ temp }}</a>
+			<a href="{{leto.id}}/{{temp.id}}" style="color:#373a3c">
+        {{ forloop.counter }}&#8228; {{ temp }}
+      </a>
 		</li>
 
 {% endfor %}

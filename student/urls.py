@@ -23,6 +23,9 @@ urlpatterns = [
 	path('natisni_potrdila/', views.natisni_potrdila, name="natisni_potrdila"),
     path('predmeti/', views.students_by_subject, name="students_by_subject"),
     path('predmeti/<int:leto>/<int:id>/', views.subject_data, name="subject_data"),
-    path('predmeti/<int:leto>/<int:id>/csv', views.naredi_predmet_csv, name="naredi_premdmet_csv"),
+    path('predmeti/<int:leto>/<int:id>/csv', views.naredi_predmet_csv, name="naredi_predmet_csv"),
+    path('predmeti/stevilo/', views.students_by_number, name="students_by_number"),
+    path('predmeti/stevilo/<int:leto>/<int:program>/<int:letnik>/csv/', 
+        views.naredi_stevilo_csv, name="naredi_stevilo_csv"),
 
 ]
