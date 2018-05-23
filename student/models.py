@@ -90,6 +90,8 @@ class Vpis(models.Model):
     prosta_izbira = models.BooleanField(default = False)
     #ce je dokoncal vpis - potrebuje se pri izpisu vpisov na /vpis
     dokoncan_vpis = models.BooleanField(default = False)
+    #naroci potrdila
+    st_narocenih_potrdil = models.IntegerField(default=0,null=True)
 
     class Meta:
         unique_together = (('student', 'studijsko_leto'),)
