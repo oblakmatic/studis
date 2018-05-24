@@ -69,7 +69,7 @@ class Zeton(models.Model):
 
 
 class Vpis(models.Model):
-    student = models.ForeignKey(Student, primary_key = True,  on_delete= models.CASCADE)
+    student = models.ForeignKey(Student, on_delete= models.CASCADE)
     
     studijsko_leto = models.ForeignKey(StudijskoLeto, null= True, on_delete=models.SET_NULL)
 
