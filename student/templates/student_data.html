@@ -37,6 +37,8 @@
 			<th>Vrsta Vpisa</th>
 			<th>Način Študija</th>
 			<th>Vrsta Študija</th>
+			<th>Vpisni list</th>
+			
 		</tr>
     </thead>
     {% for t in vpisi %}
@@ -48,6 +50,9 @@
 		<td>{{t.vrsta_vpisa}}</td>
 		<td>{{t.nacin_studija}}</td>
 		<td>{{t.vrsta_studija}}</td>
+		<td><form action="/vpis/vpisni_list/{{ t.student.vpisna_stevilka }}/{{ t.studijsko_leto.ime }}/" method="get">
+			<button type="submit" class="btn btn-outline-primary">Prenos PDF </button>
+		</form></td>
 	</tr>
     {% endfor %}
 </table>

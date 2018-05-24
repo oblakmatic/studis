@@ -337,10 +337,10 @@ def naredi_bazo(request):
     a_stud.save()
     a_stud2 = StudijskiProgram(id=1000471,sifra="L1",stopnja="L - druga stopnja: magistrski", semestri=4, naziv= "RAČUNALN. IN INFORM. MAG II.ST")
     a_stud2.save()
-    a = StudijskiProgram(id=1000468 ,sifra="VT",stopnja="K - prva stopnja: univerzitetni", semestri=6, naziv= "RAČUNALN. IN INFORM. UN-I.ST")
-    a.save()
-    a = StudijskiProgram(id=1000470 ,sifra="VU",stopnja="J - prva stopnja: visokošolski strokovni", semestri=6, naziv= "RAČUNALN. IN INFORM. VS-I.ST")
-    a.save()
+    a_uni = StudijskiProgram(id=1000468 ,sifra="VT",stopnja="K - prva stopnja: univerzitetni", semestri=6, naziv= "RAČUNALN. IN INFORM. UN-I.ST")
+    a_uni.save()
+    a_vs = StudijskiProgram(id=1000470 ,sifra="VU",stopnja="J - prva stopnja: visokošolski strokovni", semestri=6, naziv= "RAČUNALN. IN INFORM. VS-I.ST")
+    a_vs.save()
 
     a_vs1 = VrstaStudija(id=16203,opis="Visokošolska strokovna izobrazba (prva bolonjska stopnja)", nacin_zakljucka="diplomirani...(VS)/diplomirana", raven_klasius="6/2")
     a_vs1.save()
@@ -375,9 +375,22 @@ def naredi_bazo(request):
     a_oblika = OblikaStudija(id=1, opis="na lokaciji", ang_opis="on-site" )
     a_oblika.save()
 
-    zeton = Zeton(student=primozt,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_2Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs1, oblika_studija=a_oblika)
+    zeton = Zeton(student=primozt,
+    studijski_program = a_uni,
+    letnik=a_2Letnik,
+    vrsta_vpisa=a_vv2,
+    nacin_studija=a_ns1,
+    vrsta_studija=a_vs2, 
+    oblika_studija=a_oblika)
+
     zeton.save()
-    zeton2 = Zeton(student=primozt,studijski_program=a_stud2,letnik=a_1Letnik,vrsta_vpisa=a_vv2,nacin_studija=a_ns2,vrsta_studija=a_vs2, oblika_studija=a_oblika)
+    zeton2 = Zeton(student=primozt,
+    studijski_program=a_uni,
+    letnik=a_3Letnik,
+    vrsta_vpisa=a_vv1,
+    nacin_studija=a_ns1,
+    vrsta_studija=a_vs2, 
+    oblika_studija=a_oblika)
     zeton2.save()
 
     zeton = Zeton(student=martin,studijski_program=StudijskiProgram.objects.filter(pk=1000468)[0],letnik=a_3Letnik,vrsta_vpisa=a_vv1,nacin_studija=a_ns1,vrsta_studija=a_vs2, oblika_studija=a_oblika)

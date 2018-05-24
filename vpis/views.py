@@ -41,13 +41,21 @@ nas_leto_ob = StudijskoLeto.objects.filter(ime=nas_leto)
 
 
 
-def vpisni_list(request, vpisna):
-    student = Student.objects.filter(vpisna_stevilka=vpisna)
-    vpis = Vpis.objects.filter(student= student[0])
-    narediVpisniList(student,vpis)
+def vpisni_list(request, vpisna, ind_studleto, ind_studleto2):
+    
+    studleto = str(ind_studleto)+"/"+str(ind_studleto2)
+    studleto_ob = StudijskoLeto.objects.get(ime=studleto)
 
-    name = str(vpisna) +"2018"+'.pdf'
+    student = Student.objects.filter(vpisna_stevilka=vpisna)
+    vpis = Vpis.objects.filter(student= student[0]).filter(studijsko_leto = studleto_ob)
+    
+    name = str(vpisna) +str(ind_studleto)+'.pdf'
     fs = FileSystemStorage('/tmp')
+    
+    if not fs.exists(name):
+        #print("Generiram pdf")
+        narediVpisniList(student,vpis)
+    
     with fs.open(name) as pdf:
         response = HttpResponse(pdf, content_type='application/pdf')
         response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
@@ -81,8 +89,19 @@ def index2_vpis_post(request,index):
                     prosta_izbira = zeton[index].pravica_do_izbire)
 
                 nov_vpis.save()
-                zeton[index].izkoriscen = True
-                zeton[index].save()
+                
+                zeton1 = zeton[index]
+                
+                if len(zeton) == 2:
+                    #print("evo me")
+                    drugind = (index+1)%2
+                    #print(str(index)+ str(drugind))
+                    zeton2 = zeton[drugind]
+                    zeton2.izkoriscen =True
+                    zeton2.save()
+                zeton1.izkoriscen = True
+                zeton1.save()
+                
                 return HttpResponseRedirect('/vpis/predmetnik/')
 
 def index2_vpis(request):
@@ -231,7 +250,8 @@ def index_vpis(request):
                     'vpisi' : Vpis.objects.filter(student=student[0]).filter(dokoncan_vpis=True),
                     'student': student[0],
                     'studentform': form,
-                    'opozorilo': opozorilo
+                    'opozorilo': opozorilo,
+                    'gumbobstaja' : aligumbobstaja(student[0])
                     }
                     return render(request,'vpis/index_vpis.html',context)
             else:
@@ -239,7 +259,8 @@ def index_vpis(request):
                 'vpisi' : Vpis.objects.filter(student=student[0]).filter(dokoncan_vpis=True),
                 'student': student[0],
                 'studentform': form,
-                'opozorilo': 'Prišlo je do napake, ponovno vnesite podatke'
+                'opozorilo': 'Prišlo je do napake, ponovno vnesite podatke',
+                'gumbobstaja' : aligumbobstaja(student[0])
                 }
                 return render(request,'vpis/index_vpis.html',context)
         else:
@@ -299,12 +320,15 @@ def index_vpis(request):
             else:
                 opozorilo= "Nimaš žetona"
             
+            print(Vpis.objects.filter(student=najden_student[0]).filter(dokoncan_vpis=False).exists())
             context = {
                 'vpisi' : Vpis.objects.filter(student=najden_student[0]).filter(dokoncan_vpis=True),
                 'student' : najden_student[0],
                 'opozorilo' : opozorilo,
-                'studentform' : studentform
+                'studentform' : studentform,
+                'gumbobstaja' : aligumbobstaja(najden_student[0])
                 }
+                
         else:
             opozorilo="Samo študenti se lahko vpišejo"
             context = {
@@ -482,20 +506,20 @@ def preveri_emso_datum(emso, datum):
 # program hoce delati, zeton dodelimo studentu
 def narediZetonZaKandidata(student1,kandidat):
     
-    print(student1)
-    print(kandidat)
-    print("neki")
+    #print(student1)
+    #print(kandidat)
+    #print("neki")
     if Zeton.objects.filter(student=student1[0]).exists():
         return
     
-    print("neki")
+    #print("neki")
     letnik = Letnik.objects.get(ime="1.")
     studij_prog = kandidat.studijski_program
     vrsta_studija = None
     nacin_studija = NacinStudija.objects.get(id=1)
     vrsta_vpisa = VrstaVpisa.objects.get(id=1)
     oblika_studija = OblikaStudija.objects.get(id=1)
-    print("neki")
+    #print("neki")
     if studij_prog.id == 1000470:
         vrsta_studija = VrstaStudija.objects.get(id=16203)
     elif studij_prog.id == 1000468:
@@ -531,6 +555,8 @@ def narediVpisniList(student,vpis):
     obcina_zacasno = na(str(student[0].obcina_zacasno))
     drzava_rojstva = na(str(student[0].drzava_rojstva))
     obcina_rojstva = na(str(student[0].obcina_rojstva))
+    datum_rojstva = na(str(student[0].datum_rojstva))
+    datum_rojstva = datum_rojstva[8:]+'.'+ datum_rojstva[5:7] + '.' + datum_rojstva[:4]
 
     #vpis
 
@@ -565,15 +591,16 @@ def narediVpisniList(student,vpis):
 
 
     merge = {** student.values()[0], 
-    'drzava' : drzava,
-     'obcina': obcina,
+    'drzava' : dodajvejico(drzava,obcina),
+     'obcina': dodajvejico(obcina,posta),
      'posta': posta,
      'posta_zacasno':posta_zacasno,
      'naslov_zacasno_bivalisce':naslov_zacasno_bivalisce,
-     'drzava_zacasno':drzava_zacasno,
-     'obcina_zacasno':obcina_zacasno,
-      'drzava_rojstva':drzava_rojstva,
-      'obcina_rojstva':obcina_rojstva,}
+     'drzava_zacasno':dodajvejico(drzava_zacasno,obcina_zacasno),
+     'obcina_zacasno':dodajvejico(obcina_zacasno,posta_zacasno),
+      'drzava_rojstva': dodajvejico(drzava_rojstva, obcina_rojstva),
+      'obcina_rojstva':obcina_rojstva,
+      'datum_rojstva': datum_rojstva}
 
     merge2 = {** vpis.values()[0],
 
@@ -597,6 +624,18 @@ def narediVpisniList(student,vpis):
     pdfkit.from_string( html_string,'/tmp/'+ vp+leto+'.pdf')
     return
 
+#logika za dodajanje vejice ce naslejdnji string obstaja mu doda vejico
+# Slovenija Ljubljana --> return(Slovenija,) Ljubljana or Slovenija None --> return(Slovenija)
+def dodajvejico(nekistring, naslednji):
+    if nekistring == "":
+        return nekistring    
+    elif naslednji == "":
+        return nekistring
+    elif nekistring == None or naslednji == None:
+        raise Exception("not cool bro, pri metodi dodaj vejico je slo v narobe")
+    else:
+        return nekistring + ", "
+
 
 def na(objekt):
     if objekt == "None":
@@ -604,3 +643,6 @@ def na(objekt):
     else:
         return objekt
     
+def aligumbobstaja(student):
+    #print(Zeton.objects.filter(student = student).values())
+    return Zeton.objects.filter(student = student).filter(izkoriscen = False).exists()
