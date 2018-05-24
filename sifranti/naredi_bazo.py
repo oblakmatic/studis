@@ -520,6 +520,14 @@ def naredi_bazo(request):
     rok10 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date, prostor_izvajanja = "A1")
     rok10.save()
 
+    rok_date = datetime.datetime(2018, 7, 16, 12, 15)
+    rok11 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date, prostor_izvajanja = "A1")
+    rok11.save()
+
+    rok_date = datetime.datetime(2018, 7, 30, 12, 15)
+    rok12 = Rok(izvedba_predmeta = a_izv_teh, datum = rok_date, prostor_izvajanja = "A1")
+    rok12.save()
+
 
 
     new_date = datetime.datetime(2018, 2, 15, 14, 30)
@@ -1255,6 +1263,108 @@ def naredi_bazo(request):
     new_date = datetime.datetime(2017, 2, 16, 14, 20)
     a_prijava2 = Prijava(created_at = new_date, predmeti_studenta = p_predmetiStudentpPrimoz0_old, rok = rok3_prev, zaporedna_stevilka_polaganja = 2, ocena_izpita = 5)
     a_prijava2.save()
+
+ # primozprimernik10 -> 1 prijava - 5.6.2018
+    #kreiranje studenta
+    p_prim0 = Student(vpisna_stevilka = "63150910", 
+    emso = "5869362400010", 
+    priimek="primoz", 
+    ime="primernik10", 
+    naslov_stalno_bivalisce="Godešič 163, 4220 Škofja Loka", 
+    drzava=a_slo, 
+    drzava_rojstva = a_slo, 
+    posta= a_sklPosta, 
+    obcina=a_sklObcina,
+    obcina_rojstva= a_ljObcina, 
+    telefon="031866686", 
+    email="pp0010@student.uni-lj.si")
+    p_prim0.save()
+
+    user, created = User.objects.get_or_create(username="primozprimernik10", email="pp0010@student.uni-lj.si")
+    user.first_name = "Primoz"
+    user.last_name = "Primernik10"
+        
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        prof_group, status = Group.objects.get_or_create(name='students') 
+        prof_group.user_set.add(user)
+
+    user.save()
+
+    # kreiranje vpisa
+    p_vpisPrimoz0 = Vpis(student=p_prim0, 
+    studijsko_leto=a_17_18, 
+    studijski_program=a_studijskiProgram, 
+    letnik=a_3Letnik, 
+    vrsta_vpisa=a_vrstaVpisa,
+    nacin_studija=a_nacinStudija, 
+    vrsta_studija=a_vrstaStudija)
+    p_vpisPrimoz0.save()
+
+    # dodajanje predmetov
+    p_predmetiStudentpPrimoz0 = PredmetiStudenta()
+    p_predmetiStudentpPrimoz0.save()
+    p_predmetiStudentpPrimoz0.vpis = p_vpisPrimoz0
+    p_predmetiStudentpPrimoz0.predmeti.add(a_teh,a_oim,a_ep,a_obl,a_P1)
+    p_predmetiStudentpPrimoz0.save()
+
+    # dodaja prijave na rok
+    new_date = datetime.datetime(2018, 2, 15, 14, 30)
+    a_prijava1 = Prijava(created_at = new_date, predmeti_studenta = p_predmetiStudentpPrimoz0, rok = rok7, zaporedna_stevilka_polaganja = 1)
+    a_prijava1.save()
+
+ # primozprimernik11 -> 1 prijava - 5.6.2018
+    #kreiranje studenta
+    p_prim0 = Student(vpisna_stevilka = "63150911", 
+    emso = "5869362400011", 
+    priimek="primoz", 
+    ime="primernik11", 
+    naslov_stalno_bivalisce="Godešič 163, 4220 Škofja Loka", 
+    drzava=a_slo, 
+    drzava_rojstva = a_slo, 
+    posta= a_sklPosta, 
+    obcina=a_sklObcina,
+    obcina_rojstva= a_ljObcina, 
+    telefon="031866686", 
+    email="pp0011@student.uni-lj.si")
+    p_prim0.save()
+
+    user, created = User.objects.get_or_create(username="primozprimernik11", email="pp0011@student.uni-lj.si")
+    user.first_name = "Primoz"
+    user.last_name = "Primernik11"
+        
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        prof_group, status = Group.objects.get_or_create(name='students') 
+        prof_group.user_set.add(user)
+
+    user.save()
+
+    # kreiranje vpisa
+    p_vpisPrimoz0 = Vpis(student=p_prim0, 
+    studijsko_leto=a_17_18, 
+    studijski_program=a_studijskiProgram, 
+    letnik=a_3Letnik, 
+    vrsta_vpisa=a_vrstaVpisa,
+    nacin_studija=a_nacinStudija, 
+    vrsta_studija=a_vrstaStudija)
+    p_vpisPrimoz0.save()
+
+    # dodajanje predmetov
+    p_predmetiStudentpPrimoz0 = PredmetiStudenta()
+    p_predmetiStudentpPrimoz0.save()
+    p_predmetiStudentpPrimoz0.vpis = p_vpisPrimoz0
+    p_predmetiStudentpPrimoz0.predmeti.add(a_teh,a_oim,a_ep,a_obl,a_P1)
+    p_predmetiStudentpPrimoz0.save()
+
+    # dodaja prijave na rok
+    new_date = datetime.datetime(2018, 2, 15, 14, 30)
+    a_prijava1 = Prijava(created_at = new_date, predmeti_studenta = p_predmetiStudentpPrimoz0, rok = rok7, zaporedna_stevilka_polaganja = 1)
+    a_prijava1.save()
 
  #
 
