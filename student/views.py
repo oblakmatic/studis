@@ -14,6 +14,7 @@ from reportlab.platypus import *
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import letter, A4, landscape
 from reportlab.lib import colors 
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 import time
 from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER
@@ -800,7 +801,10 @@ def naredi_predmet_pdf(predmet, leto, student_list):
 	options = {
     	'page-size': 'A4',
         'dpi': 600,
-        '--footer-right': '[page]',
+        'header-left': "FAKULTETA ZA RAČUNALNIŠTVO IN INFORMATIKO",
+        'header-right': "[date]",
+        'footer-right': "[page] od [topage]",
+        'header-line': '',
 	}
 
 	html_string =  render_to_string('pdf_predmet.html',context)
@@ -819,7 +823,11 @@ def naredi_stevilo_pdf(leto, letnik, program, predmeti):
 	options = {
     	'page-size': 'A4',
         'dpi': 600,
-        '--footer-right': '[page]',
+        'header-left': "FAKULTETA ZA RAČUNALNIŠTVO IN INFORMATIKO",
+        'header-right': "[date]",
+        'footer-right': "[page] od [topage]",
+        'header-line': '',
+
 	}
 
 	html_string =  render_to_string('pdf_stevilo.html',context)
@@ -908,6 +916,7 @@ def naredi_stevilo_csv(request, leto, program, letnik):
 	writer.writerow([str(leto)])
 	writer.writerow([str(letnik) + "letnik"])
 
+	writer.writerow(["#", "Šifra predmeta", "Ime predmeta", "Število vpisanih"])
 	for num, p in enumerate(predmeti_list):
 		 writer.writerow([str(num), str(p['id']), str(p['ime']), str(p['number'])])
 
