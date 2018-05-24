@@ -975,4 +975,87 @@ def sort_prijave(prijave):
 
 	return new_prijave
 
-	
+def uredi_rok(request):
+	if request.method == 'POST' and 'post_type' in request.POST:
+		rok_id = request.POST['rok_id']
+		rok_za_urejanje = Rok.objects.get(id=rok_id)
+		context = {
+			"IzvedbaPredmeta": rok_za_urejanje.izvedba_predmeta,
+			"datumRoka": str("%02d.%02d.%4d" % (rok_za_urejanje.datum.day, rok_za_urejanje.datum.month, rok_za_urejanje.datum.year)),
+			"uraRoka": str("%02d:%02d" % (rok_za_urejanje.datum.hour, rok_za_urejanje.datum.minute)),
+			"prostorRoka": str("%s" % (rok_za_urejanje.prostor_izvajanja)),
+			"rok": rok_za_urejanje,
+			"atendees": Prijava.objects.filter(aktivna_prijava = True, rok = rok_za_urejanje).count()
+		}
+		return render(request,'uredi_rok.html',context)
+	elif request.method == 'POST':
+		rok_id = request.POST['id_rok']
+		rok_za_urejanje = Rok.objects.get(id=rok_id)
+		datum = request.POST['datum']
+		cas = request.POST['cas']
+		prostor = request.POST['prostor']
+
+		datum_split = datum.split(".")
+		cas_split = cas.split(":")
+		
+		datum_ = datetime(int(datum_split[2]), int(datum_split[1]), int(datum_split[0]), int(cas_split[0]), int(cas_split[1]))
+		print("rok id", rok_id)
+		print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", datum_.date())
+		if (Rok.objects.filter(~Q(id=rok_id), datum__date = datum_.date()).count() > 0):
+			context = {
+				'arr': [],
+				'message': 'Rok na izbrani datum že obstaja!',
+				'msg_type': 'alert-warning'
+			}
+
+			return render(request,'izpiti-message.html',context)
+		rok_za_urejanje.datum = datum_
+		rok_za_urejanje.prostor = prostor
+		rok_za_urejanje.save()
+		context = {
+			'arr': [],
+			'message': 'Rok uspešno urejen!',
+			'msg_type': 'alert-success'
+		}
+		return render(request,'izpiti-message.html',context)
+	else:
+		context = {
+			'arr': [],
+			'message': 'Napačen tip dostopa!',
+			'msg_type': 'alert-warning'
+		}
+		return render(request,'izpiti-message.html',context)
+
+def izbrisi_rok(request):
+	if request.method == 'POST' and 'post_type' in request.POST:
+		rok_id = request.POST['rok_id']
+		rok_za_urejanje = Rok.objects.get(id=rok_id)
+		context = {
+			"IzvedbaPredmeta": rok_za_urejanje.izvedba_predmeta,
+			"datumRoka": str("%02d.%02d.%4d" % (rok_za_urejanje.datum.day, rok_za_urejanje.datum.month, rok_za_urejanje.datum.year)),
+			"uraRoka": str("%02d:%02d" % (rok_za_urejanje.datum.hour, rok_za_urejanje.datum.minute)),
+			"prostorRoka": str("%s" % (rok_za_urejanje.prostor_izvajanja)),
+			"rok": rok_za_urejanje,
+			"atendees": Prijava.objects.filter(aktivna_prijava = True, rok = rok_za_urejanje).count()
+		}
+		return render(request,'izbrisi_rok.html',context)
+	elif request.method == 'POST':
+		rok_id = request.POST['id_rok']
+		rok_za_urejanje = Rok.objects.get(id=rok_id)
+		relevantne_prijave = Prijava.objects.filter(rok = rok_za_urejanje).delete()
+		rok_za_urejanje.delete()
+		context = {
+			'arr': [],
+			'message': 'Rok uspešno izbrisan!',
+			'msg_type': 'alert-success'
+		}
+		return render(request,'izpiti-message.html',context)
+	else:
+		context = {
+			'arr': [],
+			'message': 'Napačen tip dostopa!',
+			'msg_type': 'alert-warning'
+		}
+		return render(request,'izpiti-message.html',context)
+
+		
