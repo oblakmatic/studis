@@ -9,17 +9,23 @@
 
         <thead>
             <tr>
+                <th scope="col">#</th>
                 <th scope="col">Studijsko leto</th>
                 <th scope="col">Predmet</th>
                 <th scope="col">Izvajalec</th>
                 <th scope="col">Datum</th>
                 <th scope="col">Prostor</th>
+                <th scope="col">Uredi rok</th>
+                <th scope="col">Briši rok</th>
             </tr>
         </thead>
 
         {% for rok in arr %}
 
         <tr>
+            <td>
+                {{forloop.counter}}
+            </td>
             <td>
                 {{ rok.izvedba_predmeta.studijsko_leto }}
             </td>
@@ -54,6 +60,23 @@
                 {{ rok.datum|date:'d.m.Y' }}, {{ rok.datum|time:"H:i" }}
             </td>
             <td>{{ rok.prostor_izvajanja }}</td>
+            <form action="/izpiti/uredi-rok/" method="post">
+                {% csrf_token %}
+                <td>
+                    <input type="text" id="{{ rok.id }}"  name="rok_id" value="{{rok.id}}" hidden />
+                    <input type="text" name="post_type" value="post_type" hidden />
+                    <button type="submit" name="dodaj_izpit" class="btn btn-outline-primary mt-2">Uredi</button>
+                </td>
+            </form>
+
+            <form action="/izpiti/izbrisi-rok/" method="post">
+                {% csrf_token %}
+                <td>
+                    <input type="text" id="{{ rok.id }}"  name="rok_id" value="{{rok.id}}" hidden />
+                    <input type="text" name="post_type" value="post_type" hidden />
+                    <button type="submit" name="dodaj_izpit" class="btn btn-outline-primary mt-2">Izbriši</button>
+                </td>
+            </form>
         </tr>
         {% endfor %}
 

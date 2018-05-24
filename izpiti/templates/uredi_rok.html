@@ -16,7 +16,7 @@
                     <th scope="col">Datum (dd.mm.yyyy)</th>
                     <th scope="col">Cas (hh:mm)</th>
                     <th scope="col">Prostor</th>
-                    <th scope="col">Dodaj rok izpita</th>
+                    <th scope="col">Uredi rok izpita</th>
                 </tr>
             </thead>
             <tr>
@@ -39,7 +39,7 @@
                     {{ IzvedbaPredmeta.ucitelj_1}}
                 </td>
                 {% endif %}
-                <form action="/izpiti/izpiti-message/" method="post">
+                <form action="/izpiti/uredi-rok/" method="post">
                     {% csrf_token %}
                     <td>
                         <input type="text" id="datum" oninput="myFunction(this)" name="datum" style="width: 120px;" placeholder="dd.mm.yyyy" value="{{datumRoka}}" required />
@@ -53,7 +53,7 @@
                     <td>
                         <input type="hidden" name="id_rok" value={{ rok.id }}>
                         {% if atendees > 0 %}
-                            <input type="checkbox" name="seznanjenost" value="seznanjenost">Na izpitni rok so prijavljeni študenti. Potrdite seznanjenost.</input>
+                            <input type="checkbox" name="seznanjenost" value="seznanjenost" required>Na izpitni rok so prijavljeni študenti. Potrdite seznanjenost.</input>
                         {% endif%}
                         <button type="submit" name="uredi_izpit" class="btn btn-outline-primary mt-2">Uredi izpitni rok</button>
                     </td>
