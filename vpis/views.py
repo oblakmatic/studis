@@ -540,7 +540,102 @@ def narediZetonZaKandidata(student1,kandidat):
     nov_zeton.save()
     print("nekisad")
     return
+def izracunajSteviloPolaganj(izvedba_predmeta,student):
     
+    vsi_vpisi = Vpis.objects.filter(student= student).order_by('studijsko_leto__ime')
+    stevec_trenutnih = 0
+    stevec_vseh = 0
+    i = 0
+    for vpis in vsi_vpisi:
+        predmeti_stud = PredmetiStudenta.objects.filter(vpis=vpis)
+        roki = Rok.objects.filter(izvedba_predmeta = izvedba_predmeta)
+        prijave = Prijava.objects.filter(predmeti_stud__in = list(predmeti_stud)).filter(rok__in = list(roki)).order_by('created_at')
+        stevec_vseh += len(prijave)
+        if i == len(vsi_vpisi)-1:
+            stevec_trenutnih = len(prijave)
+
+        i += 1
+
+    return str(stevec_vseh)+"-"+str(stevec_trenutnih)
+
+
+def narediKartotecniList(nic):
+
+    student = Student.objects.filter(vpisna_stevilka=63158888)
+    vpisi = Vpis.objects.filter(student=student[0])
+
+    todayy = datetime.today()
+    #vpisi
+
+    vsi_vpisi = []
+
+    i = 0
+    for vpis in vpisi:
+        studijsko_leto = na(str(vpis.studijsko_leto))
+        studijski_program = na(str(vpis.studijski_program))
+        letnik = na(str(vpis.letnik))
+        vrsta_vpisa = na(str(vpis.vrsta_vpisa))
+        nacin_studija = na(str(vpis.nacin_studija))
+        vrsta_studija = na(str(vpis.vrsta_studija))
+        oblika_studija = na(str(vpis.oblika_studija))
+
+
+        
+        #predmeti
+        predmeti = PredmetiStudenta.objects.filter(vpis= vpis)[0].predmeti.all()
+
+        vsipod = []
+
+        for predmet in predmeti:
+            izvedba = IzvedbaPredmeta.objects.filter(predmet=predmet, studijsko_leto=vpis.studijsko_leto)[0]
+            izracun = izracunajSteviloPolaganj(predmet,student)
+            #print(izvedba.ucitelj_2)
+            ucitelj1 = na(str(izvedba.ucitelj_1))
+            ucitelj2 = na(str(izvedba.ucitelj_2))
+            ucitelj3 = na(str(izvedba.ucitelj_3))
+            #print(ucitelj2)
+            #ucitelj = "test"
+            tocke = na(str(predmet.kreditne_tocke))
+            #predmet_ime = na(str(predmet.ime))
+
+            merge = {
+                    'sifra' : predmet.id,
+                    'ime': predmet.ime,
+                    'kt' : predmet.kreditne_tocke,
+                     'ucitelj1': ucitelj1,
+                     'ucitelj2': ucitelj2,
+                     'ucitelj3': ucitelj3,
+                     'tocke': tocke}
+            vsipod.append(merge)
+
+        merge2 = {** vpisi.values()[i],
+            'predmeti' : vsipod,
+            'studijsko_leto':studijsko_leto,
+            'studijski_program':studijski_program,
+            'letnik':letnik,
+            'vrsta_vpisa':vrsta_vpisa,
+            'nacin_studija':nacin_studija,
+            'vrsta_studija':vrsta_studija,
+            'oblika_studija':oblika_studija
+            }
+        vsi_vpisi.append(merge2)
+        i = i +1
+
+
+
+    context = {
+        "datum" : todayy.strftime('%d.%m.%Y'),
+        "student" : student.values()[0],
+        "vpisi" : vsi_vpisi,
+
+    }
+
+    html_string =  render_to_string('vpis/kartotecni_list.html',context)
+    pdfkit.from_string( html_string,'/tmp/kartotecni.pdf')
+    return
+
+
+
 #pripeli student in vpis kot queryset
 def narediVpisniList(student,vpis):
     #prvoleto = Vpis.objects.filter(student=student).order_by('studijsko_leto')[0]

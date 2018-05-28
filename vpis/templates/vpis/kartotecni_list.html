@@ -1,0 +1,72 @@
+<head>
+    <meta charset="UTF-8">
+  
+  </head>
+<h2 style="text-align: left;">UNIVERZA V LJUBLJANI</h2>
+<table style="width: 652.4px;">
+<tbody>
+<tr style="height: 32.45px;">
+<td style="width: 711px; height: 32.45px;">
+<h3>Fakulteta za računalni&scaron;tvo in informatiko</h3>
+</td>
+<td style="width: 338.4px; height: 32.45px; text-align: right;">Datum:{{datum}}&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>KARTOTEČNI LIST</p>
+<p style="text-align: center;">Pregled opravljenih izpitov</p>
+<p style="text-align: center;"><b>{{student.vpisna_stevilka}} </b>{{student.ime}} {{student.priimek}}</p>
+
+{%for vpis in vpisi%}
+
+<p style="text-align: center;">{{vpis.studijski_program}}</p>
+<table style="width: 652px;">
+<tbody>
+<tr>
+<td style="width: 337.8px;">&Scaron;tudijsko leto: {{vpis.studijsko_leto}}</td>
+<td style="width: 324.2px;">Vrsta vpisa: {{ vpis.vrsta_vpisa}}</td>
+</tr>
+<tr>
+<td style="width: 337.8px;">Letnik: {{vpis.letnik}}</td>
+<td style="width: 324.2px;">&nbsp;</td>
+</tr>
+<tr>
+<td style="width: 337.8px;">Način: {{vpis.nacin_studija}}</td>
+<td style="width: 324.2px;">&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<table style="width: 654.8px;">
+<tbody>
+<tr>
+<td style="width: 10px;"><strong>#</strong></td>
+<td style="width: 10px;"><strong>&Scaron;ifra</strong></td>
+<td style="width: 10px;"><strong>Predmet</strong></td>
+<td style="width: 10px;"><strong>KT</strong></td>
+<td style="width: 12px;"><strong>Predavatelj(i)</strong></td>
+<td style="width: 70px;"><strong>Datum</strong></td>
+<td style="width: 38px;"><strong>Ocena</strong></td>
+<td style="width: 95.8px;"><strong>&Scaron;t. polaganj</strong></td>
+</tr>
+{%for predmet in vpis.predmeti%}
+<tr>
+<td style="width: 10px;">{{forloop.counter}}</td>
+<td style="width: 10px;">{{predmet.sifra}}</td>
+<td style="width: 10px;">{{predmet.ime}}</td>
+<td style="width: 10px;">{{predmet.kt}}</td>
+<td style="width: 12px;">
+<p>{{predmet.ucitelj1}}</p>
+<p>{{predmet.ucitelj2}}</p>
+<p>{{predmet.ucitelj3}}</p>
+</td>
+<td style="width: 70px;">{{predmet.izpit}}</td>
+<td style="width: 38px;">{{predmet.ocena}}</td>
+<td style="width: 95.8px;">{{predmet.st_polaganj}}</td>
+</tr>
+{%endfor%}
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p style="page-break-before: always;">&nbsp;</p>
+{% endfor %}
