@@ -434,7 +434,7 @@ def predmetnik(request):
                     predmeti_izbirni.append(p.predmet)
                     
     
-            moduls = Modul.objects.all()
+            moduls = Modul.objects.filter(studijski_program=program, studijsko_leto=leto)
         
     
             for m in moduls:
