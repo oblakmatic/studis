@@ -170,14 +170,15 @@
           $( "#id_ima_modul" ).change(function() {
             var $input = $( this );
              if ($input.is( ":checked" )){      
-                    $("#id_obvezen").prop( "checked", false );
+                $("#id_obvezen").prop( "checked", false );
                  $("#id_modul").show();
-                 $("label[for='id_modul").show();
+                 $("label[for='id_modul']").show();
              }else{
                $("#id_modul").hide();
-                 $("label[for='id_modul").hide();
+                $("label[for='id_modul']").hide();
              }
           }).change();
+
           $( "#id_strokoven" ).change(function() {
             var $input = $( this );
              if ($input.is( ":checked" )){      
