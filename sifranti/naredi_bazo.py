@@ -1492,6 +1492,45 @@ def naredi_bazo(request):
     katarina_predmeti2.vpis = katarina_vpis2
     katarina_predmeti2.predmeti.add(*UNI_PREDMETI_DRUGI)
     katarina_predmeti2.save()
+    
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[0], studijsko_leto = a_17_18)[0]
+    new_date = datetime.datetime(2018, 3, 3, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "A1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2018, 3, 3, 14, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 1, 
+        ocena_izpita = 6)
+
+    prijava_1.save()
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[1], studijsko_leto = a_17_18)[0]
+    new_date = datetime.datetime(2018, 4, 4, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "A1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2018, 4, 4, 14, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 1, 
+        ocena_izpita = 8)
+
+    prijava_1.save()
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[1], studijsko_leto = a_17_18)[0]
+    new_date = datetime.datetime(2018, 5, 5, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "A1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2018, 4, 4, 14, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 1, 
+        ocena_izpita = 9)
+
+    prijava_1.save()
 
 
 

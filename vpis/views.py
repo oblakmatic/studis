@@ -542,21 +542,9 @@ def narediZetonZaKandidata(student1,kandidat):
     return
 def izracunajSteviloPolaganj(izvedba_predmeta,student):
     
-    vsi_vpisi = Vpis.objects.filter(student= student).order_by('studijsko_leto__ime')
-    stevec_trenutnih = 0
-    stevec_vseh = 0
-    i = 0
-    for vpis in vsi_vpisi:
-        predmeti_stud = PredmetiStudenta.objects.filter(vpis=vpis)
-        roki = Rok.objects.filter(izvedba_predmeta = izvedba_predmeta)
-        prijave = Prijava.objects.filter(predmeti_stud__in = list(predmeti_stud)).filter(rok__in = list(roki)).order_by('created_at')
-        stevec_vseh += len(prijave)
-        if i == len(vsi_vpisi)-1:
-            stevec_trenutnih = len(prijave)
 
-        i += 1
 
-    return str(stevec_vseh)+"-"+str(stevec_trenutnih)
+    return 
 
 
 def narediKartotecniList(nic):
@@ -586,18 +574,75 @@ def narediKartotecniList(nic):
 
         vsipod = []
 
+        skupnaocena= 0
+        skupnokt = 0
+        skupnokt_max = 0
+
         for predmet in predmeti:
+            skupnokt_max += predmet.kreditne_tocke
             izvedba = IzvedbaPredmeta.objects.filter(predmet=predmet, studijsko_leto=vpis.studijsko_leto)[0]
-            izracun = izracunajSteviloPolaganj(predmet,student)
+            #izracun = izracunajSteviloPolaganj(predmet,student)
             #print(izvedba.ucitelj_2)
-            ucitelj1 = na(str(izvedba.ucitelj_1))
-            ucitelj2 = na(str(izvedba.ucitelj_2))
-            ucitelj3 = na(str(izvedba.ucitelj_3))
+            if izvedba.ucitelj_1:
+                ucitelj1 = na(str(izvedba.ucitelj_1.ime)+" "+izvedba.ucitelj_1.priimek )
+            else:
+                ucitelj1 = ""
+            if izvedba.ucitelj_2:
+                ucitelj2 = na(str(izvedba.ucitelj_2.ime)+" "+izvedba.ucitelj_2.priimek)
+            else:
+                ucitelj2 = ""
+            if izvedba.ucitelj_3:
+                ucitelj3 = na(str(izvedba.ucitelj_3.ime)+" "+izvedba.ucitelj_3.priimek)
+            else:
+                ucitelj3 = ""
+            
+            #ucitelj2 = na(str(izvedba.ucitelj_2))
+            #ucitelj3 = na(str(izvedba.ucitelj_3))
             #print(ucitelj2)
             #ucitelj = "test"
             tocke = na(str(predmet.kreditne_tocke))
             #predmet_ime = na(str(predmet.ime))
 
+            #logika prijava, datum, ocena, st. polaganj
+
+            vsi_vpisi2 = Vpis.objects.filter(student= student[0]).order_by('studijsko_leto__ime')
+            stevec_trenutnih = 0
+            stevec_vseh = 0
+            ocena = ""
+            datumm = ""
+            j = 0
+            for vpis2 in vsi_vpisi2:
+                predmeti_stud = PredmetiStudenta.objects.filter(vpis=vpis2)
+                #print(izvedba)
+                roki = Rok.objects.filter(izvedba_predmeta = izvedba)
+                #print(roki)
+                prijave = Prijava.objects.filter(predmeti_studenta__in = list(predmeti_stud)).filter(rok__in = list(roki)).order_by('created_at')
+                stevec_vseh += len(prijave)
+                #print(vpis2.studijsko_leto.ime)
+
+                if len(prijave) !=0:
+                    stevec_trenutnih = len(prijave)
+                    ocena = str(prijave[0].ocena_izpita)
+                    datumm = str(prijave[0].created_at)
+                    datumm = datumm[8:10]+'.'+ datumm[5:7] + '.' + datumm[:4]
+                    #
+                    #print(datumm)
+                    
+                        
+
+
+                j += 1
+
+            stevilo_polaganj = str(stevec_vseh)+"-"+str(stevec_trenutnih)
+            if stevilo_polaganj == "0-0":
+                stevilo_polaganj = ""
+                
+            else:
+                skupnaocena += int(ocena)
+                skupnokt += predmet.kreditne_tocke
+                
+
+            
             merge = {
                     'sifra' : predmet.id,
                     'ime': predmet.ime,
@@ -605,6 +650,9 @@ def narediKartotecniList(nic):
                      'ucitelj1': ucitelj1,
                      'ucitelj2': ucitelj2,
                      'ucitelj3': ucitelj3,
+                     'datumm': datumm,
+                     'st_polaganj': stevilo_polaganj,
+                     'ocena': ocena,
                      'tocke': tocke}
             vsipod.append(merge)
 
@@ -616,7 +664,9 @@ def narediKartotecniList(nic):
             'vrsta_vpisa':vrsta_vpisa,
             'nacin_studija':nacin_studija,
             'vrsta_studija':vrsta_studija,
-            'oblika_studija':oblika_studija
+            'oblika_studija':oblika_studija,
+            'max_stevilo_kt' : skupnokt_max,
+            'stevilo_kt' : skupnokt,
             }
         vsi_vpisi.append(merge2)
         i = i +1
