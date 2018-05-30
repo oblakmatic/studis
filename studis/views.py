@@ -132,7 +132,7 @@ def vzdr_pred(request, _program, _leto, _letnik):
 	predmeti_modul = []
 	#za imena modulov in
 	temporary = []
-
+	temporary2 = []
 	#1
 	if letnik == Letnik.objects.get(ime="1."):
 	
@@ -167,6 +167,7 @@ def vzdr_pred(request, _program, _leto, _letnik):
 				predmeti_obvezni.append(p.predmet)
 
 			else:
+				temporary.append(p.strokoven)
 				predmeti_izbirni.append(p.predmet)
 				
 
@@ -174,7 +175,7 @@ def vzdr_pred(request, _program, _leto, _letnik):
 	
 
 		for m in moduls:
-			temporary.append(m.ime)
+			temporary2.append(m.ime)
 			pr = Predmetnik.objects.filter(modul=m, studijsko_leto=leto, studijski_program=program)
 			temp=[]
 			for p in pr:
@@ -194,7 +195,7 @@ def vzdr_pred(request, _program, _leto, _letnik):
 	context = {
 		'predmeti_o': predmeti_obvezni,
 		'predmeti_i': zip(predmeti_izbirni, temporary),
-		'predmeti_m': zip(predmeti_modul, temporary),
+		'predmeti_m': zip(predmeti_modul, temporary2),
 		'letnik': letnik,
 		'leto': leto,
 		'program': program,
