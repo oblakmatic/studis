@@ -1704,17 +1704,17 @@ def vsi_predmeti():
 
 
     #moduli
-    modul1 = Modul(ime="Informacijski sistemi")
+    modul1 = Modul(ime="Informacijski sistemi", studijsko_leto=LETO, studijski_program=UNI)
     modul1.save()
-    modul2 = Modul(ime="Obvladovanje informatike")
+    modul2 = Modul(ime="Obvladovanje informatike", studijsko_leto=LETO, studijski_program=UNI)
     modul2.save()
-    modul3 = Modul(ime="Računalniška omrežja")
+    modul3 = Modul(ime="Računalniška omrežja", studijsko_leto=LETO, studijski_program=UNI)
     modul3.save()
-    modul4 = Modul(ime="Umetna inteligenca")
+    modul4 = Modul(ime="Umetna inteligenca", studijsko_leto=LETO, studijski_program=UNI)
     modul4.save()
-    modul5 = Modul(ime="Razvoj programske opreme")
+    modul5 = Modul(ime="Razvoj programske opreme", studijsko_leto=LETO, studijski_program=UNI)
     modul5.save()
-    modul6 = Modul(ime="Medijske tehnologije")
+    modul6 = Modul(ime="Medijske tehnologije", studijsko_leto=LETO, studijski_program=UNI)
     modul6.save()
 
 
@@ -2146,17 +2146,17 @@ def vsi_predmeti2():
 
 
     #moduli
-    modul1 = Modul.objects.get(ime="Informacijski sistemi")
+    modul1 = Modul(ime="Informacijski sistemi", studijsko_leto=LETO, studijski_program = UNI)
     modul1.save()
-    modul2 = Modul.objects.get(ime="Obvladovanje informatike")
+    modul2 = Modul(ime="Obvladovanje informatike", studijsko_leto=LETO, studijski_program = UNI)
     modul2.save()
-    modul3 = Modul.objects.get(ime="Računalniška omrežja")
+    modul3 = Modul(ime="Računalniška omrežja", studijsko_leto=LETO, studijski_program = UNI)
     modul3.save()
-    modul4 = Modul.objects.get(ime="Umetna inteligenca")
+    modul4 = Modul(ime="Umetna inteligenca", studijsko_leto=LETO, studijski_program = UNI)
     modul4.save()
-    modul5 = Modul.objects.get(ime="Razvoj programske opreme")
+    modul5 = Modul(ime="Razvoj programske opreme", studijsko_leto=LETO, studijski_program = UNI)
     modul5.save()
-    modul6 = Modul.objects.get(ime="Medijske tehnologije")
+    modul6 = Modul(ime="Medijske tehnologije", studijsko_leto=LETO, studijski_program = UNI)
     modul6.save()
 
 
@@ -2420,4 +2420,18 @@ def vsi_predmeti2():
     pr = Predmetnik(studijski_program = VSS, studijsko_leto=LETO, letnik = LETNIK, predmet = a)
     pr.save()
     narediIzvedbo(pr, narediProfesorja("Igor","Škraba"))
+
+    LETO = StudijskoLeto.objects.get(ime="2016/2017")
+    modul1 = Modul(ime="Informacijski sistemi", studijsko_leto=LETO, studijski_program=UNI)
+    modul1.save()
+    modul2 = Modul(ime="Obvladovanje informatike", studijsko_leto=LETO, studijski_program=UNI)
+    modul2.save()
+    modul3 = Modul(ime="Računalniška omrežja", studijsko_leto=LETO, studijski_program=UNI)
+    modul3.save()
+    modul4 = Modul(ime="Umetna inteligenca", studijsko_leto=LETO, studijski_program=UNI)
+    modul4.save()
+    modul5 = Modul(ime="Razvoj programske opreme", studijsko_leto=LETO, studijski_program=UNI)
+    modul5.save()
+    modul6 = Modul(ime="Medijske tehnologije", studijsko_leto=LETO, studijski_program=UNI)
+    modul6.save()
 
