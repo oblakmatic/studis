@@ -102,18 +102,24 @@ class Vpis(models.Model):
         unique_together = (('student', 'studijsko_leto'),)
     
 class Modul(models.Model):
-    ime = models.CharField(max_length=100, unique=True,verbose_name="Ime Modula")
+    ime = models.CharField(max_length=100, verbose_name="Ime Modula")
+    studijsko_leto = models.ForeignKey(StudijskoLeto, null=True, on_delete= models.SET_NULL)
+    studijski_program = models.ForeignKey(StudijskiProgram, on_delete= models.CASCADE)
+
+    def __str__(self):
+        return self.ime
+
 
 class Predmetnik(models.Model):
-    studijski_program = models.ForeignKey(StudijskiProgram, on_delete= models.CASCADE)
-    studijsko_leto = models.ForeignKey(StudijskoLeto, null=True, on_delete= models.SET_NULL)
-    letnik = models.ForeignKey(Letnik, null=True, on_delete= models.SET_NULL)
-    predmet = models.ForeignKey(Predmet, null=True, on_delete= models.SET_NULL)
-    obvezen = models.BooleanField(default = True)
-    ima_modul = models.BooleanField(default = False)
-    strokoven = models.BooleanField(default = False)
+    studijski_program = models.ForeignKey(StudijskiProgram, on_delete= models.CASCADE, verbose_name="Program" )
+    studijsko_leto = models.ForeignKey(StudijskoLeto, null=True, on_delete= models.SET_NULL, verbose_name="Leto")
+    letnik = models.ForeignKey(Letnik, null=True, on_delete= models.SET_NULL, verbose_name="Letnik")
+    predmet = models.ForeignKey(Predmet, null=True, on_delete= models.SET_NULL, verbose_name="Predmet")
+    obvezen = models.BooleanField(default = True, verbose_name="Obvezen")
+    ima_modul = models.BooleanField(default = False, verbose_name="Del modula")
+    strokoven = models.BooleanField(default = False, verbose_name="Strokoven")
 
-    modul = models.ForeignKey(Modul, null=True, blank=True, on_delete= models.SET_NULL)
+    modul = models.ForeignKey(Modul, null=True, blank=True, on_delete= models.SET_NULL, verbose_name="Modul")
 
     class Meta:
         unique_together = (('studijski_program', 'studijsko_leto', 'letnik', 'predmet'),)

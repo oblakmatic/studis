@@ -1,0 +1,84 @@
+
+{% include "base.html" %}
+
+
+{% block content %}
+
+
+
+
+<div class="container sifrant">
+        <form action="/vpis/kartotecni/{{ vpisna }}/2/" method="get">
+            <button type="submit" class="btn btn-outline-primary">Prenesi PDF</button>
+        </form>
+        <form action="/vpis/kartotecni/{{ vpisna }}/3/" method="get">
+            <button type="submit" class="btn btn-outline-primary">Prikaži vsa polaganja</button>
+        </form>
+<p></p>
+<h2 style="text-align: center;">Pregled opravljenih izpitov</h2>
+<p style="text-align: center;"><b>{{student.vpisna_stevilka}} </b>{{student.ime}} {{student.priimek}}</p>
+
+{%for vpis in vpisi%}
+
+
+
+<p style="text-align: center;">{{vpis.studijski_program}}</p>
+
+<table class="table ">
+  <tbody>
+    <tr>
+      <td>&Scaron;tudijsko leto</b>: {{vpis.studijsko_leto}}</td>
+      <td>Vrsta vpisa: {{ vpis.vrsta_vpisa}}</td>
+    </tr>
+    <tr>
+      <td>Letnik: {{vpis.letnik}}</td>
+      <td>Obika študija: {{ vpis.oblika_studija}}</td>
+    </tr>
+    <tr>
+      <td>Način: {{vpis.nacin_studija}}</td>
+      <td>Vrsta študija: {{ vpis.vrsta_studija }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>&nbsp;</p>
+<table class="table ">
+<thead>
+<tr>
+  <td><strong>#</strong></td>
+  <td><strong>&Scaron;ifra</strong></td>
+  <td><strong>Predmet</strong></td>
+  <td><strong>KT</strong></td>
+  <td><strong>Izpraševalci</strong></td>
+  <td ><strong>Datum</strong></td>
+  <td ><strong>Ocena</strong></td>
+  <td><strong>&Scaron;t. polaganj</strong></td>
+</tr>
+<thead>
+
+{%for predmet in vpis.predmeti%}
+<tbody>
+<tr>
+  <td>{{forloop.counter}}</td>
+  <td>{{predmet.sifra}}</td>
+  <td>{{predmet.ime}}</td>
+  <td>{{predmet.kt}}</td>
+  {% with predmet.podrobnosti|last as podrobnost %}
+        <td>{{ podrobnost.ucitelj1}} {{ podrobnost.ucitelj2}} {{ podrobnost.ucitelj3}}</td>
+        <td>{{podrobnost.datum}}</td>
+        <td align="center" ><b>{{podrobnost.ocena}}</b></td>
+        <td>{{podrobnost.vse}} - {{podrobnost.trenutno}}</td>
+    </tr>
+    {% endwith %}
+
+{%endfor%}
+
+<p></p>
+</tbody>
+</table>
+<p>Število kreditnih točk: {{vpis.stevilo_kt}} od možnih {{vpis.max_stevilo_kt}}</p>
+<p>Povprečje: {{vpis.povprecje}}</p>
+
+{% endfor %}
+</div>
+{% endblock %}

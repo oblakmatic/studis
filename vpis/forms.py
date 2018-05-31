@@ -17,8 +17,8 @@ class NameStudentForm(ModelForm):
 		model = Student
 		exclude = ['vpisna_stevilka','dodatno_leto','email']
 		widgets = {
-            'datum_rojstva': forms.SelectDateWidget(years=BIRTH_YEAR_CHOICES),
-        }
+			'datum_rojstva': forms.SelectDateWidget(years=BIRTH_YEAR_CHOICES),
+		}
 
 	def __init__(self, *args, **kwargs):
 		super(NameStudentForm, self).__init__(*args, **kwargs)

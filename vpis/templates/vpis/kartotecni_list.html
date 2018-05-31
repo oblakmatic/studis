@@ -1,0 +1,96 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+  </head>
+<h2 style="text-align: left;">UNIVERZA V LJUBLJANI</h2>
+<table style="width: 652.4px;">
+<tbody>
+<tr style="height: 32.45px;">
+<td style="width: 711px; height: 32.45px;">
+<h3>Fakulteta za računalni&scaron;tvo in informatiko</h3>
+</td>
+<td style="width: 338.4px; height: 32.45px; text-align: right;">Datum:{{datum}}&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>KARTOTEČNI LIST</p>
+<p style="text-align: center;">Pregled opravljenih izpitov</p>
+<p style="text-align: center;"><b>{{student.vpisna_stevilka}} </b>{{student.ime}} {{student.priimek}}</p>
+
+{%for vpis in vpisi%}
+
+<p style="text-align: center;">{{vpis.studijski_program}}</p>
+
+<table class = "table">
+  <tbody>
+    <tr>
+      <td>&Scaron;tudijsko leto</b>: {{vpis.studijsko_leto}}</td>
+      <td>Vrsta vpisa: {{ vpis.vrsta_vpisa}}</td>
+    </tr>
+    <tr>
+      <td>Letnik: {{vpis.letnik}}</td>
+      <td>Obika študija: {{ vpis.oblika_studija}}</td>
+    </tr>
+    <tr>
+      <td>Način: {{vpis.nacin_studija}}</td>
+      <td>Vrsta študija: {{ vpis.vrsta_studija }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>&nbsp;</p>
+<table align="center">
+<thead>
+<tr>
+  <td><strong>#</strong></td>
+  <td><strong>&Scaron;ifra</strong></td>
+  <td><strong>Predmet</strong></td>
+  <td><strong>KT</strong></td>
+  <td><strong>Izpraševalci</strong></td>
+  <td ><strong>Datum</strong></td>
+  <td ><strong>Ocena</strong></td>
+  <td><strong>&Scaron;t. polaganj</strong></td>
+</tr>
+<thead>
+
+{%for predmet in vpis.predmeti%}
+<tbody>
+<tr>
+  <td>{{forloop.counter}}</td>
+  <td>{{predmet.sifra}}</td>
+  <td>{{predmet.ime}}</td>
+  <td>{{predmet.kt}}</td>
+  {%for podrobnost in predmet.podrobnosti %}
+    {% if not forloop.first %}
+      <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>{{ podrobnost.ucitelj1}} {{ podrobnost.ucitelj2}} {{ podrobnost.ucitelj3}}</td>
+      <td>{{podrobnost.datum}}</td>
+      <td align="center"><b>{{podrobnost.ocena}}</b></td>
+      <td>{{podrobnost.vse}} - {{podrobnost.trenutno}}</td>
+      </tr>
+    {% else %}
+
+      <td>{{ podrobnost.ucitelj1}} {{ podrobnost.ucitelj2}} {{ podrobnost.ucitelj3}}</td>
+      <td>{{podrobnost.datum}}</td>
+      <td align="center" ><b>{{podrobnost.ocena}}</b></td>
+      <td>{{podrobnost.vse}} - {{podrobnost.trenutno}}</td>
+    </tr>
+
+    {% endif %}   
+    {% endfor%}
+
+{%endfor%}
+
+<p></p>
+</tbody>
+</table>
+<p>&nbsp;</p>
+<p>Število kreditnih točk: {{vpis.stevilo_kt}} od možnih {{vpis.max_stevilo_kt}}</p>
+<p>Povprečje: {{vpis.povprecje}}</p>
+<p style="page-break-before: always;">&nbsp;</p>
+{% endfor %}

@@ -1,9 +1,10 @@
 $(function(){
     addID();
-    
     $("#predmeti").on('change', addID);
 
     $("li.dropdown-l h5").on('click', expand);
+
+    $("li.dropdown-l ul").hide();
 });
 
 
