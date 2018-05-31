@@ -540,16 +540,23 @@ def narediZetonZaKandidata(student1,kandidat):
     nov_zeton.save()
     print("nekisad")
     return
-def izracunajSteviloPolaganj(izvedba_predmeta,student):
-    
+def vrniDatum(datumm):
+    datumm = str(datumm)
+    return datumm[8:10]+'.'+ datumm[5:7] + '.' + datumm[:4]
+def vrniImePriimek(ucitelj):
+    if ucitelj:
+        return na(str(ucitelj.ime)+" "+ucitelj.priimek )
+    else:
+        return ""
 
+def narediKartotecniList(request, vpisna, storitev):
+    #storitev je index od 1-4
+    # 1-> return kartotecni_list pdf
+    # 2-> return kartotecni_list_min pdf
+    # 3-> return kartotecni_list html
+    # 4-> return kartotecni_list_min html
 
-    return 
-
-
-def narediKartotecniList(nic):
-
-    student = Student.objects.filter(vpisna_stevilka=63158888)
+    student = Student.objects.filter(vpisna_stevilka=vpisna)
     vpisi = Vpis.objects.filter(student=student[0])
 
     todayy = datetime.today()
@@ -577,84 +584,112 @@ def narediKartotecniList(nic):
         skupnaocena= 0
         skupnokt = 0
         skupnokt_max = 0
+        steviloocen = 0
 
         for predmet in predmeti:
             skupnokt_max += predmet.kreditne_tocke
             izvedba = IzvedbaPredmeta.objects.filter(predmet=predmet, studijsko_leto=vpis.studijsko_leto)[0]
-            #izracun = izracunajSteviloPolaganj(predmet,student)
-            #print(izvedba.ucitelj_2)
-            if izvedba.ucitelj_1:
-                ucitelj1 = na(str(izvedba.ucitelj_1.ime)+" "+izvedba.ucitelj_1.priimek )
-            else:
-                ucitelj1 = ""
-            if izvedba.ucitelj_2:
-                ucitelj2 = na(str(izvedba.ucitelj_2.ime)+" "+izvedba.ucitelj_2.priimek)
-            else:
-                ucitelj2 = ""
-            if izvedba.ucitelj_3:
-                ucitelj3 = na(str(izvedba.ucitelj_3.ime)+" "+izvedba.ucitelj_3.priimek)
-            else:
-                ucitelj3 = ""
+
+            # pretvori v string ucitlje
+            #ucitelj1 = vrniImePriimek(izvedba.ucitelj_1)
+            #ucitelj2 = vrniImePriimek(izvedba.ucitelj_2)
+            #ucitelj3 = vrniImePriimek(izvedba.ucitelj_3)
             
-            #ucitelj2 = na(str(izvedba.ucitelj_2))
-            #ucitelj3 = na(str(izvedba.ucitelj_3))
-            #print(ucitelj2)
-            #ucitelj = "test"
-            tocke = na(str(predmet.kreditne_tocke))
-            #predmet_ime = na(str(predmet.ime))
+            #tocke = na(str(predmet.kreditne_tocke))
+
 
             #logika prijava, datum, ocena, st. polaganj
 
             vsi_vpisi2 = Vpis.objects.filter(student= student[0]).order_by('studijsko_leto__ime')
-            stevec_trenutnih = 0
-            stevec_vseh = 0
-            ocena = ""
-            datumm = ""
-            j = 0
-            for vpis2 in vsi_vpisi2:
-                predmeti_stud = PredmetiStudenta.objects.filter(vpis=vpis2)
-                #print(izvedba)
-                roki = Rok.objects.filter(izvedba_predmeta = izvedba)
-                #print(roki)
-                prijave = Prijava.objects.filter(predmeti_studenta__in = list(predmeti_stud)).filter(rok__in = list(roki)).order_by('created_at')
-                stevec_vseh += len(prijave)
-                #print(vpis2.studijsko_leto.ime)
-
-                if len(prijave) !=0:
-                    stevec_trenutnih = len(prijave)
-                    ocena = str(prijave[0].ocena_izpita)
-                    datumm = str(prijave[0].created_at)
-                    datumm = datumm[8:10]+'.'+ datumm[5:7] + '.' + datumm[:4]
-                    #
-                    #print(datumm)
-                    
-                        
+            vse_izvedbe2 = IzvedbaPredmeta.objects.filter(predmet = izvedba.predmet)
 
 
-                j += 1
-
-            stevilo_polaganj = str(stevec_vseh)+"-"+str(stevec_trenutnih)
-            if stevilo_polaganj == "0-0":
-                stevilo_polaganj = ""
-                
-            else:
-                skupnaocena += int(ocena)
-                skupnokt += predmet.kreditne_tocke
-                
-
+            predmeti_stud = PredmetiStudenta.objects.filter(vpis__in=list(vsi_vpisi2))
+            roki = Rok.objects.filter(izvedba_predmeta__in = list(vse_izvedbe2))
+            prijave = Prijava.objects.filter(aktivna_prijava = True).filter(predmeti_studenta__in = list(predmeti_stud)).filter(rok__in = list(roki)).order_by('created_at')
             
+            
+            podatki_o_letu = []
+            vpis_trenutni = None
+            for prijava in prijave:
+                if not vpis_trenutni:
+                    vpis_trenutni = prijava.predmeti_studenta.vpis
+                    vse = 1
+                    trenutno = 1
+                    if vpis_trenutni == vpis:
+                        pod = {
+                            "prijava" : prijava,
+                            "vse" : vse,
+                            "trenutno" : trenutno,
+                            "ucitelj1" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_1),
+                            "ucitelj2" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_2),
+                            "ucitelj3" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_3),
+                            "datum" : vrniDatum(prijava.rok.datum),
+                            "ocena" : na(str(prijava.ocena_izpita)),
+                            }
+                        podatki_o_letu.append(pod)
+                    continue
+                
+                if vpis_trenutni == prijava.predmeti_studenta.vpis:
+                    #print("evo")
+                    vse += 1
+                    trenutno += 1
+                    #print(vpis_trenutni)
+                    #print(vpis)
+                    if vpis_trenutni == vpis:
+                        #print("evo")
+                        pod = {
+                            "prijava" : prijava,
+                            "vse" : vse,
+                            "trenutno" : trenutno,
+                            "ucitelj1" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_1),
+                            "ucitelj2" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_2),
+                            "ucitelj3" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_3),
+                            "datum" : vrniDatum(prijava.rok.datum),
+                            "ocena" : na(str(prijava.ocena_izpita)),
+                            }
+                        podatki_o_letu.append(pod)
+                else:
+                    vpis_trenutni = prijava.predmeti_studenta.vpis
+                    vse += 1
+                    trenutno = 1
+                    if vpis_trenutni == vpis:
+                        pod = {
+                            "prijava" : prijava,
+                            "vse" : vse,
+                            "trenutno" : trenutno,
+                            "ucitelj1" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_1),
+                            "ucitelj2" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_2),
+                            "ucitelj3" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_3),
+                            "datum" : vrniDatum(prijava.rok.datum),
+                            "ocena" : na(str(prijava.ocena_izpita)),
+                            }
+                        podatki_o_letu.append(pod)
+                
+                
+
+            #print(podatki_o_letu)
+            last = 0
+            for izvaj in podatki_o_letu:
+                if 'ocena' in izvaj and izvaj["ocena"]:
+                    last = izvaj["ocena"]
+            if int(last) > 5:
+                skupnokt += int(predmet.kreditne_tocke)
+                skupnaocena += int(last)
+                steviloocen += 1
+
             merge = {
                     'sifra' : predmet.id,
                     'ime': predmet.ime,
                     'kt' : predmet.kreditne_tocke,
-                     'ucitelj1': ucitelj1,
-                     'ucitelj2': ucitelj2,
-                     'ucitelj3': ucitelj3,
-                     'datumm': datumm,
-                     'st_polaganj': stevilo_polaganj,
-                     'ocena': ocena,
-                     'tocke': tocke}
+                    'podrobnosti' : podatki_o_letu
+                    }
             vsipod.append(merge)
+
+        if steviloocen == 0:
+            povprecje = 0
+        else: 
+            povprecje =  skupnaocena/steviloocen
 
         merge2 = {** vpisi.values()[i],
             'predmeti' : vsipod,
@@ -667,6 +702,8 @@ def narediKartotecniList(nic):
             'oblika_studija':oblika_studija,
             'max_stevilo_kt' : skupnokt_max,
             'stevilo_kt' : skupnokt,
+            'povprecje' : povprecje
+
             }
         vsi_vpisi.append(merge2)
         i = i +1
@@ -677,12 +714,44 @@ def narediKartotecniList(nic):
         "datum" : todayy.strftime('%d.%m.%Y'),
         "student" : student.values()[0],
         "vpisi" : vsi_vpisi,
+        "vpisna" : vpisna
 
     }
 
-    html_string =  render_to_string('vpis/kartotecni_list.html',context)
-    pdfkit.from_string( html_string,'/tmp/kartotecni.pdf')
-    return
+    options = {
+        'page-size': 'A4'
+    }
+
+
+    name = 'kartotecni'+str(vpisna)+'_'+ todayy.strftime('%d%m%Y')+'.pdf'
+    if storitev == 1:
+        html_string =  render_to_string('vpis/kartotecni_list.html',context)
+        pdfkit.from_string( html_string,'/tmp/'+name,options=options)
+
+
+        fs = FileSystemStorage('/tmp')
+
+        with fs.open(name) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+            return response
+
+    elif storitev == 2:
+        html_string =  render_to_string('vpis/kartotecni_list_min.html',context)
+        pdfkit.from_string( html_string,'/tmp/'+name,options=options)
+
+
+        fs = FileSystemStorage('/tmp')
+
+        with fs.open(name) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+            return response
+    elif storitev == 3:
+
+        return render(request,'vpis/html_kar.html',context)
+    elif storitev == 4:
+        return render(request,'vpis/html_kar_min.html',context)
 
 
 

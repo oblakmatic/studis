@@ -61,28 +61,13 @@
   <td>{{predmet.sifra}}</td>
   <td>{{predmet.ime}}</td>
   <td>{{predmet.kt}}</td>
-  {%for podrobnost in predmet.podrobnosti %}
-    {% if not forloop.first %}
-      <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td>{{ podrobnost.ucitelj1}} {{ podrobnost.ucitelj2}} {{ podrobnost.ucitelj3}}</td>
-      <td>{{podrobnost.datum}}</td>
-      <td align="center"><b>{{podrobnost.ocena}}</b></td>
-      <td>{{podrobnost.vse}} - {{podrobnost.trenutno}}</td>
-      </tr>
-    {% else %}
-
-      <td>{{ podrobnost.ucitelj1}} {{ podrobnost.ucitelj2}} {{ podrobnost.ucitelj3}}</td>
-      <td>{{podrobnost.datum}}</td>
-      <td align="center" ><b>{{podrobnost.ocena}}</b></td>
-      <td>{{podrobnost.vse}} - {{podrobnost.trenutno}}</td>
+    {% with predmet.podrobnosti|last as podrobnost %}
+        <td>{{ podrobnost.ucitelj1}} {{ podrobnost.ucitelj2}} {{ podrobnost.ucitelj3}}</td>
+        <td>{{podrobnost.datum}}</td>
+        <td align="center" ><b>{{podrobnost.ocena}}</b></td>
+        <td>{{podrobnost.vse}} - {{podrobnost.trenutno}}</td>
     </tr>
-
-    {% endif %}   
-    {% endfor%}
+    {% endwith %}
 
 {%endfor%}
 

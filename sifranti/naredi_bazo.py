@@ -281,13 +281,14 @@ def naredi_bazo(request):
     a = StudijskiProgram(id=1000470 ,sifra="VU",stopnja="J - prva stopnja: visokošolski strokovni", semestri=6, naziv= "RAČUNALN. IN INFORM. VS-I.ST")
     a.save()
 
-
+    a_15_16 = StudijskoLeto(ime = "2015/2016")
+    a_15_16.save()
     a_16_17 = StudijskoLeto(ime = "2016/2017")
     a_16_17.save()
     a_17_18 = StudijskoLeto(ime = "2017/2018")
     a_17_18.save()
-    a = StudijskoLeto(ime = "2018/2019")
-    a.save()
+    a_18_19 = StudijskoLeto(ime = "2018/2019")
+    a_18_19.save()
 
     a_vilijan = Ucitelj(ime = "Viljan", priimek = "Mahnič", email = "viljan.mahnic@fri.uni-lj.si")
     a_vilijan.save()
@@ -295,7 +296,11 @@ def naredi_bazo(request):
     print('\x1b[6;30;42m' + 'Uvažanje predmetov leto 2018/2019 ' + '\x1b[0m')
     vsi_predmeti()
     print('\x1b[6;30;42m' + 'Uvažanje predmetov leto 2017/2018 ' + '\x1b[0m')
-    vsi_predmeti2()
+    vsi_predmeti2(a_17_18)
+    print('\x1b[6;30;42m' + 'Uvažanje predmetov leto 2016/2017 ' + '\x1b[0m')
+    vsi_predmeti2(a_16_17)
+    print('\x1b[6;30;42m' + 'Uvažanje predmetov leto 2015/2016 ' + '\x1b[0m')
+    vsi_predmeti2(a_15_16)
 
     print('\x1b[6;30;42m' + 'Ostali ' + '\x1b[0m')
 
@@ -386,7 +391,7 @@ def naredi_bazo(request):
 
     a_vs1 = VrstaStudija(id=16203,opis="Visokošolska strokovna izobrazba (prva bolonjska stopnja)", nacin_zakljucka="diplomirani...(VS)/diplomirana", raven_klasius="6/2")
     a_vs1.save()
-    a_vs2 = VrstaStudija(id=16204,opis="Viskošolska univerzitetna izobrazba (prva bolonjska stopnja)", nacin_zakljucka="diplomirani...(UN)/diplomirana..(UN)", raven_klasius="6/2")
+    a_vs2 = VrstaStudija(id=16204,opis="Visokošolska univerzitetna izobrazba (prva bolonjska stopnja)", nacin_zakljucka="diplomirani...(UN)/diplomirana..(UN)", raven_klasius="6/2")
     a_vs2.save()
     a = VrstaStudija(id=17003,opis="Magistrska izobrazna (druga bolonjska stopnja)", nacin_zakljucka="magister / magistirca", raven_klasius="7")
     a.save()
@@ -1423,7 +1428,7 @@ def naredi_bazo(request):
 
  #
     UNI = StudijskiProgram.objects.get(id=1000468)
-    LETO = StudijskoLeto.objects.get(ime="2018/2019")
+    #LETO = StudijskoLeto.objects.get(ime="2018/2019")
     #-------
     # TESTNI PRIMER ZA KARTOTECNI LIST
     #kreiranje studenta
@@ -1456,7 +1461,7 @@ def naredi_bazo(request):
 
     # kreiranje vpisa
     katarina_vpis = Vpis(student=katarina, 
-    studijsko_leto= a_17_18, 
+    studijsko_leto= a_15_16, 
     studijski_program=UNI, 
     letnik=a_1Letnik, 
     vrsta_vpisa=a_vv1,
@@ -1467,8 +1472,20 @@ def naredi_bazo(request):
     vrsta_studija=a_vs2)
     katarina_vpis.save()
 
+    katarina_vpis1_2 = Vpis(student=katarina, 
+    studijsko_leto= a_16_17, 
+    studijski_program=UNI, 
+    letnik=a_1Letnik, 
+    vrsta_vpisa=a_vv2,
+    nacin_studija=a_ns1,
+    oblika_studija = a_oblika_on_site,
+    potrjen = True, 
+    dokoncan_vpis = True,
+    vrsta_studija=a_vs2)
+    katarina_vpis1_2.save()
+
     katarina_vpis2 = Vpis(student=katarina, 
-    studijsko_leto=LETO, 
+    studijsko_leto=a_17_18, 
     studijski_program=UNI,
     oblika_studija = a_oblika_on_site,
     letnik=a_2Letnik, 
@@ -1486,6 +1503,12 @@ def naredi_bazo(request):
     katarina_predmeti.predmeti.add(*UNI_PREDMETI_PRVI)
     katarina_predmeti.save()
 
+    katarina_predmeti1_2 = PredmetiStudenta()
+    katarina_predmeti1_2.save()
+    katarina_predmeti1_2.vpis = katarina_vpis1_2
+    katarina_predmeti1_2.predmeti.add(UNI_PREDMETI_PRVI[1],UNI_PREDMETI_PRVI[6],UNI_PREDMETI_PRVI[8],UNI_PREDMETI_PRVI[5])
+    katarina_predmeti1_2.save()
+
     # dodajanje predmetov
     katarina_predmeti2 = PredmetiStudenta()
     katarina_predmeti2.save()
@@ -1493,25 +1516,68 @@ def naredi_bazo(request):
     katarina_predmeti2.predmeti.add(*UNI_PREDMETI_DRUGI)
     katarina_predmeti2.save()
     
-    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[0], studijsko_leto = a_17_18)[0]
-    new_date = datetime.datetime(2018, 3, 3, 14, 15)
-    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "A1")
+    # prvi 
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[0], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016, 3, 3, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
     rok_1.save()
 
-    new_date = datetime.datetime(2018, 3, 3, 14, 15)
+    new_date = datetime.datetime(2016, 3, 3, 14, 15)
     prijava_1 = Prijava(created_at = new_date, 
         predmeti_studenta = katarina_predmeti, 
         rok = rok_1, zaporedna_stevilka_polaganja = 1, 
         ocena_izpita = 6)
 
     prijava_1.save()
-
-    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[1], studijsko_leto = a_17_18)[0]
-    new_date = datetime.datetime(2018, 4, 4, 14, 15)
-    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "A1")
+    # drugi
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[1], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016, 4, 4, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
     rok_1.save()
 
-    new_date = datetime.datetime(2018, 4, 4, 14, 15)
+    new_date = datetime.datetime(2016, 4, 4, 14, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 1, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+    # drugi drugic 
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[1], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016, 5, 5, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 5, 5, 14, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 2, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+
+    # drugi tretjic neuspesno 
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[1], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016, 7, 7, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 7, 7, 14, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 3, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+
+
+    #tretji uspesno
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[2], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016, 8, 8, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 8, 8, 14, 15)
     prijava_1 = Prijava(created_at = new_date, 
         predmeti_studenta = katarina_predmeti, 
         rok = rok_1, zaporedna_stevilka_polaganja = 1, 
@@ -1519,18 +1585,244 @@ def naredi_bazo(request):
 
     prijava_1.save()
 
-    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[1], studijsko_leto = a_17_18)[0]
-    new_date = datetime.datetime(2018, 5, 5, 14, 15)
-    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "A1")
+    #cetrti uspesno
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[3], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016, 6, 10, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
     rok_1.save()
 
-    new_date = datetime.datetime(2018, 4, 4, 14, 15)
+    new_date = datetime.datetime(2016, 6, 10, 14, 15)
     prijava_1 = Prijava(created_at = new_date, 
         predmeti_studenta = katarina_predmeti, 
         rok = rok_1, zaporedna_stevilka_polaganja = 1, 
-        ocena_izpita = 9)
+        ocena_izpita = 7)
 
     prijava_1.save()
+    #peti uspesno
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[4], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016, 5, 4, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 5, 4, 14, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 1, 
+        ocena_izpita = 6)
+
+    prijava_1.save()
+
+    #sesti prvic
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[5], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016, 5, 14, 14, 15)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 5, 14, 14, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 1, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+
+    #sesti drugic neuspesno
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[5], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016,  4, 20, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 4, 20, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 2, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+
+    #sedmic prvic neuspesno 
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[6], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016,  4, 20, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 4, 20, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 1, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+
+    #osmic prvic  
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[7], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016,  5, 10, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 5, 10, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 1, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+    #osmic drugic  uspesno
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[7], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016,  6, 1, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 6, 1, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 2, 
+        ocena_izpita = 8)
+
+    prijava_1.save()
+
+
+    #devetic prvi
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[8], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016,  6, 1, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 6, 1, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 1, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+    #devetic drugic 
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[8], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016,  6, 13, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 6, 13, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 2, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+    #devetic tretjic neuspesno
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[8], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016,  6, 19, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 6, 19, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 3, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+
+    #deset tretjic neuspesno
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[9], studijsko_leto = a_15_16)[0]
+    new_date = datetime.datetime(2016,  6, 20, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2016, 6, 20, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 3, 
+        ocena_izpita = 10)
+
+    prijava_1.save()
+
+    # 1 LETNIK PONAVLJANJE
+    # prvi predmet 
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[1], studijsko_leto = a_16_17)[0]
+    new_date = datetime.datetime(2017,  3, 20, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2017, 3, 20, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti1_2, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 4, 
+        ocena_izpita = 10)
+
+    prijava_1.save()
+
+    #drugi predmet prvic
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[5], studijsko_leto = a_16_17)[0]
+    new_date = datetime.datetime(2017,  4, 20, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2017, 4, 20, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti1_2, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 4, 
+        ocena_izpita = 5)
+
+    prijava_1.save()
+
+    #drugi predmet drugic uspesno
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[5], studijsko_leto = a_16_17)[0]
+    new_date = datetime.datetime(2017,  5, 20, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2017, 5, 20, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti1_2, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 5, 
+        ocena_izpita = 8)
+
+    prijava_1.save()
+
+    #tretji predmet drugic uspesno
+
+    #izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[6], studijsko_leto = a_16_17)[0]
+    pr = Predmetnik.objects.filter(studijski_program = UNI).filter(studijsko_leto= a_16_17).filter(predmet= UNI_PREDMETI_PRVI[6])[0]
+    narediIzvedboSTremi(pr, narediProfesorja("Nov","Profesor1"),narediProfesorja("Nov","Profesor2"),narediProfesorja("Nov","Profesor2"))
+    izvedba_1 = IzvedbaPredmeta.objects.filter(ucitelj_1__priimek="Profesor1")[0]
+    new_date = datetime.datetime(2017,  5, 20, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2017, 5, 20, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti1_2, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 5, 
+        ocena_izpita = 8)
+
+    prijava_1.save()
+
+    #cetrti predmet prvic uspesno
+
+    izvedba_1 = IzvedbaPredmeta.objects.filter(predmet=UNI_PREDMETI_PRVI[8], studijsko_leto = a_16_17)[0]
+
+    
+    new_date = datetime.datetime(2017,  7, 20, 15,30)
+    rok_1 = Rok(izvedba_predmeta = izvedba_1, datum = new_date, prostor_izvajanja = "P1")
+    rok_1.save()
+
+    new_date = datetime.datetime(2017, 7, 20, 20, 15)
+    prijava_1 = Prijava(created_at = new_date, 
+        predmeti_studenta = katarina_predmeti1_2, 
+        rok = rok_1, zaporedna_stevilka_polaganja = 5, 
+        ocena_izpita = 10)
+
+    prijava_1.save()
+
 
 
 
@@ -1914,7 +2206,7 @@ def vsi_predmeti():
     narediIzvedbo(pr, narediProfesorja("Klemen","Sekir"))
 
     VSS = StudijskiProgram.objects.get(id=1000470)
-    LETO = StudijskoLeto.objects.get(ime="2018/2019")
+    #LETO = StudijskoLeto.objects.get(ime="2018/2019")
     LETNIK = Letnik.objects.get(ime="1.")
 
     # prvi letnik vss
@@ -1981,12 +2273,13 @@ def vsi_predmeti():
 ##########################################
 #
 # vsi_predmeti2 se razlikujejo z vsi_predmeti le v studeijskem letu
+# ne kreira ponovno predmetov!
 #
 ###########################################
-def vsi_predmeti2():
+def vsi_predmeti2(LETO):
 
     UNI = StudijskiProgram.objects.get(id=1000468)
-    LETO = StudijskoLeto.objects.get(ime="2017/2018")
+    #LETO = StudijskoLeto.objects.get(ime="2017/2018")
     LETNIK = Letnik.objects.get(ime="1.")
 
     #1 letnik
@@ -2356,7 +2649,7 @@ def vsi_predmeti2():
     narediIzvedbo(pr, narediProfesorja("Klemen","Sekir"))
 
     VSS = StudijskiProgram.objects.get(id=1000470)
-    LETO = StudijskoLeto.objects.get(ime="2017/2018")
+    #LETO = StudijskoLeto.objects.get(ime="2017/2018")
     LETNIK = Letnik.objects.get(ime="1.")
 
     # prvi letnik vss

@@ -13,5 +13,6 @@ urlpatterns = [
     #path('<str:diff>/<int:index>/delete/',views.delete,name='delete')
     path('predmetnik/',views.predmetnik,name='predmetnik'),
     path('predmetnik/izpis/',views.koncaj_predmetnik,name='koncaj_predmetnik'),
+    path('kartotecni/<int:vpisna>/<int:storitev>/',views.narediKartotecniList,name='narediKartotecniList'),
     #path('vpisni_list/<int:vpisna>/', views.vpisni_list, name='vpisni_list'),
 ]
