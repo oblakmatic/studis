@@ -84,12 +84,26 @@ def import_students(request):
 	new = 0
 	for i in range(0, len(content)):
 		data = content[i].decode('utf-8')
-		
-		name = data[0:30].rstrip()
-		surname = data[30:60].rstrip()
-		program = data[60:67]
-		email = data[67:].rstrip()
+		name=None
+		surname=None
+		program=None
+		email=None
+		if i==0:
+			name = data[0:31].rstrip()
+			surname = data[31:61].rstrip()
+			program = data[61:68]
+			email = data[68:].rstrip()
+		else:
+			name = data[0:30].rstrip()
+			surname = data[30:60].rstrip()
+			program = data[60:67]
+			email = data[67:].rstrip()
 
+		print(name)
+		print(surname)
+		print(program)
+		print(email)
+		
 		kandidat = None
 		try:
 			kandidat = Kandidat.objects.get(email=email)
@@ -100,8 +114,11 @@ def import_students(request):
 			updated = updated + 1
 		except Kandidat.DoesNotExist:
 
-			serial = Kandidat.objects.count()+1
 			year = datetime.datetime.today().year % 2000
+			tmp = 6300 + year
+			students = Student.objects.filter(vpisna_stevilka__startswith=tmp)
+			serial = students.count()+1+i
+
 			vpisna = "63"+ str(year) + format(serial, '04d')
 			kandidat = Kandidat.objects.create(vpisna_stevilka=int(vpisna))
 			kandidat.email = email
@@ -140,7 +157,6 @@ def import_students(request):
 		
 
 		arr.append(temp)
-	
 
 
 	context = {
