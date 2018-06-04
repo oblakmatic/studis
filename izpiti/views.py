@@ -186,6 +186,10 @@ def prijava(request):
 			
 			trenutno_studijsko_leto = ptsl()
 			polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
+			polaganja_trenutna = Prijava.objects.filter(ocena = None, predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
+			if(polaganja_trenutna >= 1):
+				print('WARNING (GOING IN)! Ne mores imeti dveh prijav na isti predmet naenkrat!', polaganja_trenutna)
+
 			if(polaganja_trenutno_leto >= 3):
 
 				print('WARNING (GOING IN)! Stevilo dovoljenih prijav v enem letu prekoraceno!', polaganja_trenutno_leto)
@@ -331,6 +335,9 @@ def prijava(request):
 					#	print(prijavule.rok.izvedba_predmeta.studijsko_leto)
 
 					polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
+					polaganja_trenutna = Prijava.objects.filter(ocena = None, predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
+					if(polaganja_trenutna >= 1):
+						print('WARNING (GOING IN)! Ne mores imeti dveh prijav na isti predmet naenkrat!', polaganja_trenutna)
 					if(polaganja_trenutno_leto >= 3):
 
 						print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!', polaganja_trenutno_leto)
@@ -417,7 +424,7 @@ def prijava(request):
 								prijavljeni_roki.append(rok)
 						else:
 							# print("polaganja letos", polaganja_trenutno_leto >= 3, ",vsa polaganja:", stevilo_dosedanjih_polaganj >= 6, ",prijava condition:", prijava_condition, "time limit (prejsnji dan):", time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 0))
-							if (ze_opravil or polaganja_trenutno_leto >= 3 or stevilo_dosedanjih_polaganj >= 6 or prijava_condition or time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 0)):
+							if (ze_opravil or polaganja_trenutna >= 1 or polaganja_trenutno_leto >= 3 or stevilo_dosedanjih_polaganj >= 6 or prijava_condition or time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 0)):
 								print("disabled prijava add~~~~~~~~~~~~~~~~~~~~~~~", rok.datum)
 								disabled_roki.append(rok)
 								continue
