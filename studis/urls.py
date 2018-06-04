@@ -40,5 +40,6 @@ urlpatterns = [
     path('predmetnik/<int:_program>/<int:_leto>/<int:_letnik>/', vzdr_pred, name='vzdr_pred'),
     path('predmetnik/<int:_program>/<int:_leto>/<int:_letnik>/del/<int:predmet>/', del_pred, name='del_pred'),
     path('predmetnik/<int:_program>/<int:_leto>/<int:_letnik>/add/', add_pred, name='add_pred'),
+    path('izbrisi-obvestilo/<int:_id>', izbrisi_obvestilo, name='izbrisi_obvestilo')
 ]
     

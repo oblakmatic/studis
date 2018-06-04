@@ -43,3 +43,7 @@ class Prijava(models.Model):
     #dodav, ko ucitelj odjavi izpit--> se zabelezijo podatki o odjavilteju in cas odjave
     cas_odjave = models.DateTimeField(default=None,null=True)
     odjavitelj = models.CharField(max_length = 100, default=None, blank=True, null=True)
+
+class Obvestilo(models.Model):
+    student = models.ForeignKey(Student, on_delete= models.CASCADE)
+    besedilo = models.CharField(max_length = 250)

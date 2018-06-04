@@ -703,6 +703,20 @@ def naredi_bazo(request):
     email="pp0000@student.uni-lj.si")
     p_prim0.save()
 
+    # obvestila za intermezzo
+    obvestilo_p0 = Obvestilo(student = p_prim0, besedilo = "Tole je testno obvestilo 1!")
+    obvestilo_p0.save()
+    obvestilo_p0 = Obvestilo(student = p_prim0, besedilo = "Tole je testno obvestilo 2!")
+    obvestilo_p0.save()
+    obvestilo_p0 = Obvestilo(student = p_prim0, besedilo = "Tole je testno obvestilo 3!")
+    obvestilo_p0.save()
+    obvestilo_p0 = Obvestilo(student = p_prim0, besedilo = "Tole je testno obvestilo 4!")
+    obvestilo_p0.save()
+    obvestilo_p0 = Obvestilo(student = p_prim0, besedilo = "Tole je testno obvestilo 5!")
+    obvestilo_p0.save()
+    obvestilo_p0 = Obvestilo(student = p_prim0, besedilo = "Tole je testno obvestilo 6!")
+    obvestilo_p0.save()
+
     user, created = User.objects.get_or_create(username="primozprimernik0", email="pp0000@student.uni-lj.si")
     user.first_name = "Primoz"
     user.last_name = "Primernik0"

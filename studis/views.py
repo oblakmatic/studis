@@ -2,20 +2,32 @@ from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponseRedirect
 from django.contrib import auth
 from django.template.context_processors import csrf
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import datetime
+from datetime import timedelta
 from student.models import *
 from sifranti.models import *
 from student.forms import *
+from izpiti.models import *
 
 max_attempts = 6
 attempts = 0
 ip = -1
-block_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
+block_time = datetime.now() - timedelta(minutes=1)
 
 
 def home_view(request):
 
 	if request.user.is_authenticated:
+		if request.user.groups.all()[0].name == "students":
+			all_obvestila = Obvestilo.objects.filter(student__email = request.user.email)
+			paginator = Paginator(all_obvestila, 10)
+			page = request.GET.get('page')
+			all_obvestila = paginator.get_page(page)
+			context = {
+				"obvestila": all_obvestila
+			}
+			return render(request, 'home.html', context)
 		return render(request, 'home.html')
 
 	return HttpResponseRedirect('/user/login')
@@ -223,5 +235,9 @@ def add_pred(request, _program, _leto, _letnik):
 	if form.is_valid():
 		form.save()
 	return redirect("/predmetnik/"+str(_program)+"/"+str(_leto)+"/"+str(_letnik)+"/")
+
+def izbrisi_obvestilo(request, _id):
+	Obvestilo.objects.get(pk = _id).delete()
+	return redirect("/")
 
 
