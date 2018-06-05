@@ -25,6 +25,19 @@ def narediIzvedboSTremi(predmetnik, prof1,prof2, prof3):
     prof2.save()
     prof3.save()
     return
+
+def narediIzvedboZDvemi(predmetnik, prof1,prof2):
+    
+    prof1.predmeti.add(predmetnik.predmet)
+    prof2.predmeti.add(predmetnik.predmet)
+    izvedba = IzvedbaPredmeta(predmet = predmetnik.predmet,
+                         studijsko_leto= predmetnik.studijsko_leto, 
+                         ucitelj_1= prof1,
+                         ucitelj_2 = prof2)
+    izvedba.save()
+    prof1.save()
+    prof2.save()
+    return
 #iz ucitelja in predmetnika naredi novo izvedbo predmeta
 def narediIzvedbo(predmetnik, prof):
 

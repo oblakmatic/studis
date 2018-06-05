@@ -783,7 +783,18 @@ def students_by_number(request):
 			response = HttpResponse(pdf, content_type='application/pdf')
 			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
 			return response
-	
+
+	if request.POST.get("save_pdf2"):
+		student_list = Vpis.objects.filter(studijsko_leto=leto, letnik=letnik, 
+							studijski_program=program, potrjen=True)
+		naredi_letnik_pdf(program, letnik, leto, student_list)
+		name = str(program.id) +'.pdf'
+		fs = FileSystemStorage('/tmp')
+		with fs.open(name) as pdf:
+			response = HttpResponse(pdf, content_type='application/pdf')
+			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+			return response
+
 	#pages
 	paginator = Paginator(predmeti_list, 40)
 	page = request.GET.get('page')
@@ -806,6 +817,28 @@ def students_by_number(request):
 
 	return render(request, 'all_subjects_number.html',context)
 
+def naredi_letnik_pdf(program, letnik, leto, student_list):
+	
+	context = {
+	   'program' : program,
+	   'leto' : leto,
+	   'letnik' : letnik,
+	   'students': student_list,
+	}
+
+	options = {
+    	'page-size': 'A4',
+        'dpi': 600,
+        'header-left': "FAKULTETA ZA RAČUNALNIŠTVO IN INFORMATIKO",
+        'header-right': "[date]",
+        'footer-right': "[page] od [topage]",
+        'header-line': '',
+	}
+
+	html_string =  render_to_string('pdf_letnik.html',context)
+	pdfkit.from_string( html_string,'/tmp/'+ str(program.id) + '.pdf', options=options)
+	return
+
 def naredi_predmet_pdf(predmet, leto, student_list):
 	
 	context = {
@@ -821,6 +854,8 @@ def naredi_predmet_pdf(predmet, leto, student_list):
         'header-right': "[date]",
         'footer-right': "[page] od [topage]",
         'header-line': '',
+        'margin-top': '5mm',
+        'header-spacing': 5
 	}
 
 	html_string =  render_to_string('pdf_predmet.html',context)
@@ -843,6 +878,7 @@ def naredi_stevilo_pdf(leto, letnik, program, predmeti):
         'header-right': "[date]",
         'footer-right': "[page] od [topage]",
         'header-line': '',
+        'header-spacing': 5
 
 	}
 
