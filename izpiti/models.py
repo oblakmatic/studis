@@ -19,6 +19,13 @@ class IzvedbaPredmeta(models.Model):
     ucitelj_1 = models.ForeignKey(Ucitelj, related_name = "ucitelj_1", on_delete = models.SET_NULL, null = True)
     ucitelj_2 = models.ForeignKey(Ucitelj, related_name = "ucitelj_2", on_delete = models.SET_NULL, default=None, blank=True, null=True)
     ucitelj_3 = models.ForeignKey(Ucitelj, related_name = "ucitelj_3", on_delete = models.SET_NULL, default=None, blank=True, null=True)
+    def __str__(self):
+        ucitelji = str(self.ucitelj_1)
+        if self.ucitelj_2:
+            ucitelji = ucitelji + ", " + str(self.ucitelj_2)
+        if self.ucitelj_3:
+            ucitelji = ucitelji + ", " + str(self.ucitelj_3)
+        return str("%s, %s (%s)" % (self.predmet, self.studijsko_leto, ucitelji))
 
 class Rok(models.Model):
     izvedba_predmeta = models.ForeignKey(IzvedbaPredmeta, on_delete = models.SET_NULL, null = True)

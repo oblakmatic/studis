@@ -6,10 +6,12 @@
 
 {% block content %}
 <div class="container sifrant">
-    <h3>Prijava na izpite</h3>
+	<h3>Prijava na izpite</h3>
+	{% if st_vseh_prijav and st_druga %}
 	<div class="alert alert-info">Dosedanja polaganja: 
 		{{st_vseh_prijav}} - {{st_druga}}
 	</div>
+	{%endif%}
     <table class="table">
 
         <thead>

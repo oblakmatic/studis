@@ -173,6 +173,7 @@ def dodaj_izpit(request):
 
 
 
+
 def prijava(request):
 #VNOS PRIJAVE
 	# TODO: Implementacija omejitev, frontend indikatorji neustreznosti
@@ -460,8 +461,8 @@ def prijava(request):
 	'disabled': disabled_roki,
 	'payable': payable_roki,
 	'predmetiStudenta': curr_predmetiStudenta,
-	'st_vseh_prijav': stevilo_dosedanjih_polaganj,
-	'st_druga': druga_ponavljanja,
+	# 'st_vseh_prijav': stevilo_dosedanjih_polaganj,
+	# 'st_druga': druga_ponavljanja,
 	}
 
 	return render(request,'prijava.html',context)
