@@ -1019,7 +1019,7 @@ def uredi_rok(request):
 		for prijava in Prijava.objects.filter(aktivna_prijava = True, rok = rok_za_urejanje):
 			datumRoka  = str("%02d.%02d.%4d" % (rok_za_urejanje.datum.day, rok_za_urejanje.datum.month, rok_za_urejanje.datum.year)),
 			uraRoka = str("%02d:%02d" % (rok_za_urejanje.datum.hour, rok_za_urejanje.datum.minute)),
-			obvestilo = Obvestilo(student = prijava.predmeti_studenta__vpis__student, besedilo = str("Pri predmetu %s je pri roku %s, %s, %s prišlo do spremembe!" % (prijava.rok.izvedba_predmeta.predmet, datumRoka, uraRoka, rok_za_urejanje.prostor)))
+			obvestilo = Obvestilo(student = prijava.predmeti_studenta.vpis.student, besedilo = str("Pri predmetu %s je pri roku %s, %s, %s prišlo do spremembe!" % (prijava.rok.izvedba_predmeta.predmet, datumRoka, uraRoka, rok_za_urejanje.prostor_izvajanja)))
 			obvestilo.save()
 		rok_za_urejanje.datum = datum_
 		rok_za_urejanje.prostor = prostor
@@ -1057,7 +1057,7 @@ def izbrisi_rok(request):
 		for prijava in Prijava.objects.filter(aktivna_prijava = True, rok = rok_za_urejanje):
 			datumRoka  = str("%02d.%02d.%4d" % (rok_za_urejanje.datum.day, rok_za_urejanje.datum.month, rok_za_urejanje.datum.year)),
 			uraRoka = str("%02d:%02d" % (rok_za_urejanje.datum.hour, rok_za_urejanje.datum.minute)),
-			obvestilo = Obvestilo(student = prijava.predmeti_studenta__vpis__student, besedilo = str("Pri predmetu %s je bil rok %s, %s, %s izbrisan!" % (prijava.rok.izvedba_predmeta.predmet, datumRoka, uraRoka, rok_za_urejanje.prostor)))
+			obvestilo = Obvestilo(student = prijava.predmeti_studenta.vpis.student, besedilo = str("Pri predmetu %s je bil rok %s, %s, %s izbrisan!" % (prijava.rok.izvedba_predmeta.predmet, datumRoka, uraRoka, rok_za_urejanje.prostor_izvajanja)))
 			obvestilo.save()
 		relevantne_prijave = Prijava.objects.filter(rok = rok_za_urejanje).delete()
 		rok_za_urejanje.delete()

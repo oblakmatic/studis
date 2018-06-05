@@ -19,7 +19,7 @@ block_time = datetime.now() - timedelta(minutes=1)
 def home_view(request):
 
 	if request.user.is_authenticated:
-		if request.user.groups.all()[0].name == "students":
+		if not request.user.is_superuser and request.user.groups.all()[0].name == "students":
 			all_obvestila = Obvestilo.objects.filter(student__email = request.user.email)
 			paginator = Paginator(all_obvestila, 10)
 			page = request.GET.get('page')
