@@ -450,9 +450,9 @@ def prijava(request):
 
 	else:
 		return HttpResponse("Nimaš dovoljenja.")
-	druga_ponavljanja = stevilo_dosedanjih_polaganj
-	if (je_ponavljal):
-		druga_ponavljanja = stevilo_dosedanjih_polaganj - stevilo_rezanih_polaganj
+	#druga_ponavljanja = stevilo_dosedanjih_polaganj
+	#if (je_ponavljal):
+	#	druga_ponavljanja = stevilo_dosedanjih_polaganj - stevilo_rezanih_polaganj
 
 	context={
 	'arr': roki,
