@@ -245,6 +245,17 @@ def vrniFiltriraneElemente(diff, isci_element, element):
 	return rezultat
 
 def search(request, diff):
-	polje = polje + "__istartswith"
-	rezultat = eval(diff).all_objects.filter(**{polje: element}).values()
-	return rezultat
+
+	if request.method == 'POST':
+		form = SearchForm(request.POST)
+
+		if form.is_valid() and diff in diff_names:
+			isci_element = form.cleaned_data['isci_element']
+			element = form.cleaned_data['element']
+			
+			return HttpResponseRedirect('/sifranti/'+ diff +'/'+isci_element+'/'+element+'/')
+	else:
+		HttpResponseRedirect('/sifranti/')
+
+def naredi_bazo(request):
+	return None

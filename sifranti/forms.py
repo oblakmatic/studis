@@ -82,7 +82,7 @@ class OblikaStudijaForm(ModelForm):
 class PostaForm2(ModelForm):
     class Meta:
         model = Posta
-        exclude = ['id'] #['ime', 'postna_stevilka']
+        fields = '__all__' #['ime', 'postna_stevilka']
         
 
 class DrzavaForm2(ModelForm):

@@ -5,6 +5,8 @@
 {% block content %}
 <div class="container sifrant">
 
+  <button class="btn btn-outline-secondary btn-sm mb-2" onclick="window.history.back();">&lt; Nazaj</button>
+
 <h3>Seznam predmetov po številu vpisanih</h3>
 
 <h5>{{ sporocilo }}</h5>
@@ -44,9 +46,6 @@
   </div>
 </form>
   <div class="col-sm-6">
-
-    <button type="submit" name="save_pdf2" value="SavePDF2" class="btn btn-outline-secondary mr-2" style="float:right">Izvozi PDF študentov</button>
-
     <button type="submit" name="save_pdf" value="SavePDF" class="btn btn-outline-secondary mr-2" style="float:right">Izvozi PDF</button>
 
     <form  method="post" action="/student/predmeti/stevilo/{{leto.id}}/{{program.id}}/{{letnik.id}}/csv/">

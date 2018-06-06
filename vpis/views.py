@@ -36,7 +36,7 @@ from student.models import Vpis, Predmetnik, Modul
 from sifranti.models import StudijskiProgram, StudijskoLeto, Letnik, Predmet
 from izpiti.models import *
 
-nas_leto = "2018/2019"
+nas_leto = "2017/2018"
 nas_leto_ob = StudijskoLeto.objects.filter(ime=nas_leto)
 
 

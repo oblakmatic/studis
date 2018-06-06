@@ -24,8 +24,11 @@
   </form>
   </div>
 {% if user.groups.all.0.name == "referent" %}
-<div class="col-sm-4">
-  <a href="/student/predmeti/stevilo/" class="btn btn-outline-primary">Vpis po letnikih</a>
+<div class="mr-2">
+  <a href="/student/predmeti/stevilo/" class="btn btn-outline-primary">Vpis po številu</a>
+</div>
+<div class="">
+  <a href="/student/predmeti/letnik/" class="btn btn-outline-primary">Vpis po letnikih</a>
 </div>
 
 {% endif %}
@@ -37,7 +40,7 @@
 	
 		<li class="list-group-item mb-2 col-xs-6 myhover" style="width: 44%; margin-right: 2%">
 			<a href="{{leto.id}}/{{temp.id}}" style="color:#373a3c">
-        {{ forloop.counter }}&#8228; {{ temp }}
+        {{ forloop.counter|add:predmeti.start_index|add:"-1"}}&#8228; {{ temp }}
       </a>
 		</li>
 
