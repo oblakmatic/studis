@@ -26,7 +26,11 @@
 		<td>{{ s }}</td>
 	
 	{% endfor %}
+	{% if user.groups.all.0.name == "referent" %}
 	<td><a href="/student/ustvari-zeton/{{ temp.vpisna_stevilka }}">Ustvari vpisni žeton</a></td>
+	{% else %}
+	<td></td>
+	{% endif %}
 	<td><a href="/student/podatki/{{ temp.vpisna_stevilka }}">Izpiši vse podatke</a></td>
 	</tr>
 {% endfor %}
@@ -53,7 +57,11 @@
 		<td>{{ s }}</td>
 	
 	{% endfor %}
+	{% if user.groups.all.0.name == "referent" %}
 	<td><a href="ustvari-zeton/{{ t.id }}">Ustvari vpisni žeton</a></td>
+	{% else %}
+	<td></td>
+	{% endif %}
 	</tr>
 {% endfor %}
 </table>
@@ -79,7 +87,11 @@
 		<td>{{ s }}</td>
 	
 	{% endfor %}
+	{% if user.groups.all.0.name == "referent" %}
 	<td><a href="ustvari-zeton/{{ t.id }}">Ustvari vpisni žeton</a></td>
+	{% else %}
+	<td></td>
+	{% endif %}
 	</tr>
 {% endfor %}
 </table>
