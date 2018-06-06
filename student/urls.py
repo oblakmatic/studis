@@ -13,7 +13,6 @@ urlpatterns = [
     path('seznam-zetonov/',views.token_list,name="token_list"),
     path('izbrisi-zeton/<int:del_id>', views.token_delete,name="token_delete"),
     path('uredi-zeton/<int:edit_id>', views.token_edit,name="token_edit"),
-    path('izvoz/pdf/',views.export_pdf,name='export_pdf'),
     path('izvoz/csv/',views.export_csv,name='export_csv'),
     path('podatki/', views.student_data, name="student_data"),
     path('podatki/<int:id>', views.all_data, name="all_data"),
@@ -25,6 +24,7 @@ urlpatterns = [
     path('predmeti/<int:leto>/<int:id>/', views.subject_data, name="subject_data"),
     path('predmeti/<int:leto>/<int:id>/csv', views.naredi_predmet_csv, name="naredi_predmet_csv"),
     path('predmeti/stevilo/', views.students_by_number, name="students_by_number"),
+    path('predmeti/letnik/', views.students_by_year, name="students_by_year"),
     path('predmeti/stevilo/<int:leto>/<int:program>/<int:letnik>/csv/', 
         views.naredi_stevilo_csv, name="naredi_stevilo_csv"),
 

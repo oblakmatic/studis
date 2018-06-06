@@ -3,8 +3,8 @@
     <style>
     th, td{
       text-align:left;
-      width:200px;
-      height:35px;
+      width:220px;
+      height:30px;
       border-bottom: 1px solid #ddd;
     }
 
@@ -14,32 +14,38 @@
 <div style="height:30px">
 </div>
 
-<h3>{{program}}</h3>
-<h3>{{letnik}} letnik</h3>
+<h3>{{predmet}}</h3>
 <h5>{{leto}}</h5>
 
-{% if students %}
 <table>
     <thead>
         <tr>
           <th scope="col"  >#</th>
           <th scope="col"  >Priimek</th>
           <th scope="col"  >Ime</th>
+          <th scope="col"  >EMŠO</th>
           <th scope="col"  >Vpisna številka</th>
           <th scope="col"  >Email</th>
-          <th scope="col" >Vrsta vpisa</th>
+          <th scope="col" >Naslov</th>
+          <th scope="col" >Telefon</th>
         </tr>
       </thead>
+</table>
+{% if students %}
+<table>
 <tbody>
-  
+
   {% for t in students %}
-    <tr >
+    <tr>
       <td >{{ forloop.counter }}</td>
-      <td >{{ t.student.priimek }}</td>
-      <td >{{ t.student.ime }}</td>
-      <td >{{ t.student.vpisna_stevilka }}</td>
-      <td  >{{ t.student.email }}</td>
-      <td >{{ t.vrsta_vpisa }}</td>
+      <td >{{ t.priimek }}</td>
+      <td >{{ t.ime }}</td>
+      <td >{{ t.emso }}</td>
+      <td >{{ t.vpisna_stevilka }}</td>
+      <td >{{ t.email }}</td>
+      <td >{{ t.naslov_stalno_bivalisce }}</td>
+      <td >{{ t.telefon }}</td>
+  
     </tr>
   {% endfor %}
    
