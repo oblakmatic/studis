@@ -771,6 +771,12 @@ def narediVpisniList(student,vpis):
     obcina_rojstva = na(str(student[0].obcina_rojstva))
     datum_rojstva = na(str(student[0].datum_rojstva))
     datum_rojstva = datum_rojstva[8:]+'.'+ datum_rojstva[5:7] + '.' + datum_rojstva[:4]
+    p_zacasno = ""
+    p_stalno = ""
+    if student[0].ima_posto_na_zacasni:
+        p_zacasno = "Pošiljanje pošte:"
+    else:
+        p_stalno = "Pošiljanje pošte:"
 
     #vpis
 
@@ -814,7 +820,9 @@ def narediVpisniList(student,vpis):
      'obcina_zacasno':dodajvejico(obcina_zacasno,posta_zacasno),
       'drzava_rojstva': dodajvejico(drzava_rojstva, obcina_rojstva),
       'obcina_rojstva':obcina_rojstva,
-      'datum_rojstva': datum_rojstva}
+      'datum_rojstva': datum_rojstva,
+      'p_zacasno': p_zacasno,
+      'p_stalno': p_stalno}
 
     merge2 = {** vpis.values()[0],
 
