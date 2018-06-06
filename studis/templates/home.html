@@ -109,7 +109,68 @@ window.onload=clock;
 	                <text x="7" y="76">9</text>
 	            </svg>
 	            
-    </div>
+	</div>
+	{% if user.groups.all.0.name == "students" and obvestila %}
+	<table class="table">
+		<thead>
+		    <tr>
+		      <th scope="col">#</th>
+			  <th scope="col">Besedilo obvestila</th>
+			  <th></th>
+		    </tr>
+	  	</thead>
+	{% for t in obvestila %}
+		
+			<td>{{ forloop.counter|add:obvestila.start_index|add:"-1"}}</td>
+			<td>{{ t.besedilo }}</td>
+			<td><a href="izbrisi-obvestilo/{{ t.id }}">Izbriši</a></td>
+
+		</tr>
+
+	{% endfor %}
+	</table>
+
+
+	<div>
+		<ul class="pagination">
+		 
+        {% if obvestila.has_previous %}
+	        <li class="page-item">
+	        	<a href="?page={{ obvestila.previous_page_number }}" class="page-link">&laquo;</a>
+	        </li>
+	    {% else %}
+	        <li class="page-item disbled">
+	        	<a class="page-link">&laquo;</a>
+	        </li>
+        {% endif %}
+
+      	{% for pg in obvestila.paginator.page_range %}
+	        {% if obvestila.number == pg %}
+	          <li class="page-item active">
+	          	<a href="?page={{pg}}" class="page-link">{{pg}}</a>
+	          </li>
+	        {% else %}
+	          <li class="page-item">
+	          	<a href="?page={{pg}}" class="page-link">{{pg}}</a>
+	          </li>
+	        {% endif %}
+	    {% endfor %}
+	   
+
+	    {% if obvestila.has_next %}
+	        <li class="page-item">
+	        	<a href="?page={{ obvestila.next_page_number }}" class="page-link">&raquo;</a>
+	        </li>
+	    {% else %}
+	        <li class="page-item disbled">
+	        	<a class="page-link">&raquo;</a>
+	        </li>
+        {% endif %}
+
+		   
+		</ul>
+	</div>
+	{% endif %}
      </div>
 
 </div>

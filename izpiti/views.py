@@ -3,7 +3,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from izpiti.models import *
 from sifranti.models import *
-from sifranti.models import *
 from .models import *
 from time import gmtime, strftime
 from datetime import datetime
@@ -174,6 +173,7 @@ def dodaj_izpit(request):
 
 
 
+
 def prijava(request):
 #VNOS PRIJAVE
 	# TODO: Implementacija omejitev, frontend indikatorji neustreznosti
@@ -187,6 +187,10 @@ def prijava(request):
 			
 			trenutno_studijsko_leto = ptsl()
 			polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
+			polaganja_trenutna = Prijava.objects.filter(ocena = None, predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto).count()
+			if(polaganja_trenutna >= 1):
+				print('WARNING (GOING IN)! Ne mores imeti dveh prijav na isti predmet naenkrat!', polaganja_trenutna)
+
 			if(polaganja_trenutno_leto >= 3):
 
 				print('WARNING (GOING IN)! Stevilo dovoljenih prijav v enem letu prekoraceno!', polaganja_trenutno_leto)
@@ -332,6 +336,9 @@ def prijava(request):
 					#	print(prijavule.rok.izvedba_predmeta.studijsko_leto)
 
 					polaganja_trenutno_leto = Prijava.objects.filter(predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
+					polaganja_trenutna = Prijava.objects.filter(ocena = None, predmeti_studenta__vpis__student__email = request.user.email, rok__izvedba_predmeta = predmet, rok__izvedba_predmeta__studijsko_leto = trenutno_studijsko_leto, aktivna_prijava = True).count()
+					if(polaganja_trenutna >= 1):
+						print('WARNING (GOING IN)! Ne mores imeti dveh prijav na isti predmet naenkrat!', polaganja_trenutna)
 					if(polaganja_trenutno_leto >= 3):
 
 						print('WARNING! Stevilo dovoljenih prijav v enem letu prekoraceno!', polaganja_trenutno_leto)
@@ -418,7 +425,7 @@ def prijava(request):
 								prijavljeni_roki.append(rok)
 						else:
 							# print("polaganja letos", polaganja_trenutno_leto >= 3, ",vsa polaganja:", stevilo_dosedanjih_polaganj >= 6, ",prijava condition:", prijava_condition, "time limit (prejsnji dan):", time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 0))
-							if (ze_opravil or polaganja_trenutno_leto >= 3 or stevilo_dosedanjih_polaganj >= 6 or prijava_condition or time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 0)):
+							if (ze_opravil or polaganja_trenutna >= 1 or polaganja_trenutno_leto >= 3 or stevilo_dosedanjih_polaganj >= 6 or prijava_condition or time_now >= datetime(rok.datum.year, rok.datum.month, rok.datum.day - 1, 0)):
 								print("disabled prijava add~~~~~~~~~~~~~~~~~~~~~~~", rok.datum)
 								disabled_roki.append(rok)
 								continue
@@ -443,9 +450,9 @@ def prijava(request):
 
 	else:
 		return HttpResponse("Nimaš dovoljenja.")
-	druga_ponavljanja = stevilo_dosedanjih_polaganj
-	if (je_ponavljal):
-		druga_ponavljanja = stevilo_dosedanjih_polaganj - stevilo_rezanih_polaganj
+	#druga_ponavljanja = stevilo_dosedanjih_polaganj
+	#if (je_ponavljal):
+	#	druga_ponavljanja = stevilo_dosedanjih_polaganj - stevilo_rezanih_polaganj
 
 	context={
 	'arr': roki,
@@ -454,8 +461,8 @@ def prijava(request):
 	'disabled': disabled_roki,
 	'payable': payable_roki,
 	'predmetiStudenta': curr_predmetiStudenta,
-	'st_vseh_prijav': stevilo_dosedanjih_polaganj,
-	'st_druga': druga_ponavljanja,
+	# 'st_vseh_prijav': stevilo_dosedanjih_polaganj,
+	# 'st_druga': druga_ponavljanja,
 	}
 
 	return render(request,'prijava.html',context)
@@ -1009,6 +1016,11 @@ def uredi_rok(request):
 			}
 
 			return render(request,'izpiti-message.html',context)
+		for prijava in Prijava.objects.filter(aktivna_prijava = True, rok = rok_za_urejanje):
+			datumRoka  = str("%02d.%02d.%4d" % (rok_za_urejanje.datum.day, rok_za_urejanje.datum.month, rok_za_urejanje.datum.year)),
+			uraRoka = str("%02d:%02d" % (rok_za_urejanje.datum.hour, rok_za_urejanje.datum.minute)),
+			obvestilo = Obvestilo(student = prijava.predmeti_studenta.vpis.student, besedilo = str("Pri predmetu %s je pri roku %s, %s, %s prišlo do spremembe!" % (prijava.rok.izvedba_predmeta.predmet, datumRoka, uraRoka, rok_za_urejanje.prostor_izvajanja)))
+			obvestilo.save()
 		rok_za_urejanje.datum = datum_
 		rok_za_urejanje.prostor = prostor
 		rok_za_urejanje.save()
@@ -1042,6 +1054,11 @@ def izbrisi_rok(request):
 	elif request.method == 'POST':
 		rok_id = request.POST['id_rok']
 		rok_za_urejanje = Rok.objects.get(id=rok_id)
+		for prijava in Prijava.objects.filter(aktivna_prijava = True, rok = rok_za_urejanje):
+			datumRoka  = str("%02d.%02d.%4d" % (rok_za_urejanje.datum.day, rok_za_urejanje.datum.month, rok_za_urejanje.datum.year)),
+			uraRoka = str("%02d:%02d" % (rok_za_urejanje.datum.hour, rok_za_urejanje.datum.minute)),
+			obvestilo = Obvestilo(student = prijava.predmeti_studenta.vpis.student, besedilo = str("Pri predmetu %s je bil rok %s, %s, %s izbrisan!" % (prijava.rok.izvedba_predmeta.predmet, datumRoka, uraRoka, rok_za_urejanje.prostor_izvajanja)))
+			obvestilo.save()
 		relevantne_prijave = Prijava.objects.filter(rok = rok_za_urejanje).delete()
 		rok_za_urejanje.delete()
 		context = {

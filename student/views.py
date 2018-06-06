@@ -84,12 +84,26 @@ def import_students(request):
 	new = 0
 	for i in range(0, len(content)):
 		data = content[i].decode('utf-8')
-		
-		name = data[0:30].rstrip()
-		surname = data[30:60].rstrip()
-		program = data[60:67]
-		email = data[67:].rstrip()
+		name=None
+		surname=None
+		program=None
+		email=None
+		if i==0:
+			name = data[0:31].rstrip()
+			surname = data[31:61].rstrip()
+			program = data[61:68]
+			email = data[68:].rstrip()
+		else:
+			name = data[0:30].rstrip()
+			surname = data[30:60].rstrip()
+			program = data[60:67]
+			email = data[67:].rstrip()
 
+		print(name)
+		print(surname)
+		print(program)
+		print(email)
+		
 		kandidat = None
 		try:
 			kandidat = Kandidat.objects.get(email=email)
@@ -100,8 +114,11 @@ def import_students(request):
 			updated = updated + 1
 		except Kandidat.DoesNotExist:
 
-			serial = Kandidat.objects.count()+1
 			year = datetime.datetime.today().year % 2000
+			tmp = 6300 + year
+			students = Student.objects.filter(vpisna_stevilka__startswith=tmp)
+			serial = students.count()+1+i
+
 			vpisna = "63"+ str(year) + format(serial, '04d')
 			kandidat = Kandidat.objects.create(vpisna_stevilka=int(vpisna))
 			kandidat.email = email
@@ -140,7 +157,6 @@ def import_students(request):
 		
 
 		arr.append(temp)
-	
 
 
 	context = {
@@ -767,7 +783,18 @@ def students_by_number(request):
 			response = HttpResponse(pdf, content_type='application/pdf')
 			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
 			return response
-	
+
+	if request.POST.get("save_pdf2"):
+		student_list = Vpis.objects.filter(studijsko_leto=leto, letnik=letnik, 
+							studijski_program=program, potrjen=True)
+		naredi_letnik_pdf(program, letnik, leto, student_list)
+		name = str(program.id) +'.pdf'
+		fs = FileSystemStorage('/tmp')
+		with fs.open(name) as pdf:
+			response = HttpResponse(pdf, content_type='application/pdf')
+			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+			return response
+
 	#pages
 	paginator = Paginator(predmeti_list, 40)
 	page = request.GET.get('page')
@@ -790,6 +817,28 @@ def students_by_number(request):
 
 	return render(request, 'all_subjects_number.html',context)
 
+def naredi_letnik_pdf(program, letnik, leto, student_list):
+	
+	context = {
+	   'program' : program,
+	   'leto' : leto,
+	   'letnik' : letnik,
+	   'students': student_list,
+	}
+
+	options = {
+    	'page-size': 'A4',
+        'dpi': 600,
+        'header-left': "FAKULTETA ZA RAČUNALNIŠTVO IN INFORMATIKO",
+        'header-right': "[date]",
+        'footer-right': "[page] od [topage]",
+        'header-line': '',
+	}
+
+	html_string =  render_to_string('pdf_letnik.html',context)
+	pdfkit.from_string( html_string,'/tmp/'+ str(program.id) + '.pdf', options=options)
+	return
+
 def naredi_predmet_pdf(predmet, leto, student_list):
 	
 	context = {
@@ -805,6 +854,8 @@ def naredi_predmet_pdf(predmet, leto, student_list):
         'header-right': "[date]",
         'footer-right': "[page] od [topage]",
         'header-line': '',
+        'margin-top': '5mm',
+        'header-spacing': 5
 	}
 
 	html_string =  render_to_string('pdf_predmet.html',context)
@@ -827,6 +878,7 @@ def naredi_stevilo_pdf(leto, letnik, program, predmeti):
         'header-right': "[date]",
         'footer-right': "[page] od [topage]",
         'header-line': '',
+        'header-spacing': 5
 
 	}
 
