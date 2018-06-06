@@ -545,6 +545,7 @@ def naroci_potrdila(request):
 	
 def students_by_subject(request):
 
+	leto = StudijskoLeto.objects.get(ime="2017/2018")
 	if(request.user.groups.all()[0].name == "referent"):
 		predmeti_list = Predmet.objects.all().order_by('ime')
 	elif(request.user.groups.all()[0].name == "professors"):
@@ -555,7 +556,7 @@ def students_by_subject(request):
 	else:
 		return redirect('')
 
-	leto = StudijskoLeto.objects.latest('id')
+	
 
 	if request.POST.get('izbrano-leto') != None:
 		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))

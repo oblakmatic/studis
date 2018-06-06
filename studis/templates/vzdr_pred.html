@@ -161,12 +161,23 @@
         <form action="/predmetnik/{{program.id}}/{{leto.id}}/{{letnik.id}}/add/" method="post">
               {% csrf_token %}
         {{form}}
+        {{form2}}
         <button type="submit" class="btn btn-outline-primary">Dodaj</button>
         </form>
     </div>
 
         <script>
         $(document).ready(function(){
+
+          $("#id_izvedba-predmet").hide()
+          $("label[for='id_izvedba-predmet']").hide();
+
+          $("#id_izvedba-studijsko_leto").hide()
+          $("label[for='id_izvedba-studijsko_leto']").hide();
+          
+          
+
+
           $( "#id_ima_modul" ).change(function() {
             var $input = $( this );
              if ($input.is( ":checked" )){      

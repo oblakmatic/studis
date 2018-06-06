@@ -204,6 +204,11 @@ def vzdr_pred(request, _program, _leto, _letnik):
 
 	form = PredmetnikForm(leto, program, initial=data)
 
+	data2= {'predmet': Predmet.objects.latest('id'), 'studijsko_leto': leto}
+
+	form2 = IzvedbaForm(initial=data2)
+
+
 	context = {
 		'predmeti_o': predmeti_obvezni,
 		'predmeti_i': zip(predmeti_izbirni, temporary),
@@ -214,7 +219,8 @@ def vzdr_pred(request, _program, _leto, _letnik):
 		'leta': leta,
 		'programi': programi,
 		'letniki': letniki,
-		'form': form
+		'form': form,
+		'form2': form2
 		
 
 	}
@@ -225,6 +231,8 @@ def vzdr_pred(request, _program, _leto, _letnik):
 def del_pred(request, _program, _leto, _letnik, predmet):
 	predmetnik = Predmetnik.objects.get(studijski_program=_program, 
 		studijsko_leto=_leto, letnik=_letnik, predmet=predmet).delete()
+	izvedba = IzvedbaPredmeta.objects.get(studijsko_leto=_leto, predmet=predmet).delete()
+
 
 	return redirect("/predmetnik/"+str(_program)+"/"+str(_leto)+"/"+str(_letnik)+"/")
 
@@ -232,8 +240,31 @@ def add_pred(request, _program, _leto, _letnik):
 	leto = StudijskoLeto.objects.get(id=_leto)
 	program = StudijskiProgram.objects.get(id=_program)
 	form = PredmetnikForm(leto, program, request.POST)
+	form2 = IzvedbaForm(request.POST)
+
 	if form.is_valid():
 		form.save()
+
+	if form2.is_valid():
+		izvedba = form2.save()
+
+		data = form.cleaned_data
+		pr = data['predmet']
+	
+		izvedba.predmet = pr
+		izvedba.save()
+
+		ucitelj = izvedba.ucitelj_1
+		ucitelj.predmeti.add(pr)
+
+		if izvedba.ucitelj_2:
+			ucitelj = izvedba.ucitelj_2
+			ucitelj.predmeti.add(pr)
+
+		if izvedba.ucitelj_3:
+			ucitelj = izvedba.ucitelj_3
+			ucitelj.predmeti.add(pr)
+
 	return redirect("/predmetnik/"+str(_program)+"/"+str(_leto)+"/"+str(_letnik)+"/")
 
 def izbrisi_obvestilo(request, _id):
