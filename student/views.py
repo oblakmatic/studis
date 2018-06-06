@@ -499,12 +499,22 @@ def preveri_seznam(request):
 
 	if(request.user.groups.all()[0].name == "referent"):
 		
-		if request.method == 'POST' and 'natisni' in request.POST:
-			
+		if request.method == 'POST' and 'natisni_' in request.POST:
+			Story=[]
+			response = HttpResponse(content_type='application/pdf')
+			response['Content-Disposition'] = 'inline; filename="potrdila.pdf"'
+			doc = SimpleDocTemplate(response,pagesize=letter,
+				rightMargin=72,leftMargin=72,
+				topMargin=72,bottomMargin=18)
+
 			vpis_student_email = request.POST.get('vpis_email')
 			studijsko_leto_ime = request.POST.get('vpis_leto')
+			#print(vpis_student_email)
+			#print(studijsko_leto_ime)
 			 # se tle mors dodt da bo se to pol delal--------------------------------------------
-			return natisni_potrdilo(vpis_student_email,studijsko_leto_ime, 6)
+			Story = natisni_potrdilo(vpis_student_email,studijsko_leto_ime, 6)
+			doc.build(Story)
+			return response
 			
 
 		if request.method == 'POST' and 'prikaz_seznama' in request.POST:
@@ -524,6 +534,7 @@ def preveri_seznam(request):
 
 def naroci_potrdila(request):
 	if request.method == 'POST' and 'naroci' in request.POST:
+
 		studijsko_leto_ime = request.POST.get('studijsko_leto')
 		st_potrdil = request.POST.get('st_potrdil')
 		student = Student.objects.get(email = request.user.email)
@@ -701,9 +712,11 @@ def natisni_potrdilo(email,studijsko_leto,st_potrdil):
 	par = Paragraph(ptext, p)
 	Story.append(par)
 	for part in address_parts:
+		print(part)
 		ptext = '<font size=12>%s</font>' % part.strip()
 		par = Paragraph(ptext, p)
 		Story.append(par)
+		Story.append(Spacer(1, 10))
 			
 	Story.append(Spacer(1, 50))
 
