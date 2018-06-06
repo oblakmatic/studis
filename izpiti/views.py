@@ -492,6 +492,10 @@ def izberi_rok(request):
 		#prikaz rokov v prihodnosti --> za prikaz seznama prijavljenih, onemogočen vnos ocene!
 		roki_forward = Rok.objects.filter( Q(izvedba_predmeta__ucitelj_1__email = email_) | Q(izvedba_predmeta__ucitelj_2__email = email_) | Q(izvedba_predmeta__ucitelj_3__email = email_) , Q(datum__gt=datetime.now().date())).order_by("datum")
 
+		paginator = Paginator(roki, 10)
+		page = request.GET.get('page')
+		roki = paginator.get_page(page)
+
 		context = {
 			'arr': roki,
 			'roki_forward': roki_forward
@@ -504,6 +508,11 @@ def izberi_rok(request):
 
 		#prikaz rokov v prihodnosti --> za prikaz seznama prijavljenih, onemogočen vnos ocene!
 		roki_forward = Rok.objects.filter(datum__gt=datetime.now().date()).order_by("datum")
+
+		paginator = Paginator(roki, 10)
+		page = request.GET.get('page')
+		roki = paginator.get_page(page)
+
 
 		context = {
 			'arr': roki,
@@ -526,9 +535,9 @@ def vnesi_ocene_predmeta(request):
 			formset = formset_factory(ocenaForm, extra = len(prijave))
 
 			#dodal paginator
-			paginator = Paginator(prijave, 20)
+			paginator = Paginator(prijave, 30)
 			page = request.GET.get('page')
-			all_students = paginator.get_page(page)
+			prijave = paginator.get_page(page)
 			
 			context = {
 				'arr': prijave,
@@ -595,6 +604,12 @@ def vnesi_ocene_predmeta(request):
 			
 			formset = formset_factory(ocenaForm, extra = len(prijave))
 			
+			#dodal paginator
+			paginator = Paginator(prijave, 30)
+			page = request.GET.get('page')
+			prijave = paginator.get_page(page)
+
+
 			context = {
 				'arr': prijave,
 				'formset': formset,
@@ -785,6 +800,10 @@ def seznam_prijavljenih(request):
 
 		curr_rok = Rok.objects.filter(id = rok_id)[0]
 		
+		paginator = Paginator(prijave, 10)
+		page = request.GET.get('page')
+		prijave = paginator.get_page(page)
+
 		context = {
 			'arr': prijave,
 			'curr_rok': curr_rok
