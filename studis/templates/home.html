@@ -2,10 +2,178 @@
 
 {% block title %}Domov{% endblock %}
 
+{% block head %}
+<style>
+
+.analog-clock{
+    width:140px;
+    height:180px;
+    margin-left: 50%;
+}
+
+#clock-face{
+    stroke:black;
+    stroke-width:1px;
+    fill:white;
+}
+
+#h-hand, #m-hand, #s-hand, #s-tail{
+    stroke:black;
+    stroke-linecap:round;
+}
+
+#h-hand{
+    stroke-width:3px;
+}
+
+#m-hand{
+    stroke-width:2px;
+}
+
+#s-hand{
+    stroke-width:1px;
+}
+
+.time-text{
+    text-align:center;
+}
+</style>
+
+{% endblock %}
+
 {% block content %}
+
 {% if user.is_authenticated %}
 
+<script>
 
+	function clock(){
+	    //calculate angle
+	    var d, h, m, s;
+	    d = new Date;
+	    
+	    h = 30 * ((d.getHours()) + d.getMinutes() / 60);
+	    m = 6 * d.getMinutes();
+	    s = 6 * d.getSeconds();
+	    
+	    //move hands
+	    setAttr('h-hand', h);
+	    setAttr('m-hand', m);
+	    setAttr('s-hand', s);
+	    setAttr('s-tail', s+180);
+
+	    
+	    //call every second
+	    setTimeout(clock, 1000);
+    
+	};
+
+
+function setAttr(id,val){
+    var v = 'rotate(' + val + ', 70, 70)';
+    document.getElementById(id).setAttribute('transform', v);
+};
+
+function setText(id,val){
+    if(val < 10){
+        val = '0' + val;
+    }
+    document.getElementById(id).innerHTML = val;
+};
+
+window.onload=clock;
+
+
+</script>
+
+<div class="container sifrant" style="margin-top: 45px">
+	<div class="row">
+		<div>
+		<h3>Prošnje</h3>
+		<p>Trenutno nimate nobenih prošenj v obdelavi.</p>
+
+		<h3>Ankete</h3>
+		<p>Trenutno ni na voljo nobene ankete.</p>
+		</div>
+
+		<div class="analog-clock">
+	            <svg width="140" height="140">
+	                <circle id="clock-face" cx="70" cy="70" r="65" />
+	                <line id="h-hand" x1="70" y1="70" x2="70" y2="38" />
+	                <line id="m-hand" x1="70" y1="70" x2="70" y2="20" />
+	                <line id="s-hand" x1="70" y1="70" x2="70" y2="12" />
+	                <line id="s-tail" x1="70" y1="70" x2="70" y2="56" />
+	                <text x="62" y="18">12</text>
+	                <text x="126" y="76">3</text>
+	                <text x="66" y="130">6</text>
+	                <text x="7" y="76">9</text>
+	            </svg>
+	            
+	</div>
+	{% if user.groups.all.0.name == "students" and obvestila %}
+	<table class="table">
+		<thead>
+		    <tr>
+		      <th scope="col">#</th>
+			  <th scope="col">Besedilo obvestila</th>
+			  <th></th>
+		    </tr>
+	  	</thead>
+	{% for t in obvestila %}
+		
+			<td>{{ forloop.counter|add:obvestila.start_index|add:"-1"}}</td>
+			<td>{{ t.besedilo }}</td>
+			<td><a href="izbrisi-obvestilo/{{ t.id }}">Izbriši</a></td>
+
+		</tr>
+
+	{% endfor %}
+	</table>
+
+
+	<div>
+		<ul class="pagination">
+		 
+        {% if obvestila.has_previous %}
+	        <li class="page-item">
+	        	<a href="?page={{ obvestila.previous_page_number }}" class="page-link">&laquo;</a>
+	        </li>
+	    {% else %}
+	        <li class="page-item disbled">
+	        	<a class="page-link">&laquo;</a>
+	        </li>
+        {% endif %}
+
+      	{% for pg in obvestila.paginator.page_range %}
+	        {% if obvestila.number == pg %}
+	          <li class="page-item active">
+	          	<a href="?page={{pg}}" class="page-link">{{pg}}</a>
+	          </li>
+	        {% else %}
+	          <li class="page-item">
+	          	<a href="?page={{pg}}" class="page-link">{{pg}}</a>
+	          </li>
+	        {% endif %}
+	    {% endfor %}
+	   
+
+	    {% if obvestila.has_next %}
+	        <li class="page-item">
+	        	<a href="?page={{ obvestila.next_page_number }}" class="page-link">&raquo;</a>
+	        </li>
+	    {% else %}
+	        <li class="page-item disbled">
+	        	<a class="page-link">&raquo;</a>
+	        </li>
+        {% endif %}
+
+		   
+		</ul>
+	</div>
+	{% endif %}
+     </div>
+
+</div>
 {% else %}
 <div class="container login text-center">
   <p>Prijavite se</p>

@@ -6,8 +6,12 @@
 
 {% block content %}
 <div class="container sifrant">
-    <h3>Prijava na izpite</h3>
-
+	<h3>Prijava na izpite</h3>
+	{% if st_vseh_prijav and st_druga %}
+	<div class="alert alert-info">Dosedanja polaganja: 
+		{{st_vseh_prijav}} - {{st_druga}}
+	</div>
+	{%endif%}
     <table class="table">
 
         <thead>
@@ -66,14 +70,14 @@
 					<input type="hidden" name="rok_" value={{ rok.id }}>
 					{% if rok in disabled and rok in disabled_odjava %}
 					<p>Odjava onemogočena!</p>
+					{% elif rok in arr1 %}
+					<button type="submit" onclick="myFunction(&quot;{{ rok.datum }}&quot;)" name="odjava_izpit" class="btn btn-outline-primary mt-2">Odjavi se</button>
 					{% elif rok in disabled %}
 					<p>Prijava onemogočena!</p>
 					{% elif rok in disabled_odjava %}
 					<p>Odjava onemogočena!</p>
 					{% elif rok in payable %}
 					<button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2">Prijavi se (plačljivo)</button>
-					{% elif rok in arr1 %}
-					<button type="submit" onclick="myFunction(&quot;{{ rok.datum }}&quot;)" name="odjava_izpit" class="btn btn-outline-primary mt-2">Odjavi se</button>
 					{% else %}
 					<button type="submit" name="prijava_izpit" class="btn btn-outline-primary mt-2">Prijavi se</button>
 					{% endif %}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Urejanje roka{% endblock %}
+
+
+{% block content %}
+<div class="container sifrant">
+    <h3>Rok</h3>
+    </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Predmet</th>
+                    <th scope="col">Studijsko leto</th>
+                    <th scope="col">Ucitelji</th>
+                    <th scope="col">Datum (dd.mm.yyyy)</th>
+                    <th scope="col">Cas (hh:mm)</th>
+                    <th scope="col">Prostor</th>
+                    <th scope="col">Uredi rok izpita</th>
+                </tr>
+            </thead>
+            <tr>
+                <td>{{ IzvedbaPredmeta.predmet }}</td>
+                <td>{{ IzvedbaPredmeta.studijsko_leto }}</td>
+
+                {% if IzvedbaPredmeta.ucitelj_3 != null %}
+                <td>
+                    {{ IzvedbaPredmeta.ucitelj_1}},
+                    {{ IzvedbaPredmeta.ucitelj_2}},
+                    {{ IzvedbaPredmeta.ucitelj_3}}
+                </td>
+                {% elif IzvedbaPredmeta.ucitelj_2 != null %}
+                <td>
+                    {{ IzvedbaPredmeta.ucitelj_1}},
+                    {{ IzvedbaPredmeta.ucitelj_2}}
+                </td>
+                {% elif IzvedbaPredmeta.ucitelj_1 != null %}
+                <td>
+                    {{ IzvedbaPredmeta.ucitelj_1}}
+                </td>
+                {% endif %}
+                <form action="/izpiti/izbrisi-rok/" method="post">
+                    {% csrf_token %}
+                    <td>
+                        <input type="text" id="datum" oninput="myFunction(this)" name="datum" style="width: 120px;" placeholder="dd.mm.yyyy" value="{{datumRoka}}" required disabled/>
+                    </td>
+                    <td>
+                        <input type="text" id="cas" oninput="vnesiCas(this)" name="cas" style="width: 90px;" placeholder="hh:mm" value="{{uraRoka}}" required disabled/>
+                    </td>
+                    <td>
+                        <input type="text" id="prostor" name="prostor" value="{{prostorRoka}}" style="width: 90px;" required disabled/>
+                    </td>
+                    <td>
+                        <input type="hidden" name="id_rok" value={{ rok.id }}>
+                        {% if atendees > 0 %}
+                            <input type="checkbox" name="seznanjenost" value="seznanjenost" required>Na izpitni rok so prijavljeni študenti. Potrdite seznanjenost.</input>
+                        {% endif%}
+                        <button type="submit" name="izbrisi_izpit" class="btn btn-outline-primary mt-2">Izbriši izpitni rok</button>
+                    </td>
+                </form>
+
+            </tr>
+
+</div>
+
+  
+
+
+
+        {% endblock %}

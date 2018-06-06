@@ -1,0 +1,49 @@
+<head>
+    <meta charset="UTF-8"> 
+    <style>
+    th, td{
+      text-align:left;
+      width:200px;
+      height:35px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    </style>
+</head>
+
+<div style="height:30px">
+</div>
+
+<h3>{{predmet}}</h3>
+<h5>{{leto}}</h5>
+
+
+{% if students %}
+<table>
+    <thead>
+        <tr>
+          <th scope="col"  >#</th>
+          <th scope="col"  >Priimek</th>
+          <th scope="col"  >Ime</th>
+          <th scope="col"  >Vpisna številka</th>
+          <th scope="col"  >Email</th>
+          <th scope="col" >Vrsta vpisa</th>
+        </tr>
+      </thead>
+<tbody>
+  
+  {% for t in students %}
+    <tr >
+      <td >{{ forloop.counter }}</td>
+      <td >{{ t.student.priimek }}</td>
+      <td >{{ t.student.ime }}</td>
+      <td >{{ t.student.vpisna_stevilka }}</td>
+      <td  >{{ t.student.email }}</td>
+      <td >{{ t.vrsta_vpisa }}</td>
+    </tr>
+  {% endfor %}
+   
+</tbody>
+</table>
+
+{% endif %}

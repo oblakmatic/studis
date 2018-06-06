@@ -1,0 +1,39 @@
+<head>
+    <meta charset="UTF-8"> 
+    <style>
+    
+    li {
+      margin-bottom: 30px;
+      margin-right: 300px;
+      list-style-type: none;
+      border-bottom: 1px solid #ddd;
+    }
+
+
+    </style>
+</head>
+
+<div style="height:10px">
+</div>
+
+<h3 >{{program}}</h3>
+<h3>{{leto}}</h3>
+<h3>{{letnik}} letnik</h3>
+
+<h4>Število vpisanih v posamezne predmete</h4>
+
+{% if predmeti %}
+<ul>
+   <li style="background-color: #ddd">
+      <strong>
+        <span style="margin-right: 20px">#</span>Šifra in ime predmeta<span style="float: right">Število vpisanih</span>
+      </strong>
+    </li>
+  {% for t in predmeti %}
+    <li>
+      <span style="margin-right: 20px">{{ forloop.counter }}&#8228;</span> ({{t.id}}) {{t.ime}}  <span style="float: right">{{ t.number}}</span>
+    </li>
+  {% endfor %}
+</ul>  
+
+{% endif %}

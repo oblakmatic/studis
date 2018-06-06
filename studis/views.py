@@ -1,18 +1,33 @@
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponseRedirect
 from django.contrib import auth
 from django.template.context_processors import csrf
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import datetime
+from datetime import timedelta
+from student.models import *
+from sifranti.models import *
+from student.forms import *
+from izpiti.models import *
 
 max_attempts = 6
 attempts = 0
 ip = -1
-block_time = datetime.datetime.now() - datetime.timedelta(minutes=1)
+block_time = datetime.now() - timedelta(minutes=1)
 
 
 def home_view(request):
 
 	if request.user.is_authenticated:
+		if not request.user.is_superuser and request.user.groups.all()[0].name == "students":
+			all_obvestila = Obvestilo.objects.filter(student__email = request.user.email)
+			paginator = Paginator(all_obvestila, 10)
+			page = request.GET.get('page')
+			all_obvestila = paginator.get_page(page)
+			context = {
+				"obvestila": all_obvestila
+			}
+			return render(request, 'home.html', context)
 		return render(request, 'home.html')
 
 	return HttpResponseRedirect('/user/login')
@@ -76,12 +91,12 @@ def invalid(request):
 
 
 def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+	if x_forwarded_for:
+		ip = x_forwarded_for.split(',')[0]
+	else:
+		ip = request.META.get('REMOTE_ADDR')
+	return ip
 
 #checks if ip is being blocked
 def is_blocked(request):
@@ -103,5 +118,126 @@ def is_blocked(request):
 
 	return True
 
+def vzdr_pred(request, _program, _leto, _letnik):
+
+	program = StudijskiProgram.objects.get(id=_program)
+	leto = StudijskoLeto.objects.get(id=_leto)
+	letnik = Letnik.objects.get(id=_letnik)
+
+	if request.POST.get('izbrano-leto') != None:
+		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))
+
+	if request.POST.get('izbran-program') != None:
+		program = StudijskiProgram.objects.get(naziv=request.POST.get('izbran-program'))
+
+	if request.POST.get('izbran-letnik') != None:
+		letnik = Letnik.objects.get(ime=request.POST.get('izbran-letnik'))
+
+	if request.method == "POST" and (request.POST.get('izbrano-leto') != None or 
+		request.POST.get('izbran-program') != None or
+		request.POST.get('izbran-letnik') != None):
+		print("redirecting")
+		return redirect("/predmetnik/"+str(program.id)+"/"+str(leto.id)+"/"+str(letnik.id)+"/")
+
+	predmeti_obvezni = []
+	predmeti_izbirni = []
+	predmeti_modul = []
+	#za imena modulov in
+	temporary = []
+	temporary2 = []
+	#1
+	if letnik == Letnik.objects.get(ime="1."):
+	
+		predmetniki = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik)
+		
+		for p in predmetniki:
+			if  p.obvezen:
+				predmeti_obvezni.append(p.predmet)
+
+
+
+	#2 letnik
+	elif letnik == Letnik.objects.get(ime="2."):
+	
+		predmetniki = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik)
+		
+		for p in predmetniki:
+			if  p.obvezen:
+				predmeti_obvezni.append(p.predmet)
+
+			else:
+				temporary.append(p.strokoven)
+				predmeti_izbirni.append(p.predmet)
+
+	#3 letnik
+	else:
+	
+		predmetniki = Predmetnik.objects.filter(studijski_program=program, studijsko_leto=leto, letnik=letnik, modul=None)
+		
+		for p in predmetniki:
+			if  p.obvezen:
+				predmeti_obvezni.append(p.predmet)
+
+			else:
+				temporary.append(p.strokoven)
+				predmeti_izbirni.append(p.predmet)
+				
+
+		moduls = Modul.objects.filter(studijsko_leto=leto, studijski_program=program)
+	
+
+		for m in moduls:
+			temporary2.append(m.ime)
+			pr = Predmetnik.objects.filter(modul=m, studijsko_leto=leto, studijski_program=program)
+			temp=[]
+			for p in pr:
+				temp.append(p.predmet)
+
+		
+			predmeti_modul.append(temp)
+
+	leta = StudijskoLeto.objects.all()
+	programi = StudijskiProgram.objects.all()
+	letniki = Letnik.objects.all()
+
+	data= {'studijski_program': program, 'studijsko_leto': leto, 'letnik': letnik}
+
+	form = PredmetnikForm(leto, program, initial=data)
+
+	context = {
+		'predmeti_o': predmeti_obvezni,
+		'predmeti_i': zip(predmeti_izbirni, temporary),
+		'predmeti_m': zip(predmeti_modul, temporary2),
+		'letnik': letnik,
+		'leto': leto,
+		'program': program,
+		'leta': leta,
+		'programi': programi,
+		'letniki': letniki,
+		'form': form
+		
+
+	}
+
+		
+	return render(request, 'vzdr_pred.html', context)
+
+def del_pred(request, _program, _leto, _letnik, predmet):
+	predmetnik = Predmetnik.objects.get(studijski_program=_program, 
+		studijsko_leto=_leto, letnik=_letnik, predmet=predmet).delete()
+
+	return redirect("/predmetnik/"+str(_program)+"/"+str(_leto)+"/"+str(_letnik)+"/")
+
+def add_pred(request, _program, _leto, _letnik):
+	leto = StudijskoLeto.objects.get(id=_leto)
+	program = StudijskiProgram.objects.get(id=_program)
+	form = PredmetnikForm(leto, program, request.POST)
+	if form.is_valid():
+		form.save()
+	return redirect("/predmetnik/"+str(_program)+"/"+str(_leto)+"/"+str(_letnik)+"/")
+
+def izbrisi_obvestilo(request, _id):
+	Obvestilo.objects.get(pk = _id).delete()
+	return redirect("/")
 
 

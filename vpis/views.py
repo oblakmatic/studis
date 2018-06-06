@@ -4,36 +4,64 @@ from django.template import loader
 from django import forms
 from django.contrib.auth.models import User, Group
 
+import datetime
+from reportlab.pdfgen import canvas
+from reportlab.platypus import *
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.pagesizes import letter, A4, landscape
+from reportlab.lib import colors 
+
+import time
+from reportlab.lib.enums import TA_JUSTIFY, TA_RIGHT, TA_CENTER
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
+from student.forms import TokenForm
+from django.db.models import Q
+
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
+
+import pdfkit
+from django.template.loader import render_to_string
+from django.core.files.storage import FileSystemStorage
+
+
+
 # Create your views here.
 from .forms import *
 from student.models import Vpis, Predmetnik, Modul
 from sifranti.models import StudijskiProgram, StudijskoLeto, Letnik, Predmet
-from izpiti.models import PredmetiStudenta
+from izpiti.models import *
 
 nas_leto = "2018/2019"
 nas_leto_ob = StudijskoLeto.objects.filter(ime=nas_leto)
 
 
 
-def vpisni_list(request, ind_student, ind_studleto,ind_studleto2):
-
-    student = Student.objects.filter(vpisna_stevilka= ind_student)
-    ime_stud = ind_studleto+"/"+ind_studleto2
-    stud_leto = StudijskoLeto.objects.filter(ime=ime_stud)
-    vpis1 = Vpis.objects.filter(student= student[0]).filter(studijsko_leto=stud_leto[0])[0]
-
-    predmentiStudenta = PredmetiStudenta.objects.filter(vpis=vpis1)[0]
+def vpisni_list(request, vpisna, ind_studleto, ind_studleto2):
     
+    studleto = str(ind_studleto)+"/"+str(ind_studleto2)
+    studleto_ob = StudijskoLeto.objects.get(ime=studleto)
+
+    student = Student.objects.filter(vpisna_stevilka=vpisna)
+    vpis = Vpis.objects.filter(student= student[0]).filter(studijsko_leto = studleto_ob)
     
+    name = str(vpisna) +str(ind_studleto)+'.pdf'
+    fs = FileSystemStorage('/tmp')
+    
+    if not fs.exists(name):
+        #print("Generiram pdf")
+        narediVpisniList(student,vpis)
+    
+    with fs.open(name) as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+        return response
 
-    context ={
-        'student' : student,
-        'vpis': vpis1,
-        'predmeti_studenta' : predmentiStudenta,
-
-    }
-
-    return render(request,'vpis/vpisni_list.html',context) 
+    return response
 
 
 def index2_vpis_post(request,index):
@@ -56,11 +84,24 @@ def index2_vpis_post(request,index):
                     letnik=zeton[index].letnik,
                     vrsta_vpisa=zeton[index].vrsta_vpisa,
                     nacin_studija=zeton[index].nacin_studija,
-                    vrsta_studija=zeton[index].vrsta_studija)
+                    vrsta_studija=zeton[index].vrsta_studija,
+                    oblika_studija=zeton[index].oblika_studija,
+                    prosta_izbira = zeton[index].pravica_do_izbire)
 
                 nov_vpis.save()
-                zeton[index].izkoriscen = True
-                zeton[index].save()
+                
+                zeton1 = zeton[index]
+                
+                if len(zeton) == 2:
+                    #print("evo me")
+                    drugind = (index+1)%2
+                    #print(str(index)+ str(drugind))
+                    zeton2 = zeton[drugind]
+                    zeton2.izkoriscen =True
+                    zeton2.save()
+                zeton1.izkoriscen = True
+                zeton1.save()
+                
                 return HttpResponseRedirect('/vpis/predmetnik/')
 
 def index2_vpis(request):
@@ -141,8 +182,11 @@ def index_vpis(request):
 
             if form.is_valid():
 
+                
                 ta_emso = form.cleaned_data['emso']
-                if emso_verify(str(ta_emso)) == str(ta_emso):
+                ta_datum = form.cleaned_data['datum_rojstva']
+                if preveri_emso_datum(ta_emso,ta_datum):
+                    #tukaj naredimo iz kandidata studenta in mu dodelimo zeton
                     student1 = form.save(commit=False)
                     student1.vpisna_stevilka = candi.vpisna_stevilka
                     student1.email = candi.email
@@ -152,19 +196,28 @@ def index_vpis(request):
                     request.user.groups.remove(can_group)
                     request.user.save()
                     student1.save()
-                    return HttpResponseRedirect('/vpis/')
+
+                    studentek = vrniStudenta(request.user.email)
+                    print(studentek)
+                    narediZetonZaKandidata(studentek,candi)
+                    return HttpResponseRedirect('/vpis/studij/')
                 else:
                     kandidat = vrniKandidata(request.user.email)
                     studentform = None
                     id_kandidata = kandidat[0].vpisna_stevilka
                     data = Kandidat.objects.filter(pk= id_kandidata).values()[0]
                     studentform = NameStudentForm(initial= data)
-                    #kandidat 
-           
+                    opozorilo = ""
+                    
+                    if emso_verify(ta_emso) != ta_emso:
+                        opozorilo = "EMŠO je nepravilen, ponovno ga vnesite"
+                    else:
+                        opozorilo = "Datum in EMŠO se ne ujemata"
+
                     context = {
                     'student' : kandidat[0],
                     'studentform' : form,
-                    'opozorilo': 'EMŠO je nepravilen, ponovno ga vnesite'
+                    'opozorilo': opozorilo
                     }
                     return render(request,'vpis/index_vpis.html',context)
 
@@ -179,16 +232,35 @@ def index_vpis(request):
         elif is_student(request.user):
             student = vrniStudenta(request.user.email)
             form = NameStudentForm(request.POST, instance=student[0])
-            print("eno")
             if form.is_valid():
-                print("dva")
-                form.save()
-                return HttpResponseRedirect('/vpis/studij/')
-                
+                ta_emso = form.cleaned_data['emso']
+                ta_datum = form.cleaned_data['datum_rojstva']
+                if preveri_emso_datum(ta_emso,ta_datum):
+                    form.save()
+                    return HttpResponseRedirect('/vpis/studij/')
+                else:
+                    opozorilo = ""
+                    
+                    if emso_verify(ta_emso) != ta_emso:
+                        opozorilo = "EMŠO je nepravilen, ponovno ga vnesite"
+                    else:
+                        opozorilo = "Datum in EMŠO se ne ujemata"
+
+                    context = {
+                    'vpisi' : Vpis.objects.filter(student=student[0]).filter(dokoncan_vpis=True),
+                    'student': student[0],
+                    'studentform': form,
+                    'opozorilo': opozorilo,
+                    'gumbobstaja' : aligumbobstaja(student[0])
+                    }
+                    return render(request,'vpis/index_vpis.html',context)
             else:
                 context = {
-                'form': form,
-                'opozorilo': 'Prišlo je do napake, ponovno vnesite podatke'
+                'vpisi' : Vpis.objects.filter(student=student[0]).filter(dokoncan_vpis=True),
+                'student': student[0],
+                'studentform': form,
+                'opozorilo': 'Prišlo je do napake, ponovno vnesite podatke',
+                'gumbobstaja' : aligumbobstaja(student[0])
                 }
                 return render(request,'vpis/index_vpis.html',context)
         else:
@@ -248,12 +320,15 @@ def index_vpis(request):
             else:
                 opozorilo= "Nimaš žetona"
             
+            print(Vpis.objects.filter(student=najden_student[0]).filter(dokoncan_vpis=False).exists())
             context = {
-                'vpisi' : Vpis.objects.filter(student=najden_student[0]),
+                'vpisi' : Vpis.objects.filter(student=najden_student[0]).filter(dokoncan_vpis=True),
                 'student' : najden_student[0],
                 'opozorilo' : opozorilo,
-                'studentform' : studentform
+                'studentform' : studentform,
+                'gumbobstaja' : aligumbobstaja(najden_student[0])
                 }
+                
         else:
             opozorilo="Samo študenti se lahko vpišejo"
             context = {
@@ -359,7 +434,7 @@ def predmetnik(request):
                     predmeti_izbirni.append(p.predmet)
                     
     
-            moduls = Modul.objects.all()
+            moduls = Modul.objects.filter(studijski_program=program, studijsko_leto=leto)
         
     
             for m in moduls:
@@ -417,3 +492,379 @@ def koncaj_predmetnik(request):
     vpis1.dokoncan_vpis = True
     vpis1.save()
     return render(request,'vpis/predmetnik_izpis.html', context)
+
+
+def preveri_emso_datum(emso, datum):
+
+    if emso_verify(emso) == emso and datum[8:10] == emso[0:2] and emso[2:4] == datum[5:7] and emso[4:7] == datum[1:4]:
+        return True
+    else:
+        return False
+
+#naredi zeton za kandidata (ki je pa v tem momentu postal student)
+#student, kandidat sta ista oseba, iz kandidat izluscimo kateri studijski
+# program hoce delati, zeton dodelimo studentu
+def narediZetonZaKandidata(student1,kandidat):
+    
+    #print(student1)
+    #print(kandidat)
+    #print("neki")
+    if Zeton.objects.filter(student=student1[0]).exists():
+        return
+    
+    #print("neki")
+    letnik = Letnik.objects.get(ime="1.")
+    studij_prog = kandidat.studijski_program
+    vrsta_studija = None
+    nacin_studija = NacinStudija.objects.get(id=1)
+    vrsta_vpisa = VrstaVpisa.objects.get(id=1)
+    oblika_studija = OblikaStudija.objects.get(id=1)
+    #print("neki")
+    if studij_prog.id == 1000470:
+        vrsta_studija = VrstaStudija.objects.get(id=16203)
+    elif studij_prog.id == 1000468:
+        vrsta_studija = VrstaStudija.objects.get(id=16204)
+    else:
+        raise Exception("ne bi se smel tale else izvediti")
+
+    
+    
+    nov_zeton = Zeton(student = student1[0], 
+                    studijski_program = studij_prog,
+                    letnik = letnik,
+                    vrsta_studija = vrsta_studija,
+                    nacin_studija = nacin_studija,
+                    vrsta_vpisa = vrsta_vpisa,
+                    oblika_studija = oblika_studija
+                    )
+    nov_zeton.save()
+    print("nekisad")
+    return
+def vrniDatum(datumm):
+    datumm = str(datumm)
+    return datumm[8:10]+'.'+ datumm[5:7] + '.' + datumm[:4]
+def vrniImePriimek(ucitelj):
+    if ucitelj:
+        return na(str(ucitelj.ime)+" "+ucitelj.priimek )
+    else:
+        return ""
+
+def narediKartotecniList(request, vpisna, storitev):
+    #storitev je index od 1-4
+    # 1-> return kartotecni_list pdf
+    # 2-> return kartotecni_list_min pdf
+    # 3-> return kartotecni_list html
+    # 4-> return kartotecni_list_min html
+
+    student = Student.objects.filter(vpisna_stevilka=vpisna)
+    vpisi = Vpis.objects.filter(student=student[0])
+
+    todayy = datetime.today()
+    #vpisi
+
+    vsi_vpisi = []
+
+    i = 0
+    for vpis in vpisi:
+        studijsko_leto = na(str(vpis.studijsko_leto))
+        studijski_program = na(str(vpis.studijski_program))
+        letnik = na(str(vpis.letnik))
+        vrsta_vpisa = na(str(vpis.vrsta_vpisa))
+        nacin_studija = na(str(vpis.nacin_studija))
+        vrsta_studija = na(str(vpis.vrsta_studija))
+        oblika_studija = na(str(vpis.oblika_studija))
+
+
+        
+        #predmeti
+        predmeti = PredmetiStudenta.objects.filter(vpis= vpis)[0].predmeti.all()
+
+        vsipod = []
+
+        skupnaocena= 0
+        skupnokt = 0
+        skupnokt_max = 0
+        steviloocen = 0
+
+        for predmet in predmeti:
+            skupnokt_max += predmet.kreditne_tocke
+            izvedba = IzvedbaPredmeta.objects.filter(predmet=predmet, studijsko_leto=vpis.studijsko_leto)[0]
+
+            # pretvori v string ucitlje
+            #ucitelj1 = vrniImePriimek(izvedba.ucitelj_1)
+            #ucitelj2 = vrniImePriimek(izvedba.ucitelj_2)
+            #ucitelj3 = vrniImePriimek(izvedba.ucitelj_3)
+            
+            #tocke = na(str(predmet.kreditne_tocke))
+
+
+            #logika prijava, datum, ocena, st. polaganj
+
+            vsi_vpisi2 = Vpis.objects.filter(student= student[0]).order_by('studijsko_leto__ime')
+            vse_izvedbe2 = IzvedbaPredmeta.objects.filter(predmet = izvedba.predmet)
+
+
+            predmeti_stud = PredmetiStudenta.objects.filter(vpis__in=list(vsi_vpisi2))
+            roki = Rok.objects.filter(izvedba_predmeta__in = list(vse_izvedbe2))
+            prijave = Prijava.objects.filter(aktivna_prijava = True).filter(predmeti_studenta__in = list(predmeti_stud)).filter(rok__in = list(roki)).order_by('created_at')
+            
+            
+            podatki_o_letu = []
+            vpis_trenutni = None
+            for prijava in prijave:
+                if not vpis_trenutni:
+                    vpis_trenutni = prijava.predmeti_studenta.vpis
+                    vse = 1
+                    trenutno = 1
+                    if vpis_trenutni == vpis:
+                        pod = {
+                            "prijava" : prijava,
+                            "vse" : vse,
+                            "trenutno" : trenutno,
+                            "ucitelj1" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_1),
+                            "ucitelj2" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_2),
+                            "ucitelj3" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_3),
+                            "datum" : vrniDatum(prijava.rok.datum),
+                            "ocena" : na(str(prijava.ocena_izpita)),
+                            }
+                        podatki_o_letu.append(pod)
+                    continue
+                
+                if vpis_trenutni == prijava.predmeti_studenta.vpis:
+                    #print("evo")
+                    vse += 1
+                    trenutno += 1
+                    #print(vpis_trenutni)
+                    #print(vpis)
+                    if vpis_trenutni == vpis:
+                        #print("evo")
+                        pod = {
+                            "prijava" : prijava,
+                            "vse" : vse,
+                            "trenutno" : trenutno,
+                            "ucitelj1" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_1),
+                            "ucitelj2" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_2),
+                            "ucitelj3" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_3),
+                            "datum" : vrniDatum(prijava.rok.datum),
+                            "ocena" : na(str(prijava.ocena_izpita)),
+                            }
+                        podatki_o_letu.append(pod)
+                else:
+                    vpis_trenutni = prijava.predmeti_studenta.vpis
+                    vse += 1
+                    trenutno = 1
+                    if vpis_trenutni == vpis:
+                        pod = {
+                            "prijava" : prijava,
+                            "vse" : vse,
+                            "trenutno" : trenutno,
+                            "ucitelj1" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_1),
+                            "ucitelj2" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_2),
+                            "ucitelj3" :  vrniImePriimek(prijava.rok.izvedba_predmeta.ucitelj_3),
+                            "datum" : vrniDatum(prijava.rok.datum),
+                            "ocena" : na(str(prijava.ocena_izpita)),
+                            }
+                        podatki_o_letu.append(pod)
+                
+                
+
+            #print(podatki_o_letu)
+            last = 0
+            for izvaj in podatki_o_letu:
+                if 'ocena' in izvaj and izvaj["ocena"]:
+                    last = izvaj["ocena"]
+            if int(last) > 5:
+                skupnokt += int(predmet.kreditne_tocke)
+                skupnaocena += int(last)
+                steviloocen += 1
+
+            merge = {
+                    'sifra' : predmet.id,
+                    'ime': predmet.ime,
+                    'kt' : predmet.kreditne_tocke,
+                    'podrobnosti' : podatki_o_letu
+                    }
+            vsipod.append(merge)
+
+        if steviloocen == 0:
+            povprecje = 0
+        else: 
+            povprecje =  skupnaocena/steviloocen
+
+        merge2 = {** vpisi.values()[i],
+            'predmeti' : vsipod,
+            'studijsko_leto':studijsko_leto,
+            'studijski_program':studijski_program,
+            'letnik':letnik,
+            'vrsta_vpisa':vrsta_vpisa,
+            'nacin_studija':nacin_studija,
+            'vrsta_studija':vrsta_studija,
+            'oblika_studija':oblika_studija,
+            'max_stevilo_kt' : skupnokt_max,
+            'stevilo_kt' : skupnokt,
+            'povprecje' : povprecje
+
+            }
+        vsi_vpisi.append(merge2)
+        i = i +1
+
+
+
+    context = {
+        "datum" : todayy.strftime('%d.%m.%Y'),
+        "student" : student.values()[0],
+        "vpisi" : vsi_vpisi,
+        "vpisna" : vpisna
+
+    }
+
+    options = {
+        'page-size': 'A4'
+    }
+
+
+    name = 'kartotecni'+str(vpisna)+'_'+ todayy.strftime('%d%m%Y')+'.pdf'
+    if storitev == 1:
+        html_string =  render_to_string('vpis/kartotecni_list.html',context)
+        pdfkit.from_string( html_string,'/tmp/'+name,options=options)
+
+
+        fs = FileSystemStorage('/tmp')
+
+        with fs.open(name) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+            return response
+
+    elif storitev == 2:
+        html_string =  render_to_string('vpis/kartotecni_list_min.html',context)
+        pdfkit.from_string( html_string,'/tmp/'+name,options=options)
+
+
+        fs = FileSystemStorage('/tmp')
+
+        with fs.open(name) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+            return response
+    elif storitev == 3:
+
+        return render(request,'vpis/html_kar.html',context)
+    elif storitev == 4:
+        return render(request,'vpis/html_kar_min.html',context)
+
+
+
+#pripeli student in vpis kot queryset
+def narediVpisniList(student,vpis):
+    #prvoleto = Vpis.objects.filter(student=student).order_by('studijsko_leto')[0]
+    #prvoleto = prvoleto.studijsko_leto
+
+    drzava = na(str(student[0].drzava))
+    obcina = na(str(student[0].obcina))
+    posta = na(str(student[0].posta))
+    posta_zacasno = na(str(student[0].posta_zacasno))
+    naslov_zacasno_bivalisce = na(str(student[0].naslov_zacasno_bivalisce))
+    drzava_zacasno = na(str(student[0].drzava_zacasno))
+    obcina_zacasno = na(str(student[0].obcina_zacasno))
+    drzava_rojstva = na(str(student[0].drzava_rojstva))
+    obcina_rojstva = na(str(student[0].obcina_rojstva))
+    datum_rojstva = na(str(student[0].datum_rojstva))
+    datum_rojstva = datum_rojstva[8:]+'.'+ datum_rojstva[5:7] + '.' + datum_rojstva[:4]
+    p_zacasno = ""
+    p_stalno = ""
+    if student[0].ima_posto_na_zacasni:
+        p_zacasno = "Pošiljanje pošte:"
+    else:
+        p_stalno = "Pošiljanje pošte:"
+
+    #vpis
+
+    studijsko_leto = na(str(vpis[0].studijsko_leto))
+    studijski_program = na(str(vpis[0].studijski_program))
+    letnik = na(str(vpis[0].letnik))
+    vrsta_vpisa = na(str(vpis[0].vrsta_vpisa))
+    nacin_studija = na(str(vpis[0].nacin_studija))
+    vrsta_studija = na(str(vpis[0].vrsta_studija))
+    oblika_studija = na(str(vpis[0].oblika_studija))
+
+    #predmeti
+
+    predmeti = PredmetiStudenta.objects.filter(vpis= vpis[0])[0].predmeti.all()
+
+    vsipod = []
+
+    for predmet in predmeti:
+        izvedba = IzvedbaPredmeta.objects.filter(predmet=predmet, studijsko_leto=vpis[0].studijsko_leto)[0]
+        ucitelj = na(str(izvedba.ucitelj_1))
+        #ucitelj = "test"
+        tocke = na(str(predmet.kreditne_tocke))
+        predmet_ime = na(str(predmet))
+
+        merge = {'predmet': predmet_ime, 'ucitelj': ucitelj, 'tocke': tocke}
+        vsipod.append(merge)
+
+
+    leto = vpis[0].studijsko_leto.ime[0:4]
+    vp = str(vpis[0].student.vpisna_stevilka)
+
+
+
+    merge = {** student.values()[0], 
+    'drzava' : dodajvejico(drzava,obcina),
+     'obcina': dodajvejico(obcina,posta),
+     'posta': posta,
+     'posta_zacasno':posta_zacasno,
+     'naslov_zacasno_bivalisce':naslov_zacasno_bivalisce,
+     'drzava_zacasno':dodajvejico(drzava_zacasno,obcina_zacasno),
+     'obcina_zacasno':dodajvejico(obcina_zacasno,posta_zacasno),
+      'drzava_rojstva': dodajvejico(drzava_rojstva, obcina_rojstva),
+      'obcina_rojstva':obcina_rojstva,
+      'datum_rojstva': datum_rojstva,
+      'p_zacasno': p_zacasno,
+      'p_stalno': p_stalno}
+
+    merge2 = {** vpis.values()[0],
+
+    'studijsko_leto':studijsko_leto,
+     'studijski_program':studijski_program,
+     'letnik':letnik,
+     'vrsta_vpisa':vrsta_vpisa,
+     'nacin_studija':nacin_studija,
+     'vrsta_studija':vrsta_studija,
+     'oblika_studija':oblika_studija
+    }
+    context = {
+       'student' : merge ,
+       'vpis' : merge2,
+       'predmetnik': vsipod,
+
+   }
+
+
+    html_string =  render_to_string('vpis/index3_vpis.html',context)
+    pdfkit.from_string( html_string,'/tmp/'+ vp+leto+'.pdf')
+    return
+
+#logika za dodajanje vejice ce naslejdnji string obstaja mu doda vejico
+# Slovenija Ljubljana --> return(Slovenija,) Ljubljana or Slovenija None --> return(Slovenija)
+def dodajvejico(nekistring, naslednji):
+    if nekistring == "":
+        return nekistring    
+    elif naslednji == "":
+        return nekistring
+    elif nekistring == None or naslednji == None:
+        raise Exception("not cool bro, pri metodi dodaj vejico je slo v narobe")
+    else:
+        return nekistring + ", "
+
+
+def na(objekt):
+    if objekt == "None":
+        return ""
+    else:
+        return objekt
+    
+def aligumbobstaja(student):
+    #print(Zeton.objects.filter(student = student).values())
+    return Zeton.objects.filter(student = student).filter(izkoriscen = False).exists()

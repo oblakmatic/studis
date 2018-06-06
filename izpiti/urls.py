@@ -12,6 +12,8 @@ urlpatterns = [
     path('vnesi_ocene_predmeta/',views.vnesi_ocene_predmeta,name='vnesi_ocene_predmeta'),
     path('vnesi_koncne_ocene', views.vnesi_koncne_ocene, name='vnesi_koncne_ocene'),
     path('seznam_prijavljenih/',views.seznam_prijavljenih,name='seznam_prijavljenih'),
+    path('uredi-rok/', views.uredi_rok, name='uredi_rok'),
+    path('izbrisi-rok/', views.izbrisi_rok, name='izbrisi_rok')
 
 
 ]

@@ -61,20 +61,6 @@
 					<button type="submit" name="seznam" class="btn btn-outline-primary mt-2">Seznam</button>
 				</td>
 			</form>
-			<form action="/izpiti/uredi_rok/" method="post">
-				{% csrf_token %}
-				<td>
-					<input type="hidden" name="id_rok" value={{ rok.id }}>
-					<button type="submit" name="uredi" class="btn btn-outline-primary mt-2">Uredi</button>
-				</td>
-			</form>
-			<form action="/izpiti/izbrisi_rok/" method="post">
-				{% csrf_token %}
-				<td>
-					<input type="hidden" name="id_rok" value={{ rok.id }}>
-					<button type="submit" name="izbrisi" class="btn btn-outline-primary mt-2">Izbriši</button>
-				</td>
-			</form>
 		</tr>
 		{% endfor %}
 		</table>
@@ -130,6 +116,23 @@
 						<td>
 							<input type="hidden" name="id_rok" value={{ rok.id }}>
 							<button type="submit" name="seznam" class="btn btn-outline-primary mt-2">Seznam</button>
+						</td>
+					</form>
+					<form action="/izpiti/uredi-rok/" method="post">
+						{% csrf_token %}
+						<td>
+							<input type="text" id="{{ rok.id }}"  name="rok_id" value="{{rok.id}}" hidden />
+							<input type="text" name="post_type" value="post_type" hidden />
+							<button type="submit" name="dodaj_izpit" class="btn btn-outline-primary mt-2">Uredi</button>
+						</td>
+					</form>
+		
+					<form action="/izpiti/izbrisi-rok/" method="post">
+						{% csrf_token %}
+						<td>
+							<input type="text" id="{{ rok.id }}"  name="rok_id" value="{{rok.id}}" hidden />
+							<input type="text" name="post_type" value="post_type" hidden />
+							<button type="submit" name="dodaj_izpit" class="btn btn-outline-primary mt-2">Izbriši</button>
 						</td>
 					</form>
 				</tr>

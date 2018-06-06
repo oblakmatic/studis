@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
-from studis.views import login, auth_view, logout, invalid, home_view
+from studis.views import *
 
 urlpatterns = [
 	path('', home_view, name='home'),
@@ -36,7 +36,10 @@ urlpatterns = [
     path('password_reset/done/', auth_views.password_reset_done, name='password_reset_done'),
     re_path('reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',
         auth_views.password_reset_confirm, name='password_reset_confirm'),
-    path('reset/done/', auth_views.password_reset_complete, name='password_reset_complete')
-
+    path('reset/done/', auth_views.password_reset_complete, name='password_reset_complete'),
+    path('predmetnik/<int:_program>/<int:_leto>/<int:_letnik>/', vzdr_pred, name='vzdr_pred'),
+    path('predmetnik/<int:_program>/<int:_leto>/<int:_letnik>/del/<int:predmet>/', del_pred, name='del_pred'),
+    path('predmetnik/<int:_program>/<int:_leto>/<int:_letnik>/add/', add_pred, name='add_pred'),
+    path('izbrisi-obvestilo/<int:_id>', izbrisi_obvestilo, name='izbrisi_obvestilo')
 ]
     

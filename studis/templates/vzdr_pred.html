@@ -1,0 +1,196 @@
+{% include "base.html" %}
+
+
+{% block content %}
+
+<div class="container sifrant" data-letnik={{letnik.ime}}>
+    
+    <h2>Predmetnik</h2>
+
+<form method="post">
+  {% csrf_token %}
+<div class="row">
+ 
+  <div class="col-sm-2">
+      <div class="form-group mr-1">
+        <select class="form-control" name="izbrano-leto" onchange="this.form.submit()">
+          {% for l in leta %}
+            <option {% if l == leto %} selected {% endif %}>{{ l.ime }}</option>
+          {% endfor %}
+        </select>
+      </div>
+  </div>
+
+  <div class="col-sm-3">
+      <div class="form-group mr-1">
+        <select class="form-control" name="izbran-program" onchange="this.form.submit()">
+          {% for l in programi %}
+            <option {% if l == program %} selected {% endif %}>{{ l.naziv }}</option>
+          {% endfor %}
+        </select>
+      </div>
+  </div>
+
+  <div class="col-sm-1">
+      <div class="form-group">
+        <select class="form-control" name="izbran-letnik" onchange="this.form.submit()">
+          {% for l in letniki %}
+            <option {% if l == letnik %} selected {% endif %}>{{ l }}</option>
+          {% endfor %}
+        </select>
+      </div>
+  </div>
+</form>
+</div>
+    
+    <div class="row mb-4" id="predmetnik">
+
+
+        <ul class="list-group mycard col-sm-4">
+            <li class="list-group-item" style="background-color:#C3DBF7">Obvezni predmeti</li>
+            {% for t in predmeti_o %}
+    
+                <li class="list-group-item" style="display:block;" >
+                    <div class=row>
+                    <div class="col-sm-9">{{ t }}</div>
+                        
+
+                    <span class="col-sm-3">
+                         <form 
+                         action="/predmetnik/{{program.id}}/{{leto.id}}/{{letnik.id}}/del/{{ t.id }}/" 
+                         method="post">
+                        {% csrf_token %} 
+                    
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Odstrani
+                        </button>
+                        </form>
+                    </span>
+
+                    </div
+                </li>
+                
+            {% endfor %}
+        </ul>
+    
+        {% if letnik.ime != "1."  %}
+     
+        <ul class="list-group mycard col-sm-4">
+            <li class="list-group-item" style="background-color:#C3DBF7">Izbirni predmeti</li>
+            {% for t, s in predmeti_i %}
+    
+                <li class="list-group-item" style="display:block;" >
+                    <div class=row>
+                    <div class="col-sm-9">
+                    {{ t }} 
+                    {% if s  %}
+                    <i>- strokovni</i>
+                    {%  else %}
+                    <i>- splošni</i>
+                    {% endif %}
+                    </div>
+                        
+
+                     <span class="col-sm-3">
+                         <form 
+                         action="/predmetnik/{{program.id}}/{{leto.id}}/{{letnik.id}}/del/{{ t.id }}/" 
+                         method="post">
+                        {% csrf_token %} 
+                        
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Odstrani
+                        </button>
+                        </form>
+                    </span>
+
+                    </div>
+                </li>
+                
+            {% endfor %}
+        </ul>
+       {% endif %}
+
+        {% if letnik.ime == "3."  %}
+        
+        <ul class="list-group col-sm-4" >
+            <li class="list-group-item" style="background-color:#C3DBF7">Moduli</li>
+        {% for t, name in predmeti_m %}
+            <li class="list-group-item dropdown-l">
+                
+                
+               
+                <span class="ml-2">
+                <label>
+                    <h5><strong>{{name}}</strong></h5>
+                </label>
+                 </span>
+
+                <ul class="list-group">
+                {% for p in t %}
+    
+                    <li class="list-group-item" >
+                        <div class=row>
+                        <div class="col-sm-9">{{ p }}</div>
+                            
+                         <span class="col-sm-3">
+                         <form 
+                         action="/predmetnik/{{program.id}}/{{leto.id}}/{{letnik.id}}/del/{{ p.id }}/" 
+                         method="post">
+                        {% csrf_token %} 
+                      
+                        <button type="submit" class="btn btn-outline-danger btn-sm">Odstrani
+                        </button>
+                        </form>
+                    </span>
+
+                        </div>
+                    </li>
+                    
+                {% endfor %}
+                </ul>
+                
+            </li>
+
+        {% endfor %}
+        </ul>
+       
+        {% endif %}
+
+    </div>
+
+    <h2>Dodajanje predmetnika</h2>
+    <div class="mt-4">
+        <form action="/predmetnik/{{program.id}}/{{leto.id}}/{{letnik.id}}/add/" method="post">
+              {% csrf_token %}
+        {{form}}
+        <button type="submit" class="btn btn-outline-primary">Dodaj</button>
+        </form>
+    </div>
+
+        <script>
+        $(document).ready(function(){
+          $( "#id_ima_modul" ).change(function() {
+            var $input = $( this );
+             if ($input.is( ":checked" )){      
+                $("#id_obvezen").prop( "checked", false );
+                 $("#id_modul").show();
+                 $("label[for='id_modul']").show();
+             }else{
+               $("#id_modul").hide();
+                $("label[for='id_modul']").hide();
+             }
+          }).change();
+
+          $( "#id_strokoven" ).change(function() {
+            var $input = $( this );
+             if ($input.is( ":checked" )){      
+                    $("#id_obvezen").prop( "checked", false );
+        
+             }
+          }).change();
+
+
+        });
+        
+        </script>
+    
+</div>
+{% endblock %}

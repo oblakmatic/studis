@@ -48,8 +48,12 @@
 			<td>{{ t.ime }}</td>
 			<td>{{ t.vpisna_stevilka }}</td>
 			<td>{{ t.email }}</td>
-
+			  
+			{% if user.groups.all.0.name == "referent" %}
 			<td><a href="ustvari-zeton/{{ t.vpisna_stevilka }}">Ustvari vpisni žeton</a></td>
+			{% else %}
+				<td></td>
+			{% endif %}
 			<td><a href="podatki/{{ t.vpisna_stevilka }}">Izpiši vse podatke</a></td>
 		</tr>
 
