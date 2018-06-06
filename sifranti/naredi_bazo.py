@@ -428,7 +428,7 @@ def naredi_bazo(request):
     UNI_PREDMETI_DRUGI.append(Predmet.objects.get(id = 63280))
     UNI_PREDMETI_DRUGI.append(Predmet.objects.get(id = 63217))
     UNI_PREDMETI_DRUGI.append(Predmet.objects.get(id = 63220))
-    UNI_PREDMETI_DRUGI.append(Predmet.objects.get(id = 63221))
+    UNI_PREDMETI_DRUGI.append(Predmet.objects.get(id = 63219))
 
     # drugi are actually prvi
     global VS_PREDMETI_DRUGI
@@ -2942,7 +2942,7 @@ def vsi_predmeti2(LETO):
     pr = Predmetnik(studijski_program = UNI, studijsko_leto=LETO, letnik = LETNIK, predmet = a, obvezen=False, strokoven=True)
     pr.save()
     narediIzvedbo(pr, narediProfesorja("Neža","Mramor"))
-
+    
     LETNIK = Letnik.objects.get(ime="3.")
 
     #3 letnik obvezni
