@@ -1500,7 +1500,7 @@ def naredi_bazo(request):
     student4 = naredi_studenta("Luka","Cajter","63162004","lc2004@fri.uni-lj.si")
     student5 = naredi_studenta("Samo","Sever","63162005","ss2005@fri.uni-lj.si")
     student6 = naredi_studenta("Špela","Kuhar","63162006","sk2006@fri.uni-lj.si")
-    student7 = naredi_studenta("Ragnar","Lothbrok","rl2007","rl2007@fri.uni-lj.si")
+    student7 = naredi_studenta("Ragnar","Lothbrok","63162007","rl2007@fri.uni-lj.si")
     student8 = naredi_studenta("Lagerta","Lothbrok","63162008","ll2008@fri.uni-lj.si")
     student9 = naredi_studenta("Sansa","Zupančič","63162009","st2009@fri.uni-lj.si")
     student10 = naredi_studenta("Klemen","Špeh","63162010","ks2010@fri.uni-lj.si")
