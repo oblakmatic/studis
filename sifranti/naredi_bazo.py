@@ -9,6 +9,36 @@ import datetime
 
 from openpyxl import *
 
+def naredi_studenta(ime,priimek,vpisna,email):
+
+    katarina = Student(vpisna_stevilka = vpisna, 
+    emso = "1511996500207", 
+    priimek=priimek, 
+    ime=ime, 
+    naslov_stalno_bivalisce="Dunajska cesta 110", 
+    drzava=a_slo, 
+    drzava_rojstva = a_slo, 
+    posta= a_sklPosta, 
+    obcina=a_sklObcina,
+    obcina_rojstva= a_ljObcina, 
+    telefon="031866686", 
+    email=email)
+    katarina.save()
+    user, created = User.objects.get_or_create(username=email[:6], email=email)
+    user.first_name = ime
+    user.last_name = priimek
+        
+    if created:
+        user.set_password("adminadmin")
+        user.is_staff=False
+        user.is_superuser=False
+        prof_group, status = Group.objects.get_or_create(name='students') 
+        prof_group.user_set.add(user)
+
+    user.save()
+    return katarina
+
+
 
 def narediIzvedboSTremi(predmetnik, prof1,prof2, prof3):
     
@@ -146,7 +176,11 @@ def naredi_bazo(request):
     uvozi_obcine()
     uvozi_poste()
 
-    
+    global a_slo
+    global a_sklObcina
+    global a_ljObcina
+    global a_ljPosta
+    global a_sklPosta
 
     a_slo = Drzava.objects.get(id=705)
     a_sklObcina = Obcina.objects.get(id = 122)
@@ -1459,6 +1493,24 @@ def naredi_bazo(request):
     #-------
     # TESTNI PRIMER ZA KARTOTECNI LIST
     #kreiranje studenta
+    print("KREIRANJE STUDENTOV")
+    student1 = naredi_studenta("Tina","Šilc","63162001","ts2000@fri.uni-lj.si")
+    student2 = naredi_studenta("Lucija","Suhodolnik","63162002","ls2001@fri.uni-lj.si")
+    student3 = naredi_studenta("Miha","Černe","63162003","mc20003@fri.uni-lj.si")
+    student4 = naredi_studenta("Luka","Cajter","63162004","lc2004@fri.uni-lj.si")
+    student5 = naredi_studenta("Samo","Sever","63162005","ss2005@fri.uni-lj.si")
+    student6 = naredi_studenta("Špela","Kuhar","63162006","sk2006@fri.uni-lj.si")
+    student7 = naredi_studenta("Ragnar","Lothbrok","rl2007","rl2007@fri.uni-lj.si")
+    student8 = naredi_studenta("Lagerta","Lothbrok","63162008","ll2008@fri.uni-lj.si")
+    student9 = naredi_studenta("Sansa","Zupančič","63162009","st2009@fri.uni-lj.si")
+    student10 = naredi_studenta("Klemen","Špeh","63162010","ks2010@fri.uni-lj.si")
+    student11 = naredi_studenta("Klemen","Sever","63162011","ks2011@fri.uni-lj.si")
+    student12 = naredi_studenta("Branko","Pirnat","63162012","bp2012@fri.uni-lj.si")
+    student13 = naredi_studenta("Tessa","Šilc","63162013","ts2013@fri.uni-lj.si")
+    student14 = naredi_studenta("Nuša","Junhart","63162014","nj2014@fri.uni-lj.si")
+    student15 = naredi_studenta("Vanesa","Novak","63162015","vs2015@fri.uni-lj.si")
+
+
     katarina = Student(vpisna_stevilka = "63158888", 
     emso = "1511996500207", 
     priimek="Katarina", 
@@ -1485,6 +1537,8 @@ def naredi_bazo(request):
         prof_group.user_set.add(user)
 
     user.save()
+
+    #vpisi_studenta(student1, a_16_17, UNI ,a_1Letnik,)
 
     # kreiranje vpisa
     katarina_vpis = Vpis(student=katarina, 
