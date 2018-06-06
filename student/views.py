@@ -746,7 +746,7 @@ def natisni_potrdilo(email,studijsko_leto,st_potrdil):
 def students_by_number(request):
 
 
-	leto = StudijskoLeto.objects.latest('id')
+	leto = StudijskoLeto.objects.get(ime="2017/2018")
 	program = StudijskiProgram.objects.get(id=1000468)
 	letnik = Letnik.objects.get(ime="1.")
 
@@ -798,16 +798,6 @@ def students_by_number(request):
 			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
 			return response
 
-	if request.POST.get("save_pdf2"):
-		student_list = Vpis.objects.filter(studijsko_leto=leto, letnik=letnik, 
-							studijski_program=program, potrjen=True)
-		naredi_letnik_pdf(program, letnik, leto, student_list)
-		name = str(program.id) +'.pdf'
-		fs = FileSystemStorage('/tmp')
-		with fs.open(name) as pdf:
-			response = HttpResponse(pdf, content_type='application/pdf')
-			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
-			return response
 
 	#pages
 	paginator = Paginator(predmeti_list, 40)
@@ -988,6 +978,57 @@ def naredi_stevilo_csv(request, leto, program, letnik):
 
 
 	return response
+
+def students_by_year(request):
+	
+	leto = StudijskoLeto.objects.get(ime="2017/2018")
+	program = StudijskiProgram.objects.get(id=1000468)
+	letnik = Letnik.objects.get(ime="1.")
+
+	if request.POST.get('izbrano-leto') != None:
+		leto = StudijskoLeto.objects.get(ime=request.POST.get('izbrano-leto'))
+
+	if request.POST.get('izbran-program') != None:
+		program = StudijskiProgram.objects.get(naziv=request.POST.get('izbran-program'))
+
+	if request.POST.get('izbran-letnik') != None:
+		letnik = Letnik.objects.get(ime=request.POST.get('izbran-letnik'))
+
+
+	students_vpisi = Vpis.objects.filter(studijsko_leto=leto, studijski_program=program, letnik=letnik, potrjen=True)
+
+
+	if request.POST.get("save_pdf2"):
+		student_list = Vpis.objects.filter(studijsko_leto=leto, letnik=letnik, 
+							studijski_program=program, potrjen=True)
+		naredi_letnik_pdf(program, letnik, leto, student_list)
+		name = str(program.id) +'.pdf'
+		fs = FileSystemStorage('/tmp')
+		with fs.open(name) as pdf:
+			response = HttpResponse(pdf, content_type='application/pdf')
+			response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+			return response
+
+	#pages
+	paginator = Paginator(students_vpisi, 20)
+	page = request.GET.get('page')
+	students_vpisi = paginator.get_page(page)
+			
+	leta = StudijskoLeto.objects.all()
+	programi = StudijskiProgram.objects.all()
+	letniki = Letnik.objects.all()
+
+	context = {
+		'students': students_vpisi,
+		'leta': leta,
+		'leto': leto,
+		'programi': programi,
+		'program': program,
+		'letniki': letniki,
+		'letnik': letnik
+	}
+
+	return render(request, 'students_by_year.html',context)
 
 
 
