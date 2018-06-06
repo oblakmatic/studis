@@ -36,7 +36,7 @@ def changesif(request, diff):
 			return HttpResponseRedirect('/sifranti/'+ diff +'/')
 		else:
 			elements = eval(diff).objects.values()
-			paginator = Paginator(elements, 25)
+			paginator = Paginator(elements, 10)
 
 			page = request.GET.get('page')
 			elemen = paginator.get_page(page)
@@ -64,7 +64,7 @@ def changesif(request, diff):
 	else:
 		if diff in diff_names:
 			elements =  eval(diff).all_objects.order_by('pk').values()
-			paginator = Paginator(elements, 25)
+			paginator = Paginator(elements, 10)
 
 			page = request.GET.get('page')
 			elemen = paginator.get_page(page)
@@ -167,7 +167,7 @@ def search2(request, diff, key, iskani_el ):
 			return HttpResponseRedirect('/sifranti/'+ diff +'/')
 		else:
 			elements = eval(diff).all_objects.values()
-			paginator = Paginator(elements, 25)
+			paginator = Paginator(elements, 10)
 
 			page = request.GET.get('page')
 			elemen = paginator.get_page(page)
@@ -196,7 +196,7 @@ def search2(request, diff, key, iskani_el ):
 		if diff in diff_names:
 			#elements =  eval(diff).objects.order_by('pk').values()
 			elements = vrniFiltriraneElemente(diff, key, iskani_el)
-			paginator = Paginator(elements, 25)
+			paginator = Paginator(elements, 10)
 
 			page = request.GET.get('page')
 			elemen = paginator.get_page(page)
