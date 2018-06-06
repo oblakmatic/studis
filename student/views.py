@@ -997,11 +997,14 @@ def students_by_year(request):
 
 	students_vpisi = Vpis.objects.filter(studijsko_leto=leto, studijski_program=program, letnik=letnik, potrjen=True)
 
+	students_vpisi = sorted(students_vpisi, key=lambda x: ([alphabet.index(c) for c in x.student.priimek.lower()], \
+																   [alphabet.index(c) for c in x.student.ime.lower()], \
+																   [alphabet.index(c) for c in str(x.student.vpisna_stevilka)]))
+
 
 	if request.POST.get("save_pdf2"):
-		student_list = Vpis.objects.filter(studijsko_leto=leto, letnik=letnik, 
-							studijski_program=program, potrjen=True)
-		naredi_letnik_pdf(program, letnik, leto, student_list)
+	
+		naredi_letnik_pdf(program, letnik, leto, students_vpisi)
 		name = str(program.id) +'.pdf'
 		fs = FileSystemStorage('/tmp')
 		with fs.open(name) as pdf:
