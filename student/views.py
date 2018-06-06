@@ -244,7 +244,7 @@ def token_add(request, id):
 					'tokenForm': tokenForm
 				}
 				return render(request, 'token_add.html', context)
-			zeton = Zeton(student=student, studijski_program=program, letnik=letnik, vrsta_vpisa=vrsta_vpisa, nacin_studija=nacin_studija, pravica_do_izbire = prosta_izbira)# vrsta_studija=vrsta_studija, pravica_do_izbire=prosta_izbira)
+			zeton = Zeton(student=student, studijski_program=program, letnik=letnik, vrsta_vpisa=vrsta_vpisa, nacin_studija=nacin_studija, pravica_do_izbire = prosta_izbira, vrsta_studija = vrsta_studija)# vrsta_studija=vrsta_studija, pravica_do_izbire=prosta_izbira)
 			zeton.save()
 			return token_list(request, 'Žeton uspešno dodan!', 'alert-success')
 		else:
