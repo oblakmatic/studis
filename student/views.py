@@ -44,16 +44,17 @@ def upload_file(request):
 	return render(request,'import_students.html')
 
 def students(request):
+
 	if(request.user.groups.all()[0].name == "students"):
 		return redirect('/student/podatki')
 	else:
 		if(request.user.groups.all()[0].name == "referent"):
 			all_students_list = Student.objects.values('priimek', 'ime', 'vpisna_stevilka', 'email')#.order_by('priimek')
-			print('unsorted', all_students_list)
+			
 			all_students_list = sorted(all_students_list, key=lambda student: ([alphabet.index(c) for c in student['priimek'].lower()], \
 																			   [alphabet.index(c) for c in student['ime'].lower()], \
 																			   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
-			print('sorted', all_students_list)
+	
 			paginator = Paginator(all_students_list, 10)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
@@ -70,6 +71,16 @@ def students(request):
 			paginator = Paginator(all_students_list, 10)
 			page = request.GET.get('page')
 			all_students = paginator.get_page(page)
+
+		
+		if request.method == 'POST':
+			export_pdf(all_students_list)
+			name = "tabela_studentov" +'.pdf'
+			fs = FileSystemStorage('/tmp')
+			with fs.open(name) as pdf:
+				response = HttpResponse(pdf, content_type='application/pdf')
+				response['Content-Disposition'] = 'attachment; filename="'+ name+' "'
+				return response
 
 		context = {
 			'students': all_students
@@ -434,37 +445,31 @@ def export_csv(request):
 
 	return response
 
-def export_pdf(request):
-	# Create the HttpResponse object with the appropriate PDF headers.
-	response = HttpResponse(content_type='application/pdf')
-	response['Content-Disposition'] = 'attachment; filename="studenti.pdf"'
-	styles = getSampleStyleSheet()
-	doc = SimpleDocTemplate(response, pagesize=landscape(A4))
-	header = Paragraph('Tabela študentov na dan: ' + str(datetime.date.today()), styles['title'])
-	elements = []
-	all_students = Student.objects.values().order_by('priimek')
+def export_pdf(student_list):
+
+	all_students = Student.objects.values()
 	all_students = sorted(all_students, key=lambda student: (  [alphabet.index(c) for c in student['priimek'].lower()], \
 															   [alphabet.index(c) for c in student['ime'].lower()], \
 															   [alphabet.index(c) for c in str(student['vpisna_stevilka'])]))
-	k = list(all_students[0].keys())
-	
-	for l in range(len(k)):
-		if len(k[l]) > 10:
-			k[l] = k[l][:10] + ".."	
-			
+	context = {
+	   'predmet' : "Tabela študentov",
+	   'students': all_students,
+	}
 
-	data = [k]
-	
-	for student in all_students:
-		 data.append(list(student.values()))
-	LIST_STYLE = TableStyle([('INNERGRID', (0, 0), (-1, -1), 0.2, colors.black)])
-	t=Table(data)
-	t.setStyle(LIST_STYLE)
-	elements.append(header)
-	elements.append(t)
+	options = {
+    	'page-size': 'A4',
+        'dpi': 600,
+        'header-left': "FAKULTETA ZA RAČUNALNIŠTVO IN INFORMATIKO",
+        'header-right': "[date]",
+        'footer-right': "[page] od [topage]",
+        'header-line': '',
+      
+	}
 
-	doc.build(elements)
-	return response
+	html_string =  render_to_string('pdf_all.html',context)
+	pdfkit.from_string( html_string,'/tmp/tabela_studentov.pdf', options=options)
+
+	return
 
 def potrdi_studente(request):
 	if(request.user.groups.all()[0].name == "referent"):

@@ -17,11 +17,10 @@
 			{% csrf_token %}
 			<button type="submit" class="btn btn-outline-primary mb-2 mr-2">Seznam vpisnih žetonov</button>
 		</form>
-		<form action="/student/izvoz/pdf/" method="post">
+		<form  method="post">
 			{% csrf_token %}
-			<button type="submit" class="btn btn-outline-secondary mb-2 mr-2">Izvozi PDF</button>
+		 <button type="submit" name="save_pdf2" value="SavePDF2" class="btn btn-outline-secondary mb-2 mr-2">Izvozi PDF</button>
 		</form>
-
 		<form action="/student/izvoz/csv/" method="post">
 			{% csrf_token %}
 			<button type="submit" class="btn btn-outline-secondary mb-2 mr-2">Izvozi CSV</button>
