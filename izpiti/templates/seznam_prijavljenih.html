@@ -93,7 +93,7 @@
 
 			{% if arr.has_previous %}
 			<li class="page-item">
-				<a href="?page={{ arr.previous_page_number }}" class="page-link">&laquo;</a>
+				<a class="page-link">&laquo;</a>
 			</li>
 			{% else %}
 			<li class="page-item disbled">
@@ -104,11 +104,11 @@
 			{% for pg in arr.paginator.page_range %}
 			{% if arr.number == pg %}
 			<li class="page-item active">
-				<a href="?page={{pg}}" class="page-link">{{pg}}</a>
+				<a class="page-link">{{pg}}</a>
 			</li>
 			{% else %}
 			<li class="page-item">
-				<a href="?page={{pg}}" class="page-link">{{pg}}</a>
+				<a class="page-link">{{pg}}</a>
 			</li>
 			{% endif %}
 			{% endfor %}
@@ -116,7 +116,7 @@
 
 			{% if arr.has_next %}
 			<li class="page-item">
-				<a href="?page={{ arr.next_page_number }}" class="page-link">&raquo;</a>
+				<a  class="page-link">&raquo;</a>
 			</li>
 			{% else %}
 			<li class="page-item disbled">
