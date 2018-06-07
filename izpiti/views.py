@@ -529,7 +529,7 @@ def vnesi_ocene_predmeta(request):
 		if request.method == 'POST' and 'vnesi_ocene' in request.POST:
 			rok_id = request.POST['id_rok']
 
-			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id)
+			prijave = Prijava.objects.filter(~Q(ocena = -1), rok__id = rok_id, aktivna_prijava = True)
 			prijave = sort_prijave(prijave)
 
 			formset = formset_factory(ocenaForm, extra = len(prijave))
