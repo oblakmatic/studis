@@ -493,7 +493,9 @@ def potrdi_studente(request):
 	for vpis in all_vpis:
 		if vpis.potrjen == False:
 			potrjeni.append(vpis)
-	
+	paginator = Paginator(potrjeni, 10)
+	page = request.GET.get('page')
+	potrjeni = paginator.get_page(page)
 	context = {
 		'arr': potrjeni
 		}
@@ -528,7 +530,9 @@ def preveri_seznam(request):
 			for vpis in Vpis.objects.all():
 				if vpis.potrjen == True:
 					seznam.append(vpis)
-
+			paginator = Paginator(seznam, 10)
+			page = request.GET.get('page')
+			seznam = paginator.get_page(page)
 			context = {
 				'arr': seznam
 				}
