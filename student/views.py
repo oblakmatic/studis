@@ -36,7 +36,7 @@ from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from operator import itemgetter, attrgetter
 
-alphabet = 'abcčdefghijklmnopqrsštuvwxyzž0123456789'
+alphabet = 'abcćčdefghijklmnopqrsštuvwxyzž0123456789'
 
 # Create your views here.
 def upload_file(request):

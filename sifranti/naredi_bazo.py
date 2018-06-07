@@ -924,7 +924,7 @@ def naredi_bazo(request):
     student19 = naredi_studenta("Dimitri","Zakeav","63152019","dz2019@fri.uni-lj.si")
     student20 = naredi_studenta("Miha","Vidmar","63152020","mv2020@fri.uni-lj.si")
     student21 = naredi_studenta("Klavdija","Vidmar","63152021","kv2021@fri.uni-lj.si")
-    student22 = naredi_studenta("Ludmila","Bogdanivić","63152022","lb2022@fri.uni-lj.si")
+    student22 = naredi_studenta("Ludmila","Bogdanivic","63152022","lb2022@fri.uni-lj.si")
     student23 = naredi_studenta("Vinko","Gričnik","63152023","vg2023@fri.uni-lj.si")
     #student15 = naredi_studenta("Vanesa","Novak","63152015","vs2015@fri.uni-lj.si")
 
