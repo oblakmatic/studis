@@ -894,14 +894,15 @@ def naredi_bazo(request):
     student8 = naredi_studenta("Lagerta","Lothbrok","63162008","ll2008@fri.uni-lj.si")
     student9 = naredi_studenta("Sansa","Zupančič","63162009","st2009@fri.uni-lj.si")
     student10 = naredi_studenta("Klemen","Špeh","63162010","ks2010@fri.uni-lj.si")
+    student30 = naredi_studenta("Kristna","Cerar","63162030","kc2030@fri.uni-lj.si")
 
     # 3 LETNIK
     #KLEMEN DOBI ŽETON ZA PROSTO 
     #KLEMEN IZPIŠE SVOJ KARTOTEČNI LIST
-    #RAGNAR DOBI ŽETON ZA NEPROSTO IZBIRO
+    #Branko DOBI ŽETON ZA NEPROSTO IZBIRO
 
-    student11 = naredi_studenta("Klemen","Sever","63152011","ks2011@fri.uni-lj.si")
-    student12 = naredi_studenta("Branko","Pirnat","63152012","bp2012@fri.uni-lj.si")
+    student11 = naredi_studenta("Klemen","Avgust","63152011","ka2011@fri.uni-lj.si")
+    student12 = naredi_studenta("Branko","Bernik","63152012","bb2012@fri.uni-lj.si")
     student13 = naredi_studenta("Tessa","Šilc","63152013","ts2013@fri.uni-lj.si")
 
     global student14
@@ -922,6 +923,9 @@ def naredi_bazo(request):
     student18 = naredi_studenta("Viktor","Rutar","63152018","vr2018@fri.uni-lj.si")
     student19 = naredi_studenta("Dimitri","Zakeav","63152019","dz2019@fri.uni-lj.si")
     student20 = naredi_studenta("Miha","Vidmar","63152020","mv2020@fri.uni-lj.si")
+    student21 = naredi_studenta("Klavdija","Vidmar","63152021","kv2021@fri.uni-lj.si")
+    student22 = naredi_studenta("Ludmila","Bogdanivić","63152022","lb2022@fri.uni-lj.si")
+    student23 = naredi_studenta("Vinko","Gričnik","63152023","vg2023@fri.uni-lj.si")
     #student15 = naredi_studenta("Vanesa","Novak","63152015","vs2015@fri.uni-lj.si")
 
     #vpis v prvi letnik
@@ -937,6 +941,7 @@ def naredi_bazo(request):
     vpisi_studenta(student8, a_16_17, UNI ,a_1Letnik, a_vs2)
     vpisi_studenta(student9, a_16_17, UNI ,a_1Letnik, a_vs2)
     vpisi_studenta(student10, a_16_17, UNI ,a_1Letnik, a_vs2)
+    vpisi_studenta(student30, a_16_17, UNI ,a_1Letnik, a_vs2)
     
     vpisi_studenta(student11, a_15_16, UNI ,a_1Letnik, a_vs2)
     vpisi_studenta(student12, a_15_16, UNI ,a_1Letnik, a_vs2)
@@ -948,6 +953,9 @@ def naredi_bazo(request):
     vpisi_studenta(student18, a_15_16, UNI ,a_1Letnik, a_vs2)
     vpisi_studenta(student19, a_15_16, UNI ,a_1Letnik, a_vs2)
     vpisi_studenta(student20, a_15_16, UNI ,a_1Letnik, a_vs2)
+    vpisi_studenta(student21, a_15_16, UNI ,a_1Letnik, a_vs2)
+    vpisi_studenta(student22, a_15_16, UNI ,a_1Letnik, a_vs2)
+    vpisi_studenta(student23, a_15_16, UNI ,a_1Letnik, a_vs2)
 
     #vpis v drugi letnik
     #vpisi_studenta(student6, a_17_18, UNI ,a_2Letnik, a_vs2)
@@ -955,6 +963,7 @@ def naredi_bazo(request):
     vpisi_studenta(student8, a_17_18, UNI ,a_2Letnik, a_vs2)
     vpisi_studenta(student9, a_17_18, UNI ,a_2Letnik, a_vs2)
     vpisi_studenta(student10, a_17_18, UNI ,a_2Letnik, a_vs2)
+    vpisi_studenta(student30, a_17_18, UNI ,a_2Letnik, a_vs2)
 
     vpisi_studenta(student11, a_16_17, UNI ,a_2Letnik, a_vs2)
     vpisi_studenta(student12, a_16_17, UNI ,a_2Letnik, a_vs2)
@@ -966,6 +975,9 @@ def naredi_bazo(request):
     vpisi_studenta(student18, a_16_17, UNI ,a_2Letnik, a_vs2)
     vpisi_studenta(student19, a_16_17, UNI ,a_2Letnik, a_vs2)
     vpisi_studenta(student20, a_16_17, UNI ,a_2Letnik, a_vs2)
+    vpisi_studenta(student21, a_16_17, UNI ,a_2Letnik, a_vs2)
+    vpisi_studenta(student22, a_16_17, UNI ,a_2Letnik, a_vs2)
+    vpisi_studenta(student23, a_16_17, UNI ,a_2Letnik, a_vs2)
     
     # vpis v tretji letnik
 
@@ -979,6 +991,9 @@ def naredi_bazo(request):
     vpisi_studenta(student18, a_17_18, UNI ,a_3Letnik, a_vs2)
     vpisi_studenta(student19, a_17_18, UNI ,a_3Letnik, a_vs2)
     vpisi_studenta(student20, a_17_18, UNI ,a_3Letnik, a_vs2)
+    vpisi_studenta(student21, a_17_18, UNI ,a_3Letnik, a_vs2)
+    vpisi_studenta(student22, a_17_18, UNI ,a_3Letnik, a_vs2)
+    vpisi_studenta(student23, a_17_18, UNI ,a_3Letnik, a_vs2)
     
 
 
